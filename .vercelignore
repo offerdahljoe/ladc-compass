@@ -1,0 +1,13 @@
+node_modules
+.next
+.next-cloud
+out
+.tmp-pnpm
+.pnpm-store
+.cloud-check
+.env.local
+next-*.log
+next-server.pid
+LADCCompass.html
+Open-LADCCompass.cmd
+Start-LADCCompass.ps1

@@ -1,0 +1,10 @@
+.next/
+.next-cloud/
+node_modules/
+.pnpm-store/
+.tmp-pnpm/
+.cloud-check/
+*.tsbuildinfo
+next-*.log
+next-server.pid
+.env*.local
