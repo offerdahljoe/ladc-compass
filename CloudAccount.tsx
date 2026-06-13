@@ -26,10 +26,12 @@ export default function CloudAccount() {
     event.preventDefault();
     if (!supabase) return;
     setMessage("Sending sign-in link...");
+    const redirectTo =
+      process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: redirectTo,
       },
     });
     setMessage(

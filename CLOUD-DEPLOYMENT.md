@@ -33,9 +33,21 @@ For local testing, create `.env.local`:
 ```text
 NEXT_PUBLIC_SUPABASE_URL=your-project-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-public-key
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
 For cloud hosting, add those same two values as environment variables in Vercel or Netlify.
+Also add the public website URL:
+
+```text
+NEXT_PUBLIC_SITE_URL=https://your-vercel-site.vercel.app
+```
+
+In Supabase, also go to Authentication, then URL Configuration:
+
+1. Set Site URL to your Vercel URL.
+2. Add your Vercel URL to Redirect URLs.
+3. Save.
 
 ## Step 2: Deploy the Website
 
@@ -47,7 +59,8 @@ Vercel is the simplest fit for a Next.js app.
 2. Go to Vercel and create a new project from that repository.
 3. Use the default build command: `npm run build`
 4. Add the two Supabase environment variables.
-5. Vercel will publish the site and give you a URL.
+5. Add `NEXT_PUBLIC_SITE_URL` with your Vercel URL.
+6. Vercel will publish the site and give you a URL.
 
 ### Also Good: Netlify
 
