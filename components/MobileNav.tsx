@@ -1,0 +1,45 @@
+"use client";
+
+import Link from "next/link";
+import { mainNavigation } from "@/lib/siteContent";
+
+export default function MobileNav() {
+  return (
+    <div className="mb-4 rounded-lg border border-ink/10 bg-white p-4 shadow-soft lg:hidden">
+      <p className="text-sm font-semibold uppercase tracking-wide text-lagoon">
+        LADC Compass
+      </p>
+      <details className="mt-2">
+        <summary className="focus-ring cursor-pointer rounded-md bg-paper px-3 py-2 text-sm font-semibold text-ink">
+          Open navigation
+        </summary>
+        <nav className="mt-3 grid gap-2">
+          {mainNavigation.map((section) => (
+            <details key={section.title}>
+              <summary className="cursor-pointer rounded-md px-3 py-2 text-sm font-semibold text-ink">
+                {section.title}
+              </summary>
+              <div className="grid gap-1 pl-3">
+                <Link
+                  href={section.path}
+                  className="rounded-md px-3 py-2 text-sm text-ink/70 hover:bg-paper"
+                >
+                  Open {section.title}
+                </Link>
+                {section.items?.map((item) => (
+                  <Link
+                    key={item.path}
+                    href={item.path}
+                    className="rounded-md px-3 py-2 text-sm text-ink/70 hover:bg-paper"
+                  >
+                    {item.title}
+                  </Link>
+                ))}
+              </div>
+            </details>
+          ))}
+        </nav>
+      </details>
+    </div>
+  );
+}

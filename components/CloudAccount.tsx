@@ -26,10 +26,12 @@ export default function CloudAccount() {
     event.preventDefault();
     if (!supabase) return;
     setMessage("Sending sign-in link...");
+    const redirectTo =
+      process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: redirectTo,
       },
     });
     setMessage(
@@ -48,9 +50,9 @@ export default function CloudAccount() {
   if (!isCloudConfigured) {
     return (
       <section className="rounded-lg border border-marigold/40 bg-marigold/10 px-4 py-3 text-sm text-ink">
-        <strong>Cloud sync not connected yet.</strong> Add Supabase keys in
-        `.env.local` or your hosting provider to enable sign-in and sync across
-        computers. Local browser saving still works.
+        <strong>Cloud sync not connected yet.</strong> In Vercel, add
+        `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` under
+        Project Settings, then redeploy. Local browser saving still works.
       </section>
     );
   }

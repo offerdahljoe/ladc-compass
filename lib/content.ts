@@ -1,5 +1,6 @@
 export const navItems = [
   { href: "/assistant", label: "Clinical Documentation Assistant", short: "AI Coach" },
+  { href: "/cloud-sync", label: "Cloud Sync", short: "Cloud Sync" },
   { href: "/documentation-uploads", label: "Documentation Uploads", short: "Uploads" },
   { href: "/chatgpt", label: "ChatGPT", short: "ChatGPT" },
   { href: "/comprehensive-assessment", label: "Comprehensive Assessment", short: "Assessment" },
