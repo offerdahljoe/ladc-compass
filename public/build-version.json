@@ -1,0 +1,10 @@
+{
+  "app": "LADC Compass",
+  "build": "2026-06-14-medications-core-google-loginfix",
+  "includes": [
+    "Medications section",
+    "Google search bar",
+    "Detailed 12 Core Functions",
+    "Login gate timeout fix"
+  ]
+}
