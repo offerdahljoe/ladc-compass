@@ -9,7 +9,37 @@ const templateSections = [
   "How do I explain it to a client?",
   "How do I document it?",
   "What does it connect to?",
+  "Examples",
+  "Common mistakes",
 ];
+
+function sectionCopy(section: string, page: ContentPage) {
+  const title = page.title.toLowerCase();
+  const context = `${page.title} in ${page.section}`;
+
+  if (section === "What is this?") {
+    return `${context} is a working clinical reference page. It helps an LADC intern understand the task, choose the right next step, and connect the topic to assessment, documentation, treatment planning, ethics, and workplace workflow.`;
+  }
+  if (section === "Why does it matter?") {
+    return `This matters because clinical work is connected. A detail gathered in assessment may affect ASAM risk, diagnosis, treatment plan problems, progress note language, referrals, client scripts, and consultation. This page is designed to prevent the topic from living in isolation.`;
+  }
+  if (section === "When do I use it?") {
+    return `Use this page when ${title} shows up in real work, supervision, documentation review, exam study, client communication, or Kai-Shin/Procentive workflow. It is also a good place to start when you know the clinical issue but are not sure which form, wording, or tool comes next.`;
+  }
+  if (section === "How do I explain it to a client?") {
+    return `Plain-language script: "I want to explain what we are doing and why. This part helps us understand what support fits best, what needs attention, and what choices you have. You can ask questions, and we will go at a pace that makes sense."`;
+  }
+  if (section === "How do I document it?") {
+    return `Documentation pattern: state the clinically relevant facts, connect them to risk/need/strengths, describe the counselor action or recommendation, and note the follow-up. Keep wording neutral, behavioral, de-identified for learning notes, and tied to the treatment plan or ASAM dimension when applicable.`;
+  }
+  if (section === "What does it connect to?") {
+    return `Common connections: Comprehensive Assessment, ASAM Dimensions, DSM-5 criteria, treatment plan problems/goals/objectives/interventions, progress notes, client scripts, ethical duties, Core Functions, Procentive workflow, and supervision questions. Use the Related Tools panel to move through those connections.`;
+  }
+  if (section === "Examples") {
+    return `Example wording: "Counselor reviewed ${page.title.toLowerCase()} with the individual using plain-language explanation, assessed relevant needs and strengths, and identified follow-up items for treatment planning and supervision." Example next step: open a related wording page, script page, or Procentive workflow page before documenting.`;
+  }
+  return `Common mistakes: treating the page like a standalone checklist, copying language without clinical rationale, skipping ASAM or treatment-plan connections, using jargon with clients, documenting conclusions without observable support, or forgetting to bring uncertainty to supervision.`;
+}
 
 export default function PageTemplate({
   page,
@@ -49,8 +79,9 @@ export default function PageTemplate({
                 >
                   <h3 className="font-semibold text-ink">{prompt}</h3>
                   <p className="mt-2 text-sm leading-6 text-ink/70">
-                    Add questions, clinical listening points, documentation
-                    examples, and related tools for this assessment area.
+                    Use this subsection to collect what is known, what is
+                    missing, why it matters clinically, how it connects to ASAM,
+                    and what wording or treatment plan idea may follow.
                   </p>
                 </div>
               ))}
@@ -68,10 +99,7 @@ export default function PageTemplate({
             >
               <h2 className="text-xl font-semibold text-ink">{section}</h2>
               <p className="mt-3 text-sm leading-6 text-ink/72">
-                Placeholder content for {page.title}. This section will hold
-                practical counseling guidance, examples, scripts, forms,
-                documentation language, and internal links relevant to this
-                workflow.
+                {sectionCopy(section, page)}
               </p>
             </div>
           ))}

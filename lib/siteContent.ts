@@ -77,6 +77,39 @@ export const mainNavigation: NavItem[] = [
     ],
   },
   {
+    title: "Clinical Wording Library",
+    path: "/clinical-wording/assessment-wording",
+    items: [
+      "Assessment Wording",
+      "ASAM Wording",
+      "DSM-5 Diagnostic Wording",
+      "Progress Note Wording",
+      "Group Note Wording",
+      "Treatment Plan Wording",
+      "Risk and Safety Wording",
+      "Discharge Wording",
+      "Procentive Copy/Paste Wording",
+    ].map((title) => ({ title, path: `/clinical-wording/${slugify(title)}` })),
+  },
+  {
+    title: "Client Scripts Library",
+    path: "/client-scripts/opening-the-conversation",
+    items: [
+      "Opening the Conversation",
+      "Explaining Confidentiality",
+      "Explaining Releases",
+      "Explaining Assessment",
+      "Explaining ASAM",
+      "Explaining Treatment Plans",
+      "Explaining Groups",
+      "Discussing Positive UAs",
+      "Discussing Relapse",
+      "Discussing Discharge",
+      "Mandated Reporting",
+      "When a Client Refuses",
+    ].map((title) => ({ title, path: `/client-scripts/${slugify(title)}` })),
+  },
+  {
     title: "Client Communication Toolkit",
     path: "/client-communication/confidentiality",
     items: [
@@ -94,6 +127,22 @@ export const mainNavigation: NavItem[] = [
       { title: "Discussing Discharge", path: "/client-communication/discharge" },
       { title: "Mandated Reporting Scripts", path: "/client-communication/mandated-reporting" },
     ],
+  },
+  {
+    title: "Group Therapy Hub",
+    path: "/group-therapy-hub/group-session-builder",
+    items: [
+      "Group Session Builder",
+      "Topic Library",
+      "Opening Questions",
+      "Processing Questions",
+      "Skills Practice Activities",
+      "Psychoeducation Groups",
+      "Relapse Prevention Groups",
+      "Documentation Language",
+      "Group Expectations",
+      "Worksheet Ideas",
+    ].map((title) => ({ title, path: `/group-therapy-hub/${slugify(title)}` })),
   },
   {
     title: "12 Core Functions",
@@ -165,6 +214,21 @@ export const mainNavigation: NavItem[] = [
     ].map((title) => ({ title, path: `/kai-shin/${slugify(title)}` })),
   },
   {
+    title: "Procentive Workflow",
+    path: "/procentive-workflow/intake-to-assessment",
+    items: [
+      "Intake to Assessment",
+      "Assessment Entry Workflow",
+      "ASAM Fields",
+      "Diagnosis Fields",
+      "Treatment Plan Fields",
+      "Progress Note Workflow",
+      "Group Note Workflow",
+      "Discharge Workflow",
+      "Copy/Paste Checks",
+    ].map((title) => ({ title, path: `/procentive-workflow/${slugify(title)}` })),
+  },
+  {
     title: "Resource Hub",
     path: "/resource-hub/community-resources",
     items: [
@@ -198,6 +262,16 @@ export const mainNavigation: NavItem[] = [
       "42 CFR Part 2 Resources",
     ].map((title) => ({ title, path: `/website-library/${slugify(title)}` })),
   },
+  {
+    title: "I'm Stuck Helper",
+    path: "/helper/im-stuck",
+    items: [
+      { title: "I'm Stuck", path: "/helper/im-stuck" },
+      { title: "What Page Do I Need?", path: "/helper/what-page-do-i-need" },
+      { title: "What Wording Do I Need?", path: "/helper/what-wording-do-i-need" },
+      { title: "What Does This Connect To?", path: "/helper/what-does-this-connect-to" },
+    ],
+  },
 ];
 
 export const quickActions = [
@@ -210,6 +284,9 @@ export const quickActions = [
   { title: "Study 12 Core Functions", path: "/core-functions/screening" },
   { title: "Track Internship Hours", path: "/internship-licensure/hours-tracker" },
   { title: "Open Kai-Shin Hub", path: "/kai-shin/procentive" },
+  { title: "I'm Stuck", path: "/helper/im-stuck" },
+  { title: "Find Clinical Wording", path: "/clinical-wording/assessment-wording" },
+  { title: "Build a Group", path: "/group-therapy-hub/group-session-builder" },
 ];
 
 export const resourceCategories = [
@@ -305,8 +382,64 @@ const specialPages: Record<string, Partial<ContentPage>> = {
       "/treatment-planning/problem-statements",
       "/documentation/progress-notes",
       "/client-communication/comprehensive-assessment",
+      "/client-scripts/explaining-assessment",
+      "/clinical-wording/assessment-wording",
       "/core-functions/assessment",
       "/kai-shin/intake-workflow",
+      "/procentive-workflow/assessment-entry-workflow",
+    ],
+  },
+  "/clinical-wording/assessment-wording": {
+    summary:
+      "A reusable wording library for turning de-identified assessment information into neutral, clinically useful language for documentation and Procentive fields.",
+    related: [
+      "/assessments/comprehensive-assessment",
+      "/clinical-wording/asam-wording",
+      "/clinical-wording/dsm-5-diagnostic-wording",
+      "/procentive-workflow/assessment-entry-workflow",
+      "/treatment-planning/problem-statements",
+    ],
+  },
+  "/client-scripts/opening-the-conversation": {
+    summary:
+      "A plain-language script library for explaining clinical processes without jargon, reducing client confusion, and supporting informed participation.",
+    related: [
+      "/client-scripts/explaining-assessment",
+      "/client-scripts/explaining-confidentiality",
+      "/client-communication/confidentiality",
+      "/ethics-compliance/confidentiality",
+    ],
+  },
+  "/group-therapy-hub/group-session-builder": {
+    summary:
+      "A practical group workflow for quickly choosing a topic, opening question, activity, processing questions, skill practice, and documentation language.",
+    related: [
+      "/group-therapy-hub/topic-library",
+      "/group-therapy-hub/processing-questions",
+      "/documentation/group-notes",
+      "/clinical-wording/group-note-wording",
+      "/core-functions/counseling",
+    ],
+  },
+  "/procentive-workflow/intake-to-assessment": {
+    summary:
+      "A workplace-specific workflow map for moving from intake information into assessment, ASAM, diagnosis, treatment planning, and documentation fields.",
+    related: [
+      "/kai-shin/procentive",
+      "/procentive-workflow/assessment-entry-workflow",
+      "/assessments/comprehensive-assessment",
+      "/clinical-wording/procentive-copy-paste-wording",
+    ],
+  },
+  "/helper/im-stuck": {
+    summary:
+      "A guided triage helper for moments when you know the clinical task but not the next page, wording, form, or connection.",
+    related: [
+      "/assessments/comprehensive-assessment",
+      "/clinical-wording/assessment-wording",
+      "/client-scripts/opening-the-conversation",
+      "/documentation/progress-notes",
+      "/treatment-planning/problem-statements",
     ],
   },
   "/resource-hub/community-resources": {
@@ -347,15 +480,73 @@ export const contentPages: ContentPage[] = allNavItems.map((item) => {
     prompts: override.prompts,
     related:
       override.related ??
-      [
-        "/assessments/comprehensive-assessment",
-        "/assessments/asam-dimensions",
-        "/treatment-planning/problem-statements",
-        "/documentation/progress-notes",
-      ].filter((path) => path !== item.path),
+      defaultRelatedFor(item.path, section),
     tags: [section, item.title],
   };
 });
+
+function defaultRelatedFor(path: string, section: string) {
+  const base = [
+    "/assessments/comprehensive-assessment",
+    "/assessments/asam-dimensions",
+    "/clinical-wording/assessment-wording",
+    "/client-scripts/opening-the-conversation",
+    "/treatment-planning/problem-statements",
+    "/documentation/progress-notes",
+    "/helper/im-stuck",
+  ];
+  const sectionLinks: Record<string, string[]> = {
+    Documentation: [
+      "/clinical-wording/progress-note-wording",
+      "/procentive-workflow/progress-note-workflow",
+      "/core-functions/reports-and-record-keeping",
+    ],
+    "Treatment Planning": [
+      "/assessments/comprehensive-assessment",
+      "/clinical-wording/treatment-plan-wording",
+      "/procentive-workflow/treatment-plan-fields",
+    ],
+    "Clinical Toolbox": [
+      "/group-therapy-hub/group-session-builder",
+      "/client-scripts/opening-the-conversation",
+      "/documentation/progress-notes",
+    ],
+    "Client Communication Toolkit": [
+      "/client-scripts/opening-the-conversation",
+      "/ethics-compliance/confidentiality",
+      "/clinical-wording/assessment-wording",
+    ],
+    "12 Core Functions": [
+      "/assessments/comprehensive-assessment",
+      "/documentation/progress-notes",
+      "/ethics-compliance/documentation-compliance",
+    ],
+    "Ethics & Compliance": [
+      "/client-scripts/explaining-confidentiality",
+      "/documentation/crisis-notes",
+      "/core-functions/consultation",
+    ],
+    "Kai-Shin Hub": [
+      "/procentive-workflow/intake-to-assessment",
+      "/clinical-wording/procentive-copy-paste-wording",
+      "/documentation/templates",
+    ],
+    "Procentive Workflow": [
+      "/kai-shin/procentive",
+      "/clinical-wording/procentive-copy-paste-wording",
+      "/documentation/examples",
+    ],
+    "Group Therapy Hub": [
+      "/documentation/group-notes",
+      "/clinical-wording/group-note-wording",
+      "/clinical-toolbox/group-therapy-ideas",
+    ],
+  };
+
+  return [...(sectionLinks[section] ?? []), ...base]
+    .filter((link, index, links) => link !== path && links.indexOf(link) === index)
+    .slice(0, 8);
+}
 
 export function getPageByPath(path: string) {
   return contentPages.find((page) => page.path === path);

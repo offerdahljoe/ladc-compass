@@ -47,6 +47,32 @@ export default function DashboardHome() {
         ))}
       </section>
 
+      <section className="mt-5 rounded-lg border border-lagoon/20 bg-white p-5 shadow-soft">
+        <h2 className="text-xl font-semibold text-ink">Connected clinical operating system</h2>
+        <p className="mt-2 text-sm leading-6 text-ink/70">
+          These hubs are designed to keep assessment, wording, client
+          communication, Procentive workflow, groups, and treatment planning
+          connected instead of scattered.
+        </p>
+        <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+          {[
+            ["Clinical Wording Library", "/clinical-wording/assessment-wording"],
+            ["Client Scripts Library", "/client-scripts/opening-the-conversation"],
+            ["Procentive Workflow", "/procentive-workflow/intake-to-assessment"],
+            ["Group Therapy Hub", "/group-therapy-hub/group-session-builder"],
+            ["I’m Stuck", "/helper/im-stuck"],
+          ].map(([title, path]) => (
+            <Link
+              key={path}
+              href={path}
+              className="focus-ring rounded-lg border border-ink/10 bg-paper p-4 text-sm font-semibold text-ink hover:border-lagoon hover:text-lagoon"
+            >
+              {title}
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <section className="mt-5 grid gap-4 lg:grid-cols-4">
         {[
           ["Favorites", favorites.length ? favorites.map((item) => item.title).join(", ") : "No favorites saved yet."],
