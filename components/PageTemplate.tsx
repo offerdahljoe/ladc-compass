@@ -1,6 +1,6 @@
 import FavoriteButton from "@/components/FavoriteButton";
 import RelatedTools from "@/components/RelatedTools";
-import type { ContentPage } from "@/lib/siteContent";
+import { getPageDetails, type ContentPage } from "@/lib/siteContent";
 
 const templateSections = [
   "What is this?",
@@ -13,34 +13,6 @@ const templateSections = [
   "Common mistakes",
 ];
 
-function sectionCopy(section: string, page: ContentPage) {
-  const title = page.title.toLowerCase();
-  const context = `${page.title} in ${page.section}`;
-
-  if (section === "What is this?") {
-    return `${context} is a working clinical reference page. It helps an LADC intern understand the task, choose the right next step, and connect the topic to assessment, documentation, treatment planning, ethics, and workplace workflow.`;
-  }
-  if (section === "Why does it matter?") {
-    return `This matters because clinical work is connected. A detail gathered in assessment may affect ASAM risk, diagnosis, treatment plan problems, progress note language, referrals, client scripts, and consultation. This page is designed to prevent the topic from living in isolation.`;
-  }
-  if (section === "When do I use it?") {
-    return `Use this page when ${title} shows up in real work, supervision, documentation review, exam study, client communication, or Kai-Shin/Procentive workflow. It is also a good place to start when you know the clinical issue but are not sure which form, wording, or tool comes next.`;
-  }
-  if (section === "How do I explain it to a client?") {
-    return `Plain-language script: "I want to explain what we are doing and why. This part helps us understand what support fits best, what needs attention, and what choices you have. You can ask questions, and we will go at a pace that makes sense."`;
-  }
-  if (section === "How do I document it?") {
-    return `Documentation pattern: state the clinically relevant facts, connect them to risk/need/strengths, describe the counselor action or recommendation, and note the follow-up. Keep wording neutral, behavioral, de-identified for learning notes, and tied to the treatment plan or ASAM dimension when applicable.`;
-  }
-  if (section === "What does it connect to?") {
-    return `Common connections: Comprehensive Assessment, ASAM Dimensions, DSM-5 criteria, treatment plan problems/goals/objectives/interventions, progress notes, client scripts, ethical duties, Core Functions, Procentive workflow, and supervision questions. Use the Related Tools panel to move through those connections.`;
-  }
-  if (section === "Examples") {
-    return `Example wording: "Counselor reviewed ${page.title.toLowerCase()} with the individual using plain-language explanation, assessed relevant needs and strengths, and identified follow-up items for treatment planning and supervision." Example next step: open a related wording page, script page, or Procentive workflow page before documenting.`;
-  }
-  return `Common mistakes: treating the page like a standalone checklist, copying language without clinical rationale, skipping ASAM or treatment-plan connections, using jargon with clients, documenting conclusions without observable support, or forgetting to bring uncertainty to supervision.`;
-}
-
 export default function PageTemplate({
   page,
   children,
@@ -48,6 +20,18 @@ export default function PageTemplate({
   page: ContentPage;
   children?: React.ReactNode;
 }) {
+  const details = getPageDetails(page);
+  const copyBySection = {
+    "What is this?": details.what,
+    "Why does it matter?": details.why,
+    "When do I use it?": details.when,
+    "How do I explain it to a client?": details.explain,
+    "How do I document it?": details.document,
+    "What does it connect to?": details.connects,
+    Examples: details.examples,
+    "Common mistakes": details.mistakes,
+  };
+
   return (
     <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_18rem]">
       <article>
@@ -98,12 +82,44 @@ export default function PageTemplate({
               className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft"
             >
               <h2 className="text-xl font-semibold text-ink">{section}</h2>
-              <p className="mt-3 text-sm leading-6 text-ink/72">
-                {sectionCopy(section, page)}
-              </p>
+              {Array.isArray(copyBySection[section as keyof typeof copyBySection]) ? (
+                <ul className="mt-3 grid gap-2 text-sm leading-6 text-ink/72">
+                  {(copyBySection[section as keyof typeof copyBySection] as string[]).map((item) => (
+                    <li key={item} className="rounded-md bg-paper px-3 py-2">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-3 text-sm leading-6 text-ink/72">
+                  {copyBySection[section as keyof typeof copyBySection] as string}
+                </p>
+              )}
             </div>
           ))}
         </section>
+
+        {details.externalLinks.length > 0 ? (
+          <section className="mt-5 rounded-lg border border-lagoon/20 bg-white p-5 shadow-soft">
+            <h2 className="text-xl font-semibold text-ink">Trusted External Links</h2>
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {details.externalLinks.map((link) => (
+                <a
+                  key={link.url}
+                  href={link.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="focus-ring rounded-lg border border-ink/10 bg-paper p-4 hover:border-lagoon"
+                >
+                  <h3 className="font-semibold text-ink">{link.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-ink/70">
+                    {link.description}
+                  </p>
+                </a>
+              ))}
+            </div>
+          </section>
+        ) : null}
       </article>
       <RelatedTools paths={page.related} />
     </div>

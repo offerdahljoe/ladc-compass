@@ -3,6 +3,7 @@ import HoursTrackerPlaceholder from "@/components/HoursTrackerPlaceholder";
 import PageTemplate from "@/components/PageTemplate";
 import ResourceDatabase from "@/components/ResourceDatabase";
 import StuckHelper from "@/components/StuckHelper";
+import WebsiteLibraryView from "@/components/WebsiteLibraryView";
 import { contentPages, getPageByPath } from "@/lib/siteContent";
 
 export function generateStaticParams() {
@@ -44,6 +45,14 @@ export default async function DynamicContentPage({
     return (
       <PageTemplate page={contentPage}>
         <StuckHelper />
+      </PageTemplate>
+    );
+  }
+
+  if (section === "website-library") {
+    return (
+      <PageTemplate page={contentPage}>
+        <WebsiteLibraryView />
       </PageTemplate>
     );
   }
