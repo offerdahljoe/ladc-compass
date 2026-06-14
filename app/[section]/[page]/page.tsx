@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import ADCPracticeTest from "@/components/ADCPracticeTest";
 import HoursTrackerPlaceholder from "@/components/HoursTrackerPlaceholder";
 import PageTemplate from "@/components/PageTemplate";
 import ResourceDatabase from "@/components/ResourceDatabase";
@@ -36,6 +37,14 @@ export default async function DynamicContentPage({
         <section className="mt-5">
           <HoursTrackerPlaceholder />
         </section>
+      </PageTemplate>
+    );
+  }
+
+  if (path === "/internship-licensure/practice-questions") {
+    return (
+      <PageTemplate page={contentPage}>
+        <ADCPracticeTest />
       </PageTemplate>
     );
   }

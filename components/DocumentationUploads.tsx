@@ -36,7 +36,8 @@ function isReadableText(file: File) {
 }
 
 export default function DocumentationUploads() {
-  const { entries, addEntry, removeEntry } = useLocalEntries<UploadEntry>(storageKey);
+  const { entries, addEntry, removeEntry, cloudEnabled, syncing } =
+    useLocalEntries<UploadEntry>(storageKey);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -113,7 +114,7 @@ export default function DocumentationUploads() {
             />
           </label>
           <button className="focus-ring mt-4 rounded-md bg-lagoon px-4 py-2 text-sm font-semibold text-white hover:bg-ink">
-            Save and analyze locally
+            Save and analyze
           </button>
         </form>
 
@@ -121,7 +122,12 @@ export default function DocumentationUploads() {
           <h3 className="text-xl font-semibold text-ink">Saved uploads</h3>
           <p className="mt-2 text-sm text-ink/70">
             {entries.length} saved document{entries.length === 1 ? "" : "s"}.
-            Saves to cloud when signed in, otherwise to this browser.
+            {syncing
+              ? " Checking cloud sync..."
+              : cloudEnabled
+                ? " Saving to your private cloud account."
+                : " Saving in this browser only until you sign in."}{" "}
+            Do not upload real client identifiers or PHI.
           </p>
           <div className="mt-4 grid gap-3">
             {entries.length === 0 ? (

@@ -212,8 +212,6 @@ export const mainNavigation: NavItem[] = [
       "245G",
       "HIPAA",
       "42 CFR Part 2",
-      "Minnesota Laws/Regulations",
-      "Federal Laws/Regulations",
       "Confidentiality",
       "Mandated Reporting",
       "Duty to Warn",
@@ -227,15 +225,12 @@ export const mainNavigation: NavItem[] = [
     path: "/internship-licensure/hours-tracker",
     items: [
       "Hours Tracker",
-      "Direct Hours",
-      "Indirect Hours",
       "Supervision Log",
       "Upload Internship Docs",
       "Licensure Roadmap",
       "ADC Exam Prep",
       "LADC Requirements",
       "Study Center",
-      "Flashcards",
       "Practice Questions",
     ].map((title) => ({ title, path: `/internship-licensure/${slugify(title)}` })),
   },
@@ -434,6 +429,46 @@ export const trustedExternalLinks: Record<string, ExternalLink[]> = {
       url: "https://mn.gov/boards/behavioral-health/",
       description:
         "Minnesota Board of Behavioral Health and Therapy licensure and regulatory information.",
+    },
+    {
+      title: "BBHT Apply for LADC",
+      url: "https://mn.gov/boards/behavioral-health/applicants/apply/apply-for-ladc.jsp",
+      description:
+        "Minnesota BBHT application information for Licensed Alcohol and Drug Counselor applicants.",
+    },
+    {
+      title: "BBHT LADC Exam Information",
+      url: "https://mn.gov/boards/behavioral-health/applicants/exam-information/ladc-exam-information.jsp",
+      description:
+        "Minnesota BBHT exam information for LADC applicants, including current exam guidance.",
+    },
+  ],
+  icrc: [
+    {
+      title: "IC&RC ADC Credential",
+      url: "https://internationalcredentialing.org/creds/adc",
+      description:
+        "IC&RC information about the Alcohol and Drug Counselor credential and examination resources.",
+    },
+    {
+      title: "IC&RC Exam Prep",
+      url: "https://internationalcredentialing.org/examprep",
+      description:
+        "IC&RC exam preparation resources and candidate information.",
+    },
+  ],
+  mandatedReporting: [
+    {
+      title: "Minnesota DHS Mandated Reporting",
+      url: "https://mn.gov/dhs/people-we-serve/children-and-families/services/child-protection/programs-services/reporting-child-abuse-neglect.jsp",
+      description:
+        "Minnesota DHS information on reporting suspected child abuse or neglect.",
+    },
+    {
+      title: "Minnesota Adult Abuse Reporting Center",
+      url: "https://mn.gov/dhs/people-we-serve/seniors/services/adult-protection/programs-services/maarc.jsp",
+      description:
+        "Minnesota DHS information about reporting suspected maltreatment of vulnerable adults.",
     },
   ],
   medicationInfo: [
@@ -1001,6 +1036,19 @@ function flatten(items: NavItem[]): NavItem[] {
 
 export const allNavItems = flatten(mainNavigation).filter((item) => item.path !== "/");
 
+function pageSummaryFor(item: NavItem, section: string) {
+  if (section === "Medications") {
+    return `${item.title} is a medication reference page for understanding clinical purpose, generic/common names, counseling relevance, assessment questions, documentation wording, and scope-of-practice cautions.`;
+  }
+  if (section === "Ethics & Compliance") {
+    return `${item.title} explains the practical rule, counselor responsibility, client explanation, documentation expectation, supervision trigger, and official reference links for LADC work.`;
+  }
+  if (section === "Internship & Licensure") {
+    return `${item.title} supports LADC internship organization, licensure readiness, supervision preparation, exam study, and accountable hour tracking.`;
+  }
+  return `${item.title} gives practical guidance, examples, documentation language, related tools, and next-step questions for the ${section} workflow.`;
+}
+
 const specialPages: Record<string, Partial<ContentPage>> = {
   "/assessments/comprehensive-assessment": {
     summary:
@@ -1087,12 +1135,12 @@ const specialPages: Record<string, Partial<ContentPage>> = {
   },
   "/internship-licensure/hours-tracker": {
     summary:
-      "A placeholder tracker for logging internship hours, direct hours, indirect hours, supervision, and reflection.",
+      "A working tracker for logging direct hours, indirect hours, core functions practiced, supervision contact, reflections, and total progress toward 880 hours.",
     related: [
-      "/internship-licensure/direct-hours",
-      "/internship-licensure/indirect-hours",
       "/internship-licensure/supervision-log",
       "/core-functions/screening",
+      "/internship-licensure/licensure-roadmap",
+      "/internship-licensure/adc-exam-prep",
     ],
   },
 };
@@ -1111,10 +1159,7 @@ export const contentPages: ContentPage[] = allNavItems.map((item) => {
     summary:
       override.summary ??
       coreGuide?.summary ??
-      (section === "Medications"
-        ? `${item.title} is a medication reference page for understanding clinical purpose, generic/common names, counseling relevance, assessment questions, documentation wording, and scope-of-practice cautions.`
-        : undefined) ??
-      `${item.title} is a placeholder workspace in the ${section} section. It is ready for section-specific examples, scripts, forms, and clinical guidance.`,
+      pageSummaryFor(item, section),
     prompts: override.prompts,
     related:
       override.related ??
@@ -1133,6 +1178,8 @@ function externalLinksFor(path: string, section: string, title: string) {
   if (lower.includes("asam") || lower.includes("placement")) links.push(...trustedExternalLinks.asam);
   if (lower.includes("ethics") || lower.includes("boundaries") || lower.includes("dual")) links.push(...trustedExternalLinks.ethics);
   if (lower.includes("ladc") || lower.includes("licensure") || lower.includes("adc exam")) links.push(...trustedExternalLinks.mnBoard);
+  if (lower.includes("adc exam") || lower.includes("practice questions") || lower.includes("study center")) links.push(...trustedExternalLinks.icrc);
+  if (lower.includes("mandated reporting")) links.push(...trustedExternalLinks.mandatedReporting);
   if (lower.includes("resource") || lower.includes("mat") || lower.includes("crisis") || lower.includes("recovery")) links.push(...trustedExternalLinks.samhsa);
   if (lower.includes("medication") || lower.includes("buprenorphine") || lower.includes("methadone") || lower.includes("naltrexone") || lower.includes("acamprosate") || lower.includes("disulfiram") || lower.includes("antidepressant") || lower.includes("antipsychotic")) links.push(...trustedExternalLinks.medicationInfo);
   if (lower.includes("moud") || lower.includes("opioid use disorder") || lower.includes("buprenorphine") || lower.includes("methadone")) links.push(...trustedExternalLinks.moud);
@@ -2755,33 +2802,276 @@ function coreBlocks(page: ContentPage): TopicBlock[] {
   ];
 }
 
+const ethicsGuides: Record<string, TopicBlock[]> = {
+  "/ethics-compliance/245g": [
+    {
+      title: "What 245G means in daily LADC work",
+      items: [
+        "245G is Minnesota's substance use disorder treatment services statute area. For interns, it matters because assessment, treatment planning, documentation, policies, service delivery, and client rights are not just clinical preferences; they are compliance-sensitive.",
+        "Use 245G as a map for what licensed programs must have in place. Use your agency policy for exact workflow, forms, timelines, and supervisor expectations.",
+        "In practice, 245G shows up when completing assessments, treatment plans, progress notes, treatment plan reviews, discharge planning, client rights information, and service coordination.",
+      ],
+    },
+    {
+      title: "What to pay attention to",
+      items: [
+        "Assessment content and whether the record explains the client's treatment need.",
+        "Treatment plan problems, goals, objectives, interventions, and review dates.",
+        "Progress notes that show service provided, client response, and connection to treatment plan.",
+        "Discharge planning and continuing care recommendations.",
+        "Client rights, grievance process, consent, releases, and confidentiality expectations.",
+      ],
+    },
+    {
+      title: "Documentation examples",
+      items: [
+        "Assessment documentation should connect history, current need, ASAM dimensions, diagnosis, recommendations, and treatment planning themes.",
+        "Progress note: Counselor provided relapse prevention education and facilitated coping-plan practice connected to treatment plan objective on managing cravings.",
+        "Treatment plan review: Client made progress toward identifying triggers and continues to need skill practice for high-risk social situations.",
+      ],
+    },
+    {
+      title: "Common mistakes",
+      items: [
+        "Treating 245G as something only supervisors need to know.",
+        "Writing notes that do not show a billable/clinical service or treatment plan connection.",
+        "Using templates without checking whether the required information is actually present.",
+        "Trying to answer compliance questions from memory instead of checking policy, statute, or supervision.",
+      ],
+    },
+  ],
+  "/ethics-compliance/hipaa": [
+    {
+      title: "Core idea",
+      items: [
+        "HIPAA protects individually identifiable health information. For an LADC intern, the everyday rule is simple: do not disclose, copy, paste, upload, text, email, or discuss identifiable health information unless policy and authorization allow it.",
+        "HIPAA is not the only rule. Substance use disorder treatment records may also be protected by 42 CFR Part 2, which can be stricter.",
+        "Use the minimum necessary information when sharing is allowed. If you are unsure, pause and consult supervision.",
+      ],
+    },
+    {
+      title: "Intern checklist",
+      items: [
+        "Am I using client-identifying information in a learning note, AI tool, screenshot, personal device, or study example? If yes, stop.",
+        "Is there a valid release, policy reason, or treatment/operations reason for this disclosure?",
+        "Does 42 CFR Part 2 also apply?",
+        "Am I sharing only what is necessary?",
+        "Have I documented the release, explanation, refusal, or consultation if clinically relevant?",
+      ],
+    },
+    {
+      title: "Client-friendly explanation",
+      items: [
+        "Most health information is private. We use it to support your care, and there are rules about who can see it.",
+        "Some information can be shared for treatment or when you give permission, but substance use treatment information may have extra protections.",
+        "If there is a safety or legal exception, I will explain what is happening and involve you as much as possible.",
+      ],
+    },
+  ],
+  "/ethics-compliance/42-cfr-part-2": [
+    {
+      title: "Core idea",
+      items: [
+        "42 CFR Part 2 protects certain substance use disorder treatment records. It exists because SUD information can carry stigma and legal/social consequences if disclosed improperly.",
+        "Do not assume a general HIPAA permission automatically allows SUD treatment information to be released.",
+        "Part 2 decisions often depend on whether the program and record are covered, what consent says, who is receiving information, and whether an exception applies.",
+      ],
+    },
+    {
+      title: "Release-of-information checklist",
+      items: [
+        "Who is requesting the information?",
+        "What exact information is being requested?",
+        "Does the client understand what will be shared and why?",
+        "Is the consent valid under agency policy?",
+        "Is redisclosure language required?",
+        "Is there a safety, medical emergency, court order, mandated reporting, or audit/evaluation issue that requires supervision or policy review?",
+      ],
+    },
+    {
+      title: "Documentation examples",
+      items: [
+        "Counselor reviewed ROI purpose, recipient, information to be shared, expiration, and client questions prior to signature.",
+        "Client declined ROI at this time. Counselor reviewed what coordination may be limited without consent and documented client preference.",
+        "Counselor consulted supervisor regarding Part 2 disclosure question before releasing information.",
+      ],
+    },
+  ],
+  "/ethics-compliance/confidentiality": [
+    {
+      title: "What confidentiality means",
+      items: [
+        "Confidentiality is the counselor's duty to protect client information and explain privacy limits clearly.",
+        "It is not absolute. Common exceptions involve safety risk, abuse/neglect reporting, court/legal requirements, medical emergencies, valid releases, and agency policy.",
+        "Confidentiality should be explained early, in plain language, and revisited when releases or safety issues come up.",
+      ],
+    },
+    {
+      title: "Plain-language script",
+      items: [
+        "Most of what you share here is private.",
+        "There are a few exceptions, mostly related to safety, abuse or neglect reporting, certain legal requirements, or when you sign permission for information to be shared.",
+        "If something comes up where I may need to act, I will explain what is happening and involve you as much as I can.",
+      ],
+    },
+    {
+      title: "Common mistakes",
+      items: [
+        "Saying everything is confidential.",
+        "Explaining confidentiality only through paperwork without checking understanding.",
+        "Talking about clients in public spaces, hallways, texts, personal email, or informal settings.",
+        "Sharing with family, probation, employers, or other providers without checking the release and policy.",
+      ],
+    },
+  ],
+  "/ethics-compliance/mandated-reporting": [
+    {
+      title: "What mandated reporting means",
+      items: [
+        "Mandated reporting means the counselor may be legally required to report suspected abuse, neglect, or maltreatment involving children or vulnerable adults.",
+        "You do not investigate or prove what happened. You report reasonable suspicion according to law and agency policy.",
+        "For interns: consult supervision immediately, follow agency reporting procedure, and document objectively.",
+      ],
+    },
+    {
+      title: "What to clarify",
+      items: [
+        "Who is at risk: child, vulnerable adult, elder, or other protected person?",
+        "What was disclosed or observed?",
+        "Is there immediate danger?",
+        "What does agency policy require right now?",
+        "Who was consulted and when?",
+      ],
+    },
+    {
+      title: "Documentation examples",
+      items: [
+        "Client disclosed concern related to possible maltreatment. Counselor consulted supervisor immediately and followed agency mandated reporting procedure.",
+        "Counselor documented reported information objectively, avoiding conclusions beyond what was disclosed or observed.",
+      ],
+    },
+  ],
+  "/ethics-compliance/duty-to-warn": [
+    {
+      title: "What duty to warn/protect means",
+      items: [
+        "Duty to warn/protect involves taking action when there is a serious threat of harm to an identifiable person or group, depending on law and agency policy.",
+        "This is not a solo intern decision. If threat language, intent, plan, target, means, or escalating behavior appears, consult supervision immediately and follow crisis policy.",
+        "The clinical task is to assess risk, protect safety, document objectively, and involve the proper chain of support.",
+      ],
+    },
+    {
+      title: "Risk questions",
+      items: [
+        "Who is the person thinking about harming?",
+        "What exactly has the client said or planned?",
+        "Is there intent, access to means, timeframe, or prior violence?",
+        "Is substance use, intoxication, withdrawal, psychosis, or extreme distress increasing risk?",
+        "What immediate safety steps and consultation are required?",
+      ],
+    },
+    {
+      title: "Documentation examples",
+      items: [
+        "Counselor assessed reported threat content, consulted supervisor, and followed agency crisis/duty-to-warn procedure.",
+        "Documentation should include reported statements, observed behavior, risk factors, protective factors, consultation, action taken, and follow-up plan.",
+      ],
+    },
+  ],
+  "/ethics-compliance/boundaries": [
+    {
+      title: "What boundaries mean",
+      items: [
+        "Boundaries define the professional relationship: counselor role, communication channels, time/place of services, gifts, self-disclosure, social media, dual roles, and limits of availability.",
+        "Strong boundaries are not cold. They protect safety, trust, fairness, and clinical focus.",
+        "Interns should bring boundary uncertainty to supervision early, especially in small communities or recovery communities where overlap can happen.",
+      ],
+    },
+    {
+      title: "Common boundary situations",
+      items: [
+        "Client sends friend request or messages on social media.",
+        "Client asks for personal phone number or after-hours support outside policy.",
+        "Client offers a gift.",
+        "Counselor sees client at a meeting, community event, or workplace.",
+        "Counselor feels pulled into rescuing, over-disclosing, or bending rules for one client.",
+      ],
+    },
+    {
+      title: "Documentation examples",
+      items: [
+        "Counselor reviewed communication boundaries and redirected client to approved contact channels.",
+        "Counselor consulted supervisor regarding boundary concern and followed agency policy.",
+      ],
+    },
+  ],
+  "/ethics-compliance/dual-relationships": [
+    {
+      title: "What dual relationships mean",
+      items: [
+        "A dual relationship exists when the counselor has another relationship with the client beyond the clinical role: friend, family connection, business contact, peer recovery contact, neighbor, social media connection, or community overlap.",
+        "Not every overlap is automatically unethical, but every overlap should be assessed for power, exploitation risk, confidentiality, objectivity, and client welfare.",
+        "Interns should disclose potential dual relationships to supervision before proceeding.",
+      ],
+    },
+    {
+      title: "Decision checklist",
+      items: [
+        "Could this impair objectivity or clinical judgment?",
+        "Could the client feel pressured or exploited?",
+        "Could confidentiality be compromised?",
+        "Is there a safer referral or staffing option?",
+        "What does agency policy require?",
+      ],
+    },
+    {
+      title: "Common mistakes",
+      items: [
+        "Assuming good intentions remove ethical risk.",
+        "Trying to handle the issue privately without supervision.",
+        "Continuing treatment without documenting consultation when overlap is significant.",
+        "Using social media or community relationships in a way that blurs roles.",
+      ],
+    },
+  ],
+  "/ethics-compliance/documentation-compliance": [
+    {
+      title: "What compliant documentation must show",
+      items: [
+        "What service occurred, when it occurred, why it was clinically relevant, what the counselor did, how the client responded, and what happens next.",
+        "The note should connect to assessed need, treatment plan, ASAM dimension, risk/safety issue, case management need, or discharge plan.",
+        "Use objective, respectful language. Avoid labels, unsupported conclusions, and unnecessary personal detail.",
+      ],
+    },
+    {
+      title: "Quality checklist",
+      items: [
+        "Does the note identify the service focus?",
+        "Does it name the counselor intervention?",
+        "Does it describe client response or progress/barrier?",
+        "Does it connect to the treatment plan or clinical need?",
+        "Does it avoid PHI outside the official record and avoid irrelevant details?",
+      ],
+    },
+    {
+      title: "Weak to strong examples",
+      items: [
+        "Weak: Client participated. Strong: Client engaged in relapse prevention discussion and identified two high-risk weekend situations.",
+        "Weak: Client was resistant. Strong: Client expressed ambivalence about abstinence and explored perceived benefits and consequences of continued use.",
+        "Weak: Did case management. Strong: Counselor provided housing resource list, reviewed contact steps, and planned follow-up next session.",
+      ],
+    },
+  ],
+};
+
 function ethicsBlocks(page: ContentPage): TopicBlock[] {
-  return [
+  return ethicsGuides[page.path] ?? [
     {
-      title: "Decision points",
+      title: "Ethical decision points",
       items: [
-        "What information is protected?",
-        "Who is asking for it and why?",
-        "Is there a valid release or legal exception?",
-        "Is there safety risk, mandated reporting, or duty-to-warn concern?",
-        "What does agency policy or supervision require?",
-      ],
-    },
-    {
-      title: "Documentation language",
-      items: [
-        "Counselor reviewed confidentiality limits and answered client questions.",
-        "Counselor consulted supervisor regarding [ethical/compliance issue] and followed agency policy.",
-        "Client was informed of [requirement/limit] in plain language and next steps were reviewed.",
-      ],
-    },
-    {
-      title: "Do not do this",
-      items: [
-        "Do not promise absolute confidentiality.",
-        "Do not guess on legal requirements.",
-        "Do not share information without checking release/policy.",
-        "Do not document ethics issues with blaming or emotional language.",
+        "Identify the protected information, risk, boundary, consent, or documentation issue.",
+        "Check agency policy, consult supervision, and use official sources when law or regulation is involved.",
+        "Document the situation, consultation, action taken, and follow-up objectively.",
       ],
     },
   ];
@@ -2839,23 +3129,177 @@ function resourceBlocks(page: ContentPage): TopicBlock[] {
   ];
 }
 
-function internshipBlocks(page: ContentPage): TopicBlock[] {
-  return [
+const internshipGuides: Record<string, TopicBlock[]> = {
+  "/internship-licensure/hours-tracker": [
     {
-      title: "What to track",
+      title: "How to use the tracker",
       items: [
-        "Date, hours, direct or indirect category, activity, core function, supervisor contact, and reflection.",
-        "Questions for supervision and exam prep themes.",
-        "Documentation practice without real client identifiers.",
+        "Enter direct hours when you are providing or observing client-facing clinical services such as assessment, counseling, group, case management, crisis response, client education, or referral work.",
+        "Enter indirect hours for supervision, documentation practice, training, case review, exam study tied to internship, policy review, or administrative learning tasks allowed by your program/site.",
+        "Use the reflection field to name what you learned and what question should go to supervision.",
+      ],
+    },
+  ],
+  "/internship-licensure/supervision-log": [
+    {
+      title: "What to bring to supervision",
+      items: [
+        "Cases or situations where you are unsure about ASAM rating, diagnosis, risk, boundaries, confidentiality, treatment planning, or documentation wording.",
+        "One example of something you did well and one area where you need feedback.",
+        "Questions about how your work connects to the 12 Core Functions.",
+        "Any ethical discomfort, safety concern, or role confusion. Do not wait for it to become a crisis.",
       ],
     },
     {
-      title: "Reflection prompts",
+      title: "Useful supervision questions",
       items: [
-        "What core function did I observe or practice?",
-        "What clinical judgment did I see?",
-        "What would I ask next time?",
-        "What documentation wording do I need to practice?",
+        "What information is missing before I can support this ASAM rating?",
+        "How would you word this progress note more clinically?",
+        "Is this case management, counseling, referral, or consultation?",
+        "What boundary or confidentiality issue should I be noticing here?",
+      ],
+    },
+    {
+      title: "Documentation examples",
+      items: [
+        "Supervision focused on ASAM Dimension 4 wording and treatment plan connection for ambivalence.",
+        "Supervisor advised intern to gather additional information about recovery environment before finalizing recommendation.",
+      ],
+    },
+  ],
+  "/internship-licensure/upload-internship-docs": [
+    {
+      title: "What belongs here",
+      items: [
+        "De-identified school rubrics, internship instructions, supervision forms, study guides, blank templates, and personal checklists.",
+        "Do not upload client charts, screenshots from records, client names, dates of birth, addresses, phone numbers, case numbers, or anything that identifies a real person.",
+        "Use the notes field to tell LADC Compass what the document should help you learn or build.",
+      ],
+    },
+  ],
+  "/internship-licensure/licensure-roadmap": [
+    {
+      title: "LADC roadmap checklist",
+      items: [
+        "Standard Minnesota LADC pathway information on BBHT currently lists: bachelor's degree, 18 semester credits/270 clock hours of specific alcohol and drug counseling coursework, 880-hour practicum, and required exam completion. Verify current rules before applying.",
+        "Confirm current Minnesota BBHT education requirements for your pathway.",
+        "Track internship/practicum hours and separate direct from indirect hours according to your school/site requirements.",
+        "Maintain supervision documentation and ask your supervisor how they want hours verified.",
+        "Complete required coursework and keep syllabi/transcripts organized.",
+        "Prepare for and complete the required ADC/LADC exam process listed by BBHT.",
+        "Complete background check and application materials through the BBHT process.",
+        "Keep copies of forms, supervision verification, transcripts, exam results, and correspondence.",
+      ],
+    },
+    {
+      title: "What to verify directly with BBHT",
+      items: [
+        "Whether your pathway is Standard Method, Supervision Alternative, Reciprocity, Temporary Permit, or another current board-recognized route.",
+        "Degree/coursework requirements.",
+        "Exam requirements and accepted exam provider.",
+        "Supervised practice requirements.",
+        "Application documents and fees.",
+        "Temporary permit rules if applicable.",
+        "Any recent statutory or rule changes.",
+      ],
+    },
+  ],
+  "/internship-licensure/adc-exam-prep": [
+    {
+      title: "What to study first",
+      items: [
+        "12 Core Functions: know definitions, practical examples, documentation links, and ethical issues.",
+        "Screening/assessment: know what information to gather, how to identify missing information, and how to connect data to diagnosis and ASAM.",
+        "Counseling theory and skills: MI, CBT basics, relapse prevention, group counseling, client education, cultural responsiveness, and trauma-informed practice.",
+        "Case management/referral: know when referral is indicated, how releases work, and how to coordinate without overstepping confidentiality.",
+        "Ethics: confidentiality, 42 CFR Part 2, HIPAA, boundaries, dual relationships, mandated reporting, duty to warn/protect, documentation, and consultation.",
+      ],
+    },
+    {
+      title: "Study method that actually works",
+      items: [
+        "For each topic, write: definition, when used, documentation involved, ethical risk, ASAM connection, and one exam-style example.",
+        "Practice explaining why the wrong answers are wrong. This builds exam judgment better than memorizing only correct answers.",
+        "Use practice questions by domain: assessment, counseling, treatment planning, case management/referral, ethics, documentation, pharmacology/MAT awareness, and crisis/risk.",
+      ],
+    },
+    {
+      title: "High-yield exam reminders",
+      items: [
+        "Choose the answer that protects client safety and confidentiality first.",
+        "Consult or refer when the issue is outside scope, involves medical/psychiatric risk, or creates ethical uncertainty.",
+        "Assessment comes before treatment planning. Do not jump to intervention before gathering enough information.",
+        "Use client-centered, least judgmental language. Avoid punitive or confrontational options unless immediate safety requires action.",
+      ],
+    },
+  ],
+  "/internship-licensure/ladc-requirements": [
+    {
+      title: "What this page should help you organize",
+      items: [
+        "Degree: BBHT's standard LADC method currently identifies a bachelor's degree requirement. Verify your exact pathway directly with BBHT.",
+        "Coursework: BBHT's standard method currently identifies 18 semester credits/270 clock hours of specific alcohol and drug counseling coursework.",
+        "Practicum: BBHT's standard method currently identifies an 880-hour alcohol and drug counseling practicum.",
+        "Exam: BBHT identifies required exam completion; check the LADC Exam Information page for the current exam process.",
+        "Education/coursework requirements and transcripts.",
+        "Practicum or supervised professional practice documentation.",
+        "Exam requirement and exam results.",
+        "Background check and application steps.",
+        "Supervisor verification, site paperwork, and any temporary permit documents.",
+      ],
+    },
+    {
+      title: "Do not rely on memory",
+      items: [
+        "Licensure rules can change. Always verify with Minnesota BBHT before submitting materials.",
+        "Keep a folder for official BBHT instructions, submitted forms, receipts, and emails.",
+        "Ask your supervisor or school advisor to review your roadmap before final submission.",
+      ],
+    },
+  ],
+  "/internship-licensure/study-center": [
+    {
+      title: "Weekly study structure",
+      items: [
+        "Day 1: 12 Core Functions definitions and examples.",
+        "Day 2: ASAM dimensions and placement rationale.",
+        "Day 3: documentation, treatment plans, and progress note wording.",
+        "Day 4: ethics, confidentiality, Part 2, HIPAA, mandated reporting, boundaries.",
+        "Day 5: counseling skills, MI, CBT, relapse prevention, group counseling.",
+        "Day 6: practice questions with explanations.",
+        "Day 7: supervision questions and weak-area review.",
+      ],
+    },
+    {
+      title: "Active recall prompts",
+      items: [
+        "Define this topic without looking.",
+        "Give a client example.",
+        "Name the documentation connected to it.",
+        "Name the ethical risk.",
+        "Name the ASAM dimension most connected to it.",
+      ],
+    },
+  ],
+  "/internship-licensure/practice-questions": [
+    {
+      title: "How to use the interactive test",
+      items: [
+        "Answer each question before opening other resources.",
+        "Submit the test to see your score, correct answer, and explanation.",
+        "Review missed questions by topic and write one supervision or study question from each miss.",
+      ],
+    },
+  ],
+};
+
+function internshipBlocks(page: ContentPage): TopicBlock[] {
+  return internshipGuides[page.path] ?? [
+    {
+      title: "Internship learning focus",
+      items: [
+        "Track the task, direct/indirect hours, core function, clinical learning, documentation practice, and supervision questions.",
+        "Keep all personal learning notes de-identified.",
       ],
     },
   ];

@@ -31,7 +31,7 @@ export default function LocalEntryManager({
     () => Object.fromEntries(fields.map((field) => [field.name, ""])),
     [fields],
   );
-  const { entries, addEntry, removeEntry, clearEntries } =
+  const { entries, addEntry, removeEntry, clearEntries, cloudEnabled, syncing } =
     useLocalEntries<Record<string, string>>(storageKey);
   const [draft, setDraft] = useState<Record<string, string>>(blank);
 
@@ -53,7 +53,12 @@ export default function LocalEntryManager({
       >
         <h3 className="text-xl font-semibold text-ink">Add an entry</h3>
         <p className="mt-2 text-sm text-ink/65">
-          Entries save to cloud when signed in, otherwise to this browser.
+          {syncing
+            ? "Checking cloud sync..."
+            : cloudEnabled
+              ? "Entries save to your private cloud account."
+              : "Entries save in this browser until you sign in."}{" "}
+          Do not enter client identifiers or PHI.
         </p>
         <div className="mt-4 grid gap-4">
           {fields.map((field) => (
@@ -69,7 +74,7 @@ export default function LocalEntryManager({
           type="submit"
           className="focus-ring mt-5 rounded-md bg-lagoon px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink"
         >
-          Save locally
+          Save
         </button>
       </form>
 

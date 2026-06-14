@@ -20,7 +20,14 @@ function readHours() {
     const entries = JSON.parse(
       window.localStorage.getItem("ladc-internship-hours") || "[]",
     ) as Entry[];
-    return entries.reduce((sum, entry) => sum + Number(entry.hours || 0), 0);
+    return entries.reduce(
+      (sum, entry) =>
+        sum +
+        Number(entry.directHours || 0) +
+        Number(entry.indirectHours || 0) +
+        Number(entry.hours || 0),
+      0,
+    );
   } catch {
     return 0;
   }
@@ -55,7 +62,10 @@ export default function DashboardStats() {
                 .filter((entry) => entry.collection === "ladc-internship-hours")
                 .reduce(
                   (sum, entry) =>
-                    sum + Number((entry.payload as Entry).hours || 0),
+                    sum +
+                    Number((entry.payload as Entry).directHours || 0) +
+                    Number((entry.payload as Entry).indirectHours || 0) +
+                    Number((entry.payload as Entry).hours || 0),
                   0,
                 ),
               notes: data.filter(

@@ -6,7 +6,8 @@ import { coreFunctions } from "@/lib/content";
 
 const fields = [
   { name: "date", label: "Date", type: "date" as const },
-  { name: "hours", label: "Hours", type: "number" as const, placeholder: "2.5" },
+  { name: "directHours", label: "Direct hours", type: "number" as const, placeholder: "2.0" },
+  { name: "indirectHours", label: "Indirect hours", type: "number" as const, placeholder: "0.5" },
   { name: "activity", label: "Activity", type: "textarea" as const },
   { name: "core", label: "Core function", type: "select" as const, options: coreFunctions.map((item) => item.name) },
   { name: "reflection", label: "Reflection", type: "textarea" as const },
@@ -27,12 +28,17 @@ export default function InternshipTrackerPage() {
         emptyLabel="No internship hours saved yet."
         titleField="activity"
         afterEntries={(entries) => {
-          const total = entries.reduce((sum, entry) => sum + Number(entry.hours || 0), 0);
+          const direct = entries.reduce((sum, entry) => sum + Number(entry.directHours || 0), 0);
+          const indirect = entries.reduce((sum, entry) => sum + Number(entry.indirectHours || 0), 0);
+          const legacy = entries.reduce((sum, entry) => sum + Number(entry.hours || 0), 0);
+          const total = direct + indirect + legacy;
           const progress = Math.min(100, Math.round((total / 880) * 100));
           return (
             <div className="mt-4 rounded-lg border border-lagoon/25 bg-lagoon/10 p-4">
-              <div className="flex items-center justify-between text-sm font-semibold text-ink">
-                <span>{total.toFixed(1)} of 880 hours</span>
+              <div className="grid gap-3 text-sm font-semibold text-ink sm:grid-cols-4">
+                <span>Direct: {direct.toFixed(1)}</span>
+                <span>Indirect: {indirect.toFixed(1)}</span>
+                <span>Total: {total.toFixed(1)} / 880</span>
                 <span>{progress}%</span>
               </div>
               <div className="mt-3 h-3 rounded-full bg-white">

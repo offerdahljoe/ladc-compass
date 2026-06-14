@@ -1,4 +1,4 @@
 LADC Compass deploy check
-Build marker: 2026-06-14-medications-core-google-loginfix
+Build marker: 2026-06-14-final-substance-pass
 
 If you can read this at /deploy-check.txt on Vercel, Vercel is deploying the current project root.
