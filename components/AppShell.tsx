@@ -2,7 +2,7 @@
 
 import { FormEvent, ReactNode, useEffect, useState } from "react";
 import MobileNav from "@/components/MobileNav";
-import PrivacyBanner from "@/components/PrivacyBanner";
+
 import Sidebar from "@/components/Sidebar";
 import TopSearch from "@/components/TopSearch";
 import { isCloudConfigured, supabase } from "@/lib/supabaseClient";
@@ -159,7 +159,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
             in this build.
           </div>
           <ShellUtilityRow />
-          <PrivacyBanner />
+         
           <main className="mt-5">{children}</main>
         </div>
       </div>
