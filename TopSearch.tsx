@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
+import CloudSyncStatus from "@/components/CloudSyncStatus";
 import { contentPages } from "@/lib/siteContent";
 
 export default function TopSearch() {
@@ -33,7 +34,7 @@ export default function TopSearch() {
 
   return (
     <div className="sticky top-0 z-20 border-b border-ink/10 bg-paper/95 px-4 py-3 backdrop-blur">
-      <div className="mx-auto grid max-w-5xl gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.65fr)] lg:items-end">
+      <div className="mx-auto grid max-w-7xl gap-3 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,0.6fr)_minmax(18rem,0.55fr)] xl:items-end">
         <label className="block text-sm font-medium text-ink">
           LADC Compass search
           <input
@@ -57,6 +58,7 @@ export default function TopSearch() {
             Google
           </button>
         </form>
+        <CloudSyncStatus />
       </div>
       {results.length > 0 ? (
         <div className="absolute left-4 right-4 top-24 mx-auto grid max-w-5xl gap-1 rounded-lg border border-ink/10 bg-white p-2 shadow-soft lg:top-20">

@@ -96,6 +96,27 @@ export const mainNavigation: NavItem[] = [
     ],
   },
   {
+    title: "Medications",
+    path: "/medications/overview",
+    items: [
+      { title: "Medication Overview", path: "/medications/overview" },
+      { title: "MOUD: Opioid Use Disorder", path: "/medications/moud-opioid-use-disorder" },
+      { title: "Buprenorphine", path: "/medications/buprenorphine" },
+      { title: "Methadone", path: "/medications/methadone" },
+      { title: "Naltrexone", path: "/medications/naltrexone" },
+      { title: "Naloxone", path: "/medications/naloxone" },
+      { title: "Alcohol Use Disorder Medications", path: "/medications/alcohol-use-disorder-medications" },
+      { title: "Acamprosate", path: "/medications/acamprosate" },
+      { title: "Disulfiram", path: "/medications/disulfiram" },
+      { title: "Withdrawal Support Medications", path: "/medications/withdrawal-support-medications" },
+      { title: "Antidepressants", path: "/medications/antidepressants" },
+      { title: "Anti-Anxiety Medications", path: "/medications/anti-anxiety-medications" },
+      { title: "Mood Stabilizers", path: "/medications/mood-stabilizers" },
+      { title: "Antipsychotic Medications", path: "/medications/antipsychotic-medications" },
+      { title: "Medication Questions for Assessment", path: "/medications/medication-questions-for-assessment" },
+    ],
+  },
+  {
     title: "Clinical Wording Library",
     path: "/clinical-wording/assessment-wording",
     items: [
@@ -287,6 +308,7 @@ export const quickActions = [
   { title: "Start Comprehensive Assessment", path: "/assessments/comprehensive-assessment" },
   { title: "Write Progress Note", path: "/documentation/progress-notes" },
   { title: "Build Treatment Plan", path: "/treatment-planning/problem-statements" },
+  { title: "Look Up Medications", path: "/medications/overview" },
   { title: "Find ASAM Dimension", path: "/assessments/asam-dimensions" },
   { title: "Explain Form to Client", path: "/client-communication/treatment-consent" },
   { title: "Find Community Resource", path: "/resource-hub/community-resources" },
@@ -414,6 +436,555 @@ export const trustedExternalLinks: Record<string, ExternalLink[]> = {
         "Minnesota Board of Behavioral Health and Therapy licensure and regulatory information.",
     },
   ],
+  medicationInfo: [
+    {
+      title: "MedlinePlus Drug Information",
+      url: "https://medlineplus.gov/druginformation.html",
+      description:
+        "NIH consumer medication information, including generic/brand names, uses, warnings, and side effects.",
+    },
+  ],
+  moud: [
+    {
+      title: "SAMHSA: Medications for Opioid Use Disorder",
+      url: "https://www.samhsa.gov/substance-use/treatment/options/medications-opioid-use-disorder",
+      description:
+        "SAMHSA overview of FDA-approved medications used to treat opioid use disorder.",
+    },
+  ],
+  audMeds: [
+    {
+      title: "NIAAA: Alcohol Treatment Medications",
+      url: "https://www.niaaa.nih.gov/publications/brochures-and-fact-sheets/understanding-alcohol-use-disorder",
+      description:
+        "NIAAA information about alcohol use disorder and treatment options, including medication as part of care.",
+    },
+  ],
+  naloxone: [
+    {
+      title: "FDA: Naloxone",
+      url: "https://www.fda.gov/drugs/postmarket-drug-safety-information-patients-and-providers/naloxone-drugfacts",
+      description:
+        "FDA naloxone information for opioid overdose reversal.",
+    },
+  ],
+};
+
+type CoreFunctionGuide = {
+  summary: string;
+  definition: string[];
+  whenUsed: string[];
+  forms: string[];
+  documentation: string[];
+  clinicalConnections: string[];
+  examPrep: string[];
+  mistakes: string[];
+};
+
+const coreFunctionGuides: Record<string, CoreFunctionGuide> = {
+  "/core-functions/screening": {
+    summary:
+      "Screening is the first-pass process of deciding whether substance use, mental health, safety, or practical concerns need deeper assessment or referral.",
+    definition: [
+      "Screening is brief and focused. It is not the full assessment.",
+      "The goal is to identify possible substance use disorder, withdrawal risk, crisis concerns, co-occurring needs, eligibility questions, and urgency.",
+      "Screening helps decide whether to move forward with intake/assessment, refer elsewhere, or respond to immediate safety or medical needs.",
+    ],
+    whenUsed: [
+      "First phone call, walk-in, referral review, pre-admission contact, or early program contact.",
+      "When a person is unsure whether they need treatment.",
+      "When the counselor needs to quickly identify risk before scheduling or completing full intake.",
+    ],
+    forms: [
+      "Screening form or pre-admission questionnaire.",
+      "Brief substance use screen, withdrawal risk questions, mental health/safety screen.",
+      "Referral source information, contact information, consent to contact if applicable.",
+      "Eligibility or program fit checklist.",
+    ],
+    documentation: [
+      "Screening completed to determine need for SUD assessment and service fit.",
+      "Individual reports current concerns related to [substance/use pattern] and was referred for comprehensive assessment.",
+      "Immediate risk concerns were [not identified/identified and addressed according to policy].",
+    ],
+    clinicalConnections: [
+      "ASAM Dimension 1 if intoxication or withdrawal risk appears possible.",
+      "ASAM Dimension 3 if mental health or safety concerns are present.",
+      "Ethics: confidentiality limits, crisis response, referral if needs are outside program scope.",
+    ],
+    examPrep: [
+      "Know the difference between screening and assessment.",
+      "Screening answers: Is there likely a problem and what should happen next?",
+      "Screening does not establish the full diagnosis or treatment plan.",
+    ],
+    mistakes: [
+      "Trying to complete a full assessment during screening.",
+      "Missing immediate withdrawal, overdose, or suicide risk.",
+      "Failing to document referral or next step.",
+    ],
+  },
+  "/core-functions/intake": {
+    summary:
+      "Intake is the administrative and clinical entry process that opens services, gathers required information, and prepares the person for assessment and treatment.",
+    definition: [
+      "Intake establishes the person's admission record and confirms basic program requirements.",
+      "It includes demographics, consents, releases, financial or insurance information, rights, policies, and initial service needs.",
+      "Intake is where the person begins to understand what the program is, what is expected, and what information is needed.",
+    ],
+    whenUsed: [
+      "When someone starts services or transfers into a program.",
+      "Before or alongside comprehensive assessment.",
+      "When updating admission paperwork, consents, or releases.",
+    ],
+    forms: [
+      "Admission/intake packet.",
+      "Consent for treatment.",
+      "Client rights and responsibilities.",
+      "HIPAA/Notice of Privacy Practices.",
+      "42 CFR Part 2 consent or disclosure forms when applicable.",
+      "Release of Information forms.",
+      "Emergency contact and financial/insurance forms.",
+    ],
+    documentation: [
+      "Intake paperwork reviewed and completed with client.",
+      "Client rights, confidentiality, treatment consent, and release options were explained in plain language.",
+      "Client questions were addressed; pending items include [missing form/document/signature].",
+    ],
+    clinicalConnections: [
+      "Orientation because intake often introduces program rules and expectations.",
+      "Assessment because intake provides referral context and required background information.",
+      "Ethics: informed consent, confidentiality, releases, client rights, and documentation compliance.",
+    ],
+    examPrep: [
+      "Intake is the entry/admission process, not the full clinical assessment.",
+      "Know common intake documents and why they matter.",
+      "Client rights and informed consent are central.",
+    ],
+    mistakes: [
+      "Rushing signatures without checking understanding.",
+      "Confusing ROI, HIPAA, and 42 CFR Part 2 requirements.",
+      "Leaving missing forms undocumented.",
+    ],
+  },
+  "/core-functions/orientation": {
+    summary:
+      "Orientation explains the treatment program, expectations, rules, services, rights, schedules, and how the person can participate effectively.",
+    definition: [
+      "Orientation helps the client understand how treatment works.",
+      "It covers program structure, group expectations, attendance, confidentiality, grievances, drug testing expectations, emergency procedures, and who to contact.",
+      "Good orientation reduces anxiety and prevents misunderstandings later.",
+    ],
+    whenUsed: [
+      "At admission or first active service contact.",
+      "When a client starts a new level of care, group, or program track.",
+      "When expectations need to be reviewed due to missed appointments, group issues, or confusion.",
+    ],
+    forms: [
+      "Program handbook.",
+      "Client rights/responsibilities.",
+      "Group rules and expectations.",
+      "Attendance policy.",
+      "UA/testing policy if applicable.",
+      "Grievance procedure.",
+      "Emergency and after-hours instructions.",
+    ],
+    documentation: [
+      "Program orientation completed; client was informed of schedule, expectations, rights, confidentiality limits, and contact procedures.",
+      "Client verbalized understanding of group expectations and attendance policy.",
+      "Questions regarding [topic] were answered and will be reviewed again as needed.",
+    ],
+    clinicalConnections: [
+      "Client Education because orientation teaches how the program works.",
+      "Ethics: informed participation, rights, confidentiality, boundaries.",
+      "Case Management when barriers to attendance or participation appear.",
+    ],
+    examPrep: [
+      "Orientation is about explaining program expectations and client rights.",
+      "It supports engagement and informed participation.",
+      "It is different from intake paperwork and different from counseling.",
+    ],
+    mistakes: [
+      "Handing out forms without explaining them.",
+      "Using program jargon the client does not understand.",
+      "Failing to document questions, refusals, or barriers.",
+    ],
+  },
+  "/core-functions/assessment": {
+    summary:
+      "Assessment is the structured clinical process of gathering and interpreting information to understand diagnosis, ASAM needs, strengths, risks, and recommendations.",
+    definition: [
+      "Assessment is deeper than screening and broader than diagnosis.",
+      "It gathers substance use history, mental health, medical, family/social, legal, education/employment, recovery environment, risk, strengths, and barriers.",
+      "It turns information into clinical meaning and recommendations.",
+    ],
+    whenUsed: [
+      "At admission after screening/intake.",
+      "When a major change occurs: recurrence, crisis, new diagnosis, legal change, medical issue, or treatment nonresponse.",
+      "Before placement recommendation, diagnosis, and treatment planning.",
+    ],
+    forms: [
+      "Comprehensive assessment.",
+      "ASAM Dimension summary.",
+      "DSM-5 criteria checklist or diagnostic summary.",
+      "Risk/safety assessment.",
+      "Collateral information and releases when appropriate.",
+      "Placement recommendation.",
+    ],
+    documentation: [
+      "Comprehensive assessment completed using client report, available referral information, and clinical interview.",
+      "Assessment indicates primary needs related to [ASAM dimensions] and supports recommendation for [level/service].",
+      "Strengths include [supports/skills/motivation]; barriers include [risk/environment/readiness].",
+    ],
+    clinicalConnections: [
+      "ASAM Dimensions 1-6.",
+      "DSM-5 diagnostic summary.",
+      "Treatment plan problems, goals, objectives, and interventions.",
+      "Ethics: scope, consent, confidentiality, collateral information, risk response.",
+    ],
+    examPrep: [
+      "Assessment identifies the nature and extent of SUD and related issues.",
+      "Assessment informs diagnosis, placement, and treatment planning.",
+      "Know what domains belong in a comprehensive assessment.",
+    ],
+    mistakes: [
+      "Collecting facts without clinical interpretation.",
+      "Skipping strengths and recovery environment.",
+      "Writing recommendations that do not follow from findings.",
+    ],
+  },
+  "/core-functions/treatment-planning": {
+    summary:
+      "Treatment Planning turns assessment findings into individualized problems, goals, objectives, and counselor interventions.",
+    definition: [
+      "Treatment planning translates assessed needs into a written plan for change.",
+      "It should reflect the client's goals, ASAM needs, diagnosis, strengths, barriers, and stage of change.",
+      "A strong plan guides sessions and makes progress notes easier to write.",
+    ],
+    whenUsed: [
+      "After comprehensive assessment and diagnosis/placement recommendation.",
+      "During plan reviews, recurrence response, discharge planning, or level-of-care changes.",
+      "When goals or barriers change.",
+    ],
+    forms: [
+      "Individual treatment plan.",
+      "Treatment plan review.",
+      "Problem/goal/objective/intervention worksheet.",
+      "Relapse prevention plan.",
+      "Discharge or continuing care plan.",
+    ],
+    documentation: [
+      "Treatment plan developed collaboratively based on assessment findings and client priorities.",
+      "Problem area identified as [need/barrier]. Goal is [recovery direction]. Objectives include [measurable steps].",
+      "Counselor interventions include MI, CBT skills, relapse prevention planning, psychoeducation, and referral coordination as indicated.",
+    ],
+    clinicalConnections: [
+      "Assessment and ASAM determine problem areas.",
+      "Progress notes should connect back to treatment plan goals.",
+      "Ethics: client participation, individualized care, medical necessity.",
+    ],
+    examPrep: [
+      "Know the difference between goals, objectives, and interventions.",
+      "Treatment plans should be individualized and based on assessment.",
+      "Objectives should be measurable or reviewable.",
+    ],
+    mistakes: [
+      "Using generic goals that could apply to anyone.",
+      "Writing objectives that are not measurable.",
+      "Failing to connect progress notes to plan goals.",
+    ],
+  },
+  "/core-functions/counseling": {
+    summary:
+      "Counseling is the direct therapeutic work that helps clients build insight, motivation, coping skills, recovery behaviors, and relapse prevention strategies.",
+    definition: [
+      "Counseling may be individual, group, or family-oriented within scope and program policy.",
+      "It uses evidence-informed methods such as MI, CBT skills, psychoeducation, relapse prevention, and supportive counseling.",
+      "Counseling is not advice-giving only; it is purposeful clinical intervention tied to goals.",
+    ],
+    whenUsed: [
+      "During individual sessions, group therapy, treatment plan work, relapse prevention, and recovery skill building.",
+      "When a client needs help with motivation, cravings, triggers, coping, relationships, or recovery routines.",
+      "When processing recurrence, ambivalence, or barriers to change.",
+    ],
+    forms: [
+      "Progress notes.",
+      "Group notes.",
+      "Treatment plan and plan review.",
+      "Relapse prevention worksheet.",
+      "CBT/MI worksheets or group materials.",
+    ],
+    documentation: [
+      "Counselor used MI to explore ambivalence and elicit change talk related to [goal].",
+      "Session focused on identifying triggers and practicing coping responses.",
+      "Client participated in group discussion and connected topic to personal recovery plan.",
+    ],
+    clinicalConnections: [
+      "ASAM Dimension 4 for readiness and Dimension 5 for relapse/continued use potential.",
+      "Treatment plan objectives and interventions.",
+      "Ethics: boundaries, scope of practice, cultural humility, trauma-informed care.",
+    ],
+    examPrep: [
+      "Counseling is a core clinical function, not just conversation.",
+      "Know common counseling methods used in SUD treatment.",
+      "Group counseling still requires purposeful intervention and documentation.",
+    ],
+    mistakes: [
+      "Documenting only the topic and not the intervention.",
+      "Giving advice without assessing readiness.",
+      "Letting sessions drift away from treatment goals.",
+    ],
+  },
+  "/core-functions/case-management": {
+    summary:
+      "Case Management helps coordinate practical services and supports that affect recovery, such as housing, transportation, medical care, legal needs, and benefits.",
+    definition: [
+      "Case management addresses barriers that interfere with treatment engagement and recovery stability.",
+      "It may include resource identification, referral coordination, follow-up, advocacy within role, and care coordination with proper releases.",
+      "It is connected to ASAM Dimension 6 and recovery environment needs.",
+    ],
+    whenUsed: [
+      "When practical barriers affect attendance, safety, recovery, housing, food, medical care, legal obligations, or employment.",
+      "When the client needs help connecting to outside services.",
+      "When coordination with probation, medical providers, social services, or recovery supports is needed and authorized.",
+    ],
+    forms: [
+      "Case management note.",
+      "Release of Information.",
+      "Referral form.",
+      "Resource list.",
+      "Care coordination/contact log.",
+    ],
+    documentation: [
+      "Client identified need for [resource]. Counselor provided resource information and reviewed next steps.",
+      "With valid release, counselor coordinated with [provider/agency] regarding [purpose].",
+      "Follow-up plan is to review contact outcome at next session.",
+    ],
+    clinicalConnections: [
+      "ASAM Dimension 6 recovery environment.",
+      "Referral core function.",
+      "Ethics: releases, minimum necessary information, boundaries, role clarity.",
+    ],
+    examPrep: [
+      "Case management is about coordinating needed services, not providing every service yourself.",
+      "Know when releases are needed.",
+      "Practical barriers can be treatment barriers.",
+    ],
+    mistakes: [
+      "Calling outside providers without proper release.",
+      "Promising resource availability.",
+      "Not documenting follow-up.",
+    ],
+  },
+  "/core-functions/crisis-intervention": {
+    summary:
+      "Crisis Intervention is the immediate response to safety, stabilization, intoxication, withdrawal, overdose, suicidal/homicidal risk, or acute behavioral concerns.",
+    definition: [
+      "Crisis intervention focuses on immediate safety and stabilization.",
+      "It is not long-term therapy; it is a structured response to urgent risk.",
+      "It requires agency policy, supervision/consultation, and emergency referral when needed.",
+    ],
+    whenUsed: [
+      "Suicidal ideation, homicidal ideation, overdose risk, severe withdrawal risk, intoxication, domestic violence concerns, psychosis, severe agitation, or unsafe environment.",
+      "When client safety or public safety may be at immediate risk.",
+      "When a counselor must pause routine services and follow crisis procedures.",
+    ],
+    forms: [
+      "Risk/safety assessment.",
+      "Crisis note.",
+      "Safety plan.",
+      "Incident report if required.",
+      "Consultation/supervision note.",
+      "Emergency referral documentation.",
+    ],
+    documentation: [
+      "Counselor assessed immediate safety concerns including [risk area].",
+      "Supervisor/emergency services were consulted according to agency policy.",
+      "Safety plan reviewed and client was referred to [service/level of care] as indicated.",
+    ],
+    clinicalConnections: [
+      "ASAM Dimension 1 for intoxication/withdrawal and Dimension 3 for emotional/behavioral/cognitive risk.",
+      "Ethics: mandated reporting, duty to warn/protect, scope, consultation.",
+      "Documentation compliance and crisis policy.",
+    ],
+    examPrep: [
+      "Crisis intervention prioritizes safety and stabilization.",
+      "Know when to consult, refer, or activate emergency procedures.",
+      "Documentation should include risk assessed, action taken, and follow-up.",
+    ],
+    mistakes: [
+      "Trying to manage high-risk crisis alone.",
+      "Failing to document consultation and safety steps.",
+      "Returning to routine counseling before stabilization is addressed.",
+    ],
+  },
+  "/core-functions/client-education": {
+    summary:
+      "Client Education provides accurate, understandable information about SUD, recovery, health risks, treatment, coping skills, and available supports.",
+    definition: [
+      "Client education teaches information that supports recovery decisions and skill development.",
+      "It should be understandable, relevant, culturally responsive, and connected to the person's goals.",
+      "Education can happen individually, in groups, during orientation, or as part of treatment planning.",
+    ],
+    whenUsed: [
+      "Explaining relapse prevention, cravings, withdrawal, MAT, overdose prevention, coping skills, group expectations, confidentiality, or treatment process.",
+      "When a client has misinformation or limited understanding.",
+      "When education supports a treatment plan objective.",
+    ],
+    forms: [
+      "Progress note or group note.",
+      "Educational handout or worksheet.",
+      "Relapse prevention plan.",
+      "Overdose prevention/Narcan education documentation if applicable.",
+      "Client form explanations.",
+    ],
+    documentation: [
+      "Counselor provided education on [topic] and checked client understanding.",
+      "Client identified one way the information applies to current recovery plan.",
+      "Group focused on psychoeducation regarding [topic] with discussion and skill practice.",
+    ],
+    clinicalConnections: [
+      "ASAM Dimension 4 readiness and Dimension 5 relapse potential.",
+      "Counseling, orientation, treatment planning, and group therapy.",
+      "Ethics: informed consent and accurate information.",
+    ],
+    examPrep: [
+      "Client education is not lecturing; it supports informed recovery choices.",
+      "Education should be matched to readiness and need.",
+      "Documentation should include topic and client response.",
+    ],
+    mistakes: [
+      "Overloading the client with information.",
+      "Using jargon without checking understanding.",
+      "Not tying education to the treatment plan.",
+    ],
+  },
+  "/core-functions/referral": {
+    summary:
+      "Referral connects the client to services outside the counselor's role or program when additional support is needed.",
+    definition: [
+      "Referral is the process of identifying and linking to another service or provider.",
+      "It may be internal or external and may involve warm handoff, resource information, or coordination with valid release.",
+      "Referral is used when needs exceed the current program's scope, availability, or level of care.",
+    ],
+    whenUsed: [
+      "Medical care, detox, mental health therapy, psychiatry, MAT, housing, legal assistance, food, transportation, higher/lower level of care, peer recovery support.",
+      "When assessment identifies needs outside SUD counseling scope.",
+      "When discharge or continuing care requires outside supports.",
+    ],
+    forms: [
+      "Referral form.",
+      "Release of Information.",
+      "Case management note.",
+      "Discharge/continuing care plan.",
+      "Resource list or contact log.",
+    ],
+    documentation: [
+      "Counselor discussed referral need for [service] and provided information for [provider/resource].",
+      "Client agreed to [contact/consider/decline] referral at this time.",
+      "With valid release, counselor coordinated referral information with [agency].",
+    ],
+    clinicalConnections: [
+      "Case management and discharge planning.",
+      "ASAM Dimensions 2, 3, and 6 often drive referrals.",
+      "Ethics: scope of practice, informed choice, releases, continuity of care.",
+    ],
+    examPrep: [
+      "Referral is appropriate when another provider/service is needed.",
+      "Know the difference between referral and case management.",
+      "Client choice and consent matter.",
+    ],
+    mistakes: [
+      "Making the referral decision without client involvement.",
+      "Coordinating without release.",
+      "Not documenting refusal or follow-up plan.",
+    ],
+  },
+  "/core-functions/reports-and-record-keeping": {
+    summary:
+      "Reports & Record Keeping includes accurate, timely, ethical documentation of services, assessments, plans, releases, referrals, and required reports.",
+    definition: [
+      "This function covers written records that support care, compliance, continuity, billing, supervision, and legal/ethical accountability.",
+      "It includes progress notes, assessments, treatment plans, reviews, discharge summaries, releases, incident reports, and contact logs.",
+      "Good records are clear, objective, timely, and clinically connected.",
+    ],
+    whenUsed: [
+      "After nearly every clinical service or relevant client contact.",
+      "During assessment, treatment planning, plan review, case management, crisis response, and discharge.",
+      "When preparing reports for authorized referral sources, courts, probation, or other providers with proper consent/legal basis.",
+    ],
+    forms: [
+      "Progress notes.",
+      "Group notes.",
+      "Comprehensive assessment.",
+      "Treatment plan and reviews.",
+      "Discharge summary.",
+      "ROI forms.",
+      "Case management contacts.",
+      "Incident/crisis reports.",
+    ],
+    documentation: [
+      "Documentation completed to reflect service provided, client response, clinical assessment, and plan.",
+      "Record updated to include [assessment/plan/review/referral] consistent with agency policy.",
+      "Authorized report prepared using minimum necessary information.",
+    ],
+    clinicalConnections: [
+      "All ASAM dimensions may be documented depending on service.",
+      "Ethics: confidentiality, accuracy, timely records, minimum necessary disclosure.",
+      "Procentive workflow and documentation compliance.",
+    ],
+    examPrep: [
+      "Records should be accurate, objective, timely, and confidential.",
+      "Know why documentation is part of clinical care, not separate from it.",
+      "Reports require authorization or legal basis.",
+    ],
+    mistakes: [
+      "Late or vague notes.",
+      "Copy/paste documentation that does not match the service.",
+      "Including unnecessary details in reports.",
+      "Forgetting client response or next plan.",
+    ],
+  },
+  "/core-functions/consultation": {
+    summary:
+      "Consultation is seeking professional input from supervisors or qualified colleagues to improve care, stay within scope, and address complex clinical or ethical questions.",
+    definition: [
+      "Consultation helps the counselor make better decisions when the issue is complex, risky, outside scope, or ethically uncertain.",
+      "It can involve supervision, multidisciplinary team discussion, medical/mental health consultation, or agency leadership.",
+      "Consultation does not replace informed consent, releases, or emergency procedures.",
+    ],
+    whenUsed: [
+      "Risk/safety concerns, mandated reporting questions, duty-to-warn concerns, diagnostic uncertainty, placement uncertainty, dual relationships, boundary issues, documentation concerns, scope questions.",
+      "When client needs exceed counselor expertise.",
+      "When an intern needs supervision before acting.",
+    ],
+    forms: [
+      "Supervision log.",
+      "Consultation note.",
+      "Case staffing note.",
+      "Crisis/risk documentation.",
+      "Treatment plan review or referral documentation.",
+    ],
+    documentation: [
+      "Counselor consulted supervisor regarding [issue] and followed recommendation to [action].",
+      "Case staffing reviewed concerns related to [risk/placement/coordination]. Follow-up plan is [next step].",
+      "Consultation completed due to scope/ethical concern; client care plan updated accordingly.",
+    ],
+    clinicalConnections: [
+      "Ethics and compliance.",
+      "Crisis intervention, diagnosis, ASAM placement, treatment planning, and referral.",
+      "Internship supervision and licensure development.",
+    ],
+    examPrep: [
+      "Consultation is a professional responsibility, especially for interns.",
+      "Know when to seek supervision instead of acting alone.",
+      "Consultation should be documented when clinically relevant.",
+    ],
+    mistakes: [
+      "Waiting too long to consult.",
+      "Consulting without protecting confidentiality.",
+      "Ignoring scope of practice limits.",
+      "Failing to document the consultation outcome.",
+    ],
+  },
 };
 
 export function slugify(value: string) {
@@ -532,12 +1103,17 @@ export const contentPages: ContentPage[] = allNavItems.map((item) => {
       nav.path === item.path || nav.items?.some((child) => child.path === item.path),
     )?.title ?? "LADC Compass";
   const override = specialPages[item.path] ?? {};
+  const coreGuide = section === "12 Core Functions" ? coreFunctionGuides[item.path] : undefined;
   return {
     title: item.title,
     path: item.path,
     section,
     summary:
       override.summary ??
+      coreGuide?.summary ??
+      (section === "Medications"
+        ? `${item.title} is a medication reference page for understanding clinical purpose, generic/common names, counseling relevance, assessment questions, documentation wording, and scope-of-practice cautions.`
+        : undefined) ??
       `${item.title} is a placeholder workspace in the ${section} section. It is ready for section-specific examples, scripts, forms, and clinical guidance.`,
     prompts: override.prompts,
     related:
@@ -558,6 +1134,10 @@ function externalLinksFor(path: string, section: string, title: string) {
   if (lower.includes("ethics") || lower.includes("boundaries") || lower.includes("dual")) links.push(...trustedExternalLinks.ethics);
   if (lower.includes("ladc") || lower.includes("licensure") || lower.includes("adc exam")) links.push(...trustedExternalLinks.mnBoard);
   if (lower.includes("resource") || lower.includes("mat") || lower.includes("crisis") || lower.includes("recovery")) links.push(...trustedExternalLinks.samhsa);
+  if (lower.includes("medication") || lower.includes("buprenorphine") || lower.includes("methadone") || lower.includes("naltrexone") || lower.includes("acamprosate") || lower.includes("disulfiram") || lower.includes("antidepressant") || lower.includes("antipsychotic")) links.push(...trustedExternalLinks.medicationInfo);
+  if (lower.includes("moud") || lower.includes("opioid use disorder") || lower.includes("buprenorphine") || lower.includes("methadone")) links.push(...trustedExternalLinks.moud);
+  if (lower.includes("alcohol use disorder") || lower.includes("acamprosate") || lower.includes("disulfiram")) links.push(...trustedExternalLinks.audMeds);
+  if (lower.includes("naloxone") || lower.includes("overdose")) links.push(...trustedExternalLinks.naloxone);
   return links.filter((link, index, all) => all.findIndex((item) => item.url === link.url) === index);
 }
 
@@ -1148,6 +1728,7 @@ export function getTopicBlocks(page: ContentPage): TopicBlock[] {
   if (section === "Client Scripts Library" || section === "Client Communication Toolkit") return scriptBlocks(page);
   if (section === "Group Therapy Hub" || lowerTitle.includes("group")) return groupBlocks(page);
   if (section === "Clinical Toolbox") return toolboxBlocks(page);
+  if (section === "Medications") return medicationBlocks(page);
   if (section === "12 Core Functions") return coreBlocks(page);
   if (section === "Ethics & Compliance") return ethicsBlocks(page);
   if (section === "Procentive Workflow" || section === "Kai-Shin Hub") return procentiveBlocks(page);
@@ -1622,7 +2203,530 @@ function toolboxBlocks(page: ContentPage): TopicBlock[] {
   ];
 }
 
+type MedicationGuide = {
+  category: string;
+  names: string[];
+  usedFor: string[];
+  counselorFocus: string[];
+  assessmentQuestions: string[];
+  documentation: string[];
+  clientExplanation: string[];
+  cautions: string[];
+};
+
+const medicationGuides: Record<string, MedicationGuide> = {
+  "/medications/overview": {
+    category: "Medication reference overview",
+    names: [
+      "MOUD/MAT medications for opioid use disorder: buprenorphine, methadone, naltrexone.",
+      "Alcohol use disorder medications: naltrexone, acamprosate, disulfiram.",
+      "Overdose reversal: naloxone.",
+      "Co-occurring mental health medication categories: antidepressants, anti-anxiety medications, mood stabilizers, antipsychotics.",
+    ],
+    usedFor: [
+      "Supporting recovery, reducing cravings or withdrawal risk, treating co-occurring mental health symptoms, preventing overdose death, and improving stability when prescribed by qualified medical providers.",
+      "Helping counselors understand what clients are talking about, what questions to ask, and when to coordinate care or refer to medical providers.",
+    ],
+    counselorFocus: [
+      "Counselors do not prescribe. The counseling role is education, screening for medication-related barriers, supporting adherence goals, coordinating with releases, and knowing when to refer medical questions.",
+      "Medication information should be documented as client report unless verified by medical records or provider communication.",
+    ],
+    assessmentQuestions: [
+      "What medications are you currently prescribed, and who prescribes them?",
+      "Are you taking them as prescribed? If not, what gets in the way?",
+      "Any side effects, missed doses, cost barriers, transportation barriers, or concerns about stigma?",
+      "Any recent medication changes, detox medications, MAT/MOUD, psychiatric medications, or overdose reversal kit access?",
+    ],
+    documentation: [
+      "Client reports current prescription for [medication] from [provider type if known] and reports [adherence/barrier/side effect concern].",
+      "Counselor encouraged client to discuss medication questions with prescriber and obtained ROI for coordination as appropriate.",
+    ],
+    clientExplanation: [
+      "Medication can be one support in recovery or mental health care. A medical provider decides what is appropriate. My role is to understand how it affects your treatment goals and help coordinate support if you want that.",
+    ],
+    cautions: [
+      "Do not give dosing advice.",
+      "Do not tell clients to start, stop, or change medication.",
+      "Refer urgent side effects, withdrawal risk, overdose risk, pregnancy-related medication questions, and medication interactions to medical providers immediately.",
+    ],
+  },
+  "/medications/moud-opioid-use-disorder": {
+    category: "MOUD / MAT",
+    names: [
+      "Buprenorphine: Suboxone, Subutex, Sublocade, Brixadi, Zubsolv, Bunavail depending on formulation.",
+      "Methadone: commonly dispensed through opioid treatment programs.",
+      "Naltrexone: oral naltrexone or extended-release injectable Vivitrol.",
+    ],
+    usedFor: [
+      "Medications for opioid use disorder are used to reduce withdrawal, cravings, illicit opioid use, and overdose risk as part of a broader recovery plan.",
+      "Medication choice depends on medical evaluation, client preference, access, pregnancy status, opioid tolerance, treatment history, and provider guidance.",
+    ],
+    counselorFocus: [
+      "Normalize MOUD as evidence-based treatment, not “replacing one addiction with another.”",
+      "Assess stigma, access barriers, missed doses, transportation, clinic attendance, cravings, continued use, overdose history, and recovery supports.",
+      "Coordinate with OTP/MOUD prescriber only with proper release and within agency policy.",
+    ],
+    assessmentQuestions: [
+      "Have you ever been prescribed methadone, buprenorphine, or naltrexone?",
+      "What worked or did not work about it?",
+      "Any missed doses, cravings, withdrawal symptoms, continued opioid use, or side effects?",
+      "Do you have naloxone available?",
+    ],
+    documentation: [
+      "Client reports current MOUD with [medication/provider] and identifies [benefit/barrier].",
+      "Counselor provided education that MOUD can be part of evidence-based OUD treatment and encouraged prescriber follow-up for medication questions.",
+    ],
+    clientExplanation: [
+      "MOUD means medication is being used to support opioid recovery. It can reduce cravings and withdrawal and lower overdose risk. It works best when paired with counseling, support, and medical follow-up.",
+    ],
+    cautions: [
+      "Do not frame MOUD as a failure of recovery.",
+      "Do not advise dose changes.",
+      "Be alert for sedation, intoxication, missed doses, diversion concerns, pregnancy questions, or overdose risk and follow policy.",
+    ],
+  },
+  "/medications/buprenorphine": {
+    category: "MOUD / partial opioid agonist",
+    names: [
+      "Generic: buprenorphine.",
+      "Combination: buprenorphine/naloxone.",
+      "Common brand/formulation names include Suboxone, Subutex, Sublocade, Brixadi, Zubsolv, and Bunavail.",
+    ],
+    usedFor: [
+      "Used to treat opioid use disorder by reducing withdrawal symptoms and cravings.",
+      "May be prescribed in office-based settings or other approved treatment settings depending on provider and formulation.",
+    ],
+    counselorFocus: [
+      "Ask about adherence, cravings, missed doses, side effects, continued opioid use, access barriers, and stigma.",
+      "Support treatment engagement and coordinate with prescriber with valid ROI.",
+    ],
+    assessmentQuestions: [
+      "When did you start buprenorphine and what formulation are you prescribed?",
+      "Any cravings, withdrawal, sedation, missed doses, or continued opioid use?",
+      "Any trouble filling prescriptions, attending appointments, or taking it as prescribed?",
+    ],
+    documentation: [
+      "Client reports buprenorphine treatment and states it has [reduced/not reduced] cravings and withdrawal.",
+      "Client identified barrier to medication adherence as [barrier]; counselor encouraged prescriber follow-up.",
+    ],
+    clientExplanation: [
+      "Buprenorphine is a medication used for opioid use disorder. Many people use it to reduce withdrawal and cravings while they work on recovery goals.",
+    ],
+    cautions: [
+      "Medication questions about dose, side effects, pregnancy, sedation, or interactions should go to the prescriber.",
+      "Alcohol, benzodiazepines, and other sedating substances can increase safety risk and should be addressed clinically/medically.",
+    ],
+  },
+  "/medications/methadone": {
+    category: "MOUD / full opioid agonist",
+    names: [
+      "Generic: methadone.",
+      "Often provided for OUD through certified opioid treatment programs.",
+    ],
+    usedFor: [
+      "Used to treat opioid use disorder by reducing withdrawal and cravings and supporting stabilization.",
+      "May be especially relevant for people who need structured daily dosing or have not stabilized on other options.",
+    ],
+    counselorFocus: [
+      "Ask about OTP attendance, take-home doses, sedation, cravings, continued opioid use, transportation, and coordination needs.",
+      "Understand clinic attendance and dosing routines may affect treatment scheduling.",
+    ],
+    assessmentQuestions: [
+      "Are you currently enrolled in a methadone clinic or OTP?",
+      "Any missed doses, cravings, sedation, continued use, or transportation barriers?",
+      "Do you want coordination between this program and the OTP?",
+    ],
+    documentation: [
+      "Client reports methadone treatment through [OTP if known] and identifies [benefit/barrier].",
+      "ROI discussed for coordination with OTP; client [accepted/declined] at this time.",
+    ],
+    clientExplanation: [
+      "Methadone is a medication used for opioid use disorder that can reduce withdrawal and cravings. It is usually provided through a structured clinic program.",
+    ],
+    cautions: [
+      "Do not interpret dose adequacy; refer to OTP/prescriber.",
+      "Sedation, missed doses, alcohol/benzodiazepine use, or overdose risk require prompt clinical attention and policy follow-up.",
+    ],
+  },
+  "/medications/naltrexone": {
+    category: "Opioid antagonist / AUD and OUD medication",
+    names: [
+      "Generic: naltrexone.",
+      "Brand/formulation: Vivitrol is extended-release injectable naltrexone.",
+    ],
+    usedFor: [
+      "Used for alcohol use disorder to reduce rewarding effects/cravings for some people.",
+      "Used for opioid use disorder relapse prevention after opioid detoxification because it blocks opioid effects.",
+    ],
+    counselorFocus: [
+      "Clarify whether prescribed for AUD or OUD.",
+      "For OUD, assess whether the client understands opioid blockade and overdose risk after stopping.",
+      "Ask about adherence, injection appointments, cravings, side effects, and medical follow-up.",
+    ],
+    assessmentQuestions: [
+      "Is naltrexone prescribed for alcohol use, opioid use, or both?",
+      "When was the last injection or dose?",
+      "Any cravings, return to use, side effects, or missed appointments?",
+    ],
+    documentation: [
+      "Client reports naltrexone treatment for [AUD/OUD] and reports [effect/barrier].",
+      "Counselor encouraged client to discuss medication questions with prescriber.",
+    ],
+    clientExplanation: [
+      "Naltrexone is a medication that can reduce alcohol reward/craving for some people and can block opioid effects when used for opioid recovery.",
+    ],
+    cautions: [
+      "Clients must discuss opioid use, pain treatment, and medical procedures with prescriber.",
+      "Do not advise starting naltrexone after opioid use; medical evaluation is required.",
+    ],
+  },
+  "/medications/naloxone": {
+    category: "Overdose reversal / harm reduction",
+    names: [
+      "Generic: naloxone.",
+      "Common brand/formulations include Narcan nasal spray and other naloxone products.",
+    ],
+    usedFor: [
+      "Used to reverse opioid overdose effects temporarily and restore breathing while emergency help is obtained.",
+      "Important for clients using opioids, returning to use after abstinence, using alone, or exposed to fentanyl risk.",
+    ],
+    counselorFocus: [
+      "Ask if client has naloxone, knows how to use it, and has told support people where it is.",
+      "Use overdose education as safety planning, not judgment.",
+    ],
+    assessmentQuestions: [
+      "Do you have naloxone available?",
+      "Have you or someone close to you ever experienced an overdose?",
+      "Do people around you know where naloxone is and how to use it?",
+    ],
+    documentation: [
+      "Counselor provided overdose prevention education and discussed naloxone access.",
+      "Client reports [has/does not have] naloxone and was provided information about access options.",
+    ],
+    clientExplanation: [
+      "Naloxone is an emergency medication that can reverse an opioid overdose long enough to get help. It is a safety tool, like a fire extinguisher.",
+    ],
+    cautions: [
+      "Naloxone is not a substitute for emergency medical care.",
+      "Overdose risk can return after naloxone wears off; call emergency services according to training/policy.",
+    ],
+  },
+  "/medications/alcohol-use-disorder-medications": {
+    category: "AUD medication overview",
+    names: [
+      "Naltrexone.",
+      "Acamprosate.",
+      "Disulfiram.",
+    ],
+    usedFor: [
+      "Used as part of alcohol use disorder treatment to support abstinence or reduced alcohol use goals depending on medication, medical guidance, and client goals.",
+      "Medication is typically combined with counseling, recovery supports, relapse prevention, and medical monitoring.",
+    ],
+    counselorFocus: [
+      "Ask about cravings, drinking pattern, abstinence goals, liver/medical concerns, adherence, side effects, and prescriber follow-up.",
+      "Normalize medication as one recovery support option.",
+    ],
+    assessmentQuestions: [
+      "Have you ever tried medication to support alcohol recovery?",
+      "What was helpful or not helpful?",
+      "Are cravings, withdrawal concerns, or return-to-drinking patterns current issues?",
+    ],
+    documentation: [
+      "Client expressed interest in medication options for AUD; counselor encouraged medical provider consultation.",
+      "Client reports current AUD medication and identifies [benefit/barrier].",
+    ],
+    clientExplanation: [
+      "Some medications can support alcohol recovery by helping with cravings, maintaining abstinence, or creating a safety consequence if alcohol is used. A medical provider decides what fits.",
+    ],
+    cautions: [
+      "Withdrawal risk from alcohol can be medically serious; refer to medical/detox assessment when indicated.",
+      "Do not give dosing or medication selection advice.",
+    ],
+  },
+  "/medications/acamprosate": {
+    category: "AUD medication",
+    names: ["Generic: acamprosate.", "Brand: Campral."],
+    usedFor: [
+      "Used to support maintenance of abstinence from alcohol for some people after they have stopped drinking.",
+      "Often discussed as part of relapse prevention and recovery stabilization.",
+    ],
+    counselorFocus: [
+      "Ask about abstinence goal, adherence, side effects, cravings, and prescriber follow-up.",
+      "Explore practical barriers because acamprosate may involve multiple daily doses.",
+    ],
+    assessmentQuestions: [
+      "What goal did your prescriber connect this medication to?",
+      "Any missed doses or side effects?",
+      "How are cravings and high-risk situations currently?",
+    ],
+    documentation: [
+      "Client reports acamprosate prescription to support alcohol abstinence and reports [benefit/barrier].",
+      "Counselor reviewed relapse prevention supports and encouraged prescriber follow-up for medication questions.",
+    ],
+    clientExplanation: [
+      "Acamprosate is a medication some people use after stopping alcohol to support ongoing abstinence.",
+    ],
+    cautions: [
+      "Medical provider should address kidney concerns, dosing, side effects, and fit.",
+      "Counselor should not present it as a standalone treatment.",
+    ],
+  },
+  "/medications/disulfiram": {
+    category: "AUD medication / alcohol deterrent",
+    names: ["Generic: disulfiram.", "Brand: Antabuse."],
+    usedFor: [
+      "Used to support abstinence by causing an unpleasant and potentially serious reaction if alcohol is consumed.",
+      "Works best when the client fully understands the reaction and has strong support/monitoring.",
+    ],
+    counselorFocus: [
+      "Assess understanding, informed consent, adherence, alcohol exposure risk, motivation, and prescriber follow-up.",
+      "Explore whether the client knows hidden alcohol sources can matter, such as some products or medications, depending on prescriber guidance.",
+    ],
+    assessmentQuestions: [
+      "What did your prescriber explain about alcohol reactions?",
+      "What is your plan if you feel tempted to drink?",
+      "Any missed doses, side effects, or alcohol exposure?",
+    ],
+    documentation: [
+      "Client reports disulfiram prescription and verbalizes understanding that alcohol use can cause serious reaction.",
+      "Counselor encouraged client to follow prescriber guidance and reviewed relapse prevention supports.",
+    ],
+    clientExplanation: [
+      "Disulfiram is a medication that can make drinking alcohol cause a very unpleasant or serious reaction. It requires careful medical guidance.",
+    ],
+    cautions: [
+      "Do not minimize the alcohol-disulfiram reaction.",
+      "Refer all side effect, alcohol exposure, and medication interaction questions to prescriber.",
+    ],
+  },
+  "/medications/withdrawal-support-medications": {
+    category: "Withdrawal support / detox-related medications",
+    names: [
+      "Alcohol withdrawal may involve benzodiazepines or other medically supervised protocols.",
+      "Opioid withdrawal support may involve buprenorphine, methadone, clonidine, lofexidine, or symptom-targeted medications depending on provider.",
+      "Thiamine and other vitamin/medical supports may be used in alcohol-related medical care.",
+    ],
+    usedFor: [
+      "Used by medical providers to reduce withdrawal risk, manage symptoms, and prevent complications.",
+      "Withdrawal management can require detox, emergency care, or medical monitoring depending on severity.",
+    ],
+    counselorFocus: [
+      "Screen for last use, withdrawal history, seizures, delirium tremens, overdose risk, pregnancy, medical conditions, and current symptoms.",
+      "Know when to refer to detox/medical assessment instead of routine outpatient counseling.",
+    ],
+    assessmentQuestions: [
+      "When was last use?",
+      "What withdrawal symptoms are happening now?",
+      "Any history of seizures, hallucinations, delirium tremens, severe vomiting, blackouts, or medical detox?",
+      "Any current medications or medical conditions?",
+    ],
+    documentation: [
+      "Client reports withdrawal symptoms including [symptoms]. Counselor referred client for medical evaluation/detox assessment according to policy.",
+      "No current withdrawal symptoms reported; history of [risk/no severe withdrawal] noted for ASAM Dimension 1.",
+    ],
+    clientExplanation: [
+      "Withdrawal can be uncomfortable and sometimes medically dangerous. A medical provider can decide what level of support is safest.",
+    ],
+    cautions: [
+      "Alcohol and benzodiazepine withdrawal can be life-threatening.",
+      "Do not advise home detox when medical risk may be present.",
+      "Follow agency policy for intoxication and withdrawal risk.",
+    ],
+  },
+  "/medications/antidepressants": {
+    category: "Psychiatric medication category",
+    names: [
+      "SSRIs: sertraline, fluoxetine, escitalopram, citalopram, paroxetine.",
+      "SNRIs: venlafaxine, duloxetine, desvenlafaxine.",
+      "Other examples: bupropion, mirtazapine, trazodone.",
+    ],
+    usedFor: [
+      "Commonly used for depression, anxiety disorders, trauma-related symptoms, and other conditions depending on prescriber.",
+      "Can affect recovery by improving mood/anxiety stability or by creating adherence/side effect concerns.",
+    ],
+    counselorFocus: [
+      "Ask what symptoms the medication targets, adherence, side effects, missed doses, and whether substance use affects taking it.",
+      "Monitor for mood changes and safety concerns within counseling role.",
+    ],
+    assessmentQuestions: [
+      "What is the medication prescribed for?",
+      "How long have you been taking it?",
+      "Any side effects, missed doses, or concerns?",
+      "Any recent mood changes or safety concerns?",
+    ],
+    documentation: [
+      "Client reports antidepressant medication for [symptom/diagnosis] and reports [adherence/effect/barrier].",
+      "Counselor encouraged client to discuss medication concerns with prescriber.",
+    ],
+    clientExplanation: [
+      "Antidepressants are medications some people use for depression, anxiety, trauma symptoms, or related concerns. Your prescriber is the best person for medication questions.",
+    ],
+    cautions: [
+      "Do not advise stopping abruptly.",
+      "Escalate suicidal ideation, severe mood changes, mania-like symptoms, or concerning side effects according to policy.",
+    ],
+  },
+  "/medications/anti-anxiety-medications": {
+    category: "Psychiatric medication category",
+    names: [
+      "SSRIs/SNRIs may be used for anxiety.",
+      "Buspirone is a non-benzodiazepine anxiety medication.",
+      "Hydroxyzine may be used for anxiety symptoms.",
+      "Benzodiazepines include alprazolam, clonazepam, lorazepam, diazepam and require caution in SUD settings.",
+    ],
+    usedFor: [
+      "Used to treat anxiety symptoms depending on diagnosis, medical history, and prescriber judgment.",
+      "In SUD treatment, sedating or controlled medications require careful coordination and risk awareness.",
+    ],
+    counselorFocus: [
+      "Ask about anxiety symptoms, panic, sleep, trauma triggers, medication adherence, sedation, misuse risk, and combining with alcohol/opioids.",
+      "Coordinate with prescriber only with ROI and within policy.",
+    ],
+    assessmentQuestions: [
+      "What anxiety symptoms are you treating?",
+      "Any sedation, missed doses, taking more than prescribed, or mixing with alcohol/opioids?",
+      "What non-medication coping skills help?",
+    ],
+    documentation: [
+      "Client reports anxiety medication and identifies [benefit/side effect/barrier].",
+      "Counselor reviewed coping skills and encouraged prescriber consultation for medication concerns.",
+    ],
+    clientExplanation: [
+      "Some medications can help anxiety, but safety matters, especially with alcohol, opioids, or sedating medications. Your prescriber should guide medication decisions.",
+    ],
+    cautions: [
+      "Benzodiazepines plus alcohol/opioids can increase overdose/sedation risk.",
+      "Do not give medication safety clearance; refer to prescriber.",
+    ],
+  },
+  "/medications/mood-stabilizers": {
+    category: "Psychiatric medication category",
+    names: [
+      "Examples include lithium, valproate/divalproex, carbamazepine, lamotrigine, and others depending on diagnosis.",
+    ],
+    usedFor: [
+      "Often used for bipolar disorder, mood instability, seizure-related indications, or other prescriber-determined conditions.",
+      "May require lab monitoring depending on medication.",
+    ],
+    counselorFocus: [
+      "Ask about diagnosis, mood episodes, adherence, side effects, monitoring appointments, and substance use impact.",
+      "Watch for manic symptoms, depression, safety risk, and medication nonadherence barriers.",
+    ],
+    assessmentQuestions: [
+      "What symptoms or diagnosis is this medication for?",
+      "Any recent manic, depressive, or mixed symptoms?",
+      "Any lab monitoring or prescriber follow-up needed?",
+    ],
+    documentation: [
+      "Client reports mood stabilizer prescription and reports [stability/barrier/side effect concern].",
+      "Counselor encouraged continued prescriber follow-up and monitored mood symptoms within treatment plan.",
+    ],
+    clientExplanation: [
+      "Mood stabilizers are medications some people use to reduce mood swings or stabilize bipolar-type symptoms. Prescribers monitor fit and safety.",
+    ],
+    cautions: [
+      "Medication-specific lab and side effect questions belong with prescriber.",
+      "Escalate safety concerns, severe mood changes, or signs of mania/psychosis according to policy.",
+    ],
+  },
+  "/medications/antipsychotic-medications": {
+    category: "Psychiatric medication category",
+    names: [
+      "Examples include risperidone, quetiapine, olanzapine, aripiprazole, ziprasidone, haloperidol, and long-acting injectable formulations.",
+    ],
+    usedFor: [
+      "May be used for psychosis, bipolar disorder, severe mood symptoms, agitation, or other prescriber-determined conditions.",
+      "Can be relevant in SUD treatment when symptoms affect safety, cognition, treatment engagement, or relapse risk.",
+    ],
+    counselorFocus: [
+      "Ask about symptoms targeted, adherence, side effects, sedation, restlessness, metabolic concerns, and prescriber follow-up.",
+      "Assess whether psychotic or severe mood symptoms are active and affecting safety or treatment participation.",
+    ],
+    assessmentQuestions: [
+      "What symptoms does this medication help with?",
+      "Any hallucinations, paranoia, severe mood changes, or safety concerns currently?",
+      "Any side effects or missed doses?",
+    ],
+    documentation: [
+      "Client reports antipsychotic medication for [symptom/diagnosis] and reports [benefit/barrier].",
+      "Counselor monitored mental health symptoms and encouraged prescriber follow-up.",
+    ],
+    clientExplanation: [
+      "Antipsychotic medications can help with symptoms like psychosis, severe mood instability, or agitation depending on the person’s diagnosis and prescriber plan.",
+    ],
+    cautions: [
+      "Do not interpret medication effectiveness beyond client report and observed functioning.",
+      "Active psychosis, severe agitation, or safety risk may require urgent consultation or higher level of care.",
+    ],
+  },
+  "/medications/medication-questions-for-assessment": {
+    category: "Assessment tool",
+    names: [
+      "Medication reconciliation questions.",
+      "MAT/MOUD questions.",
+      "Psychiatric medication questions.",
+      "Adherence and side effect questions.",
+    ],
+    usedFor: [
+      "Used during comprehensive assessment, reassessment, treatment planning, case management, and coordination of care.",
+    ],
+    counselorFocus: [
+      "Identify current medications, prescribers, adherence barriers, side effects, safety concerns, and coordination needs.",
+      "Understand how medication affects ASAM Dimensions 2 and 3, and sometimes Dimensions 1, 4, 5, and 6.",
+    ],
+    assessmentQuestions: [
+      "What medications are you currently prescribed?",
+      "Who prescribes each medication?",
+      "What do you take it for?",
+      "Are you taking it as prescribed?",
+      "Any side effects, missed doses, cost barriers, transportation barriers, or pharmacy problems?",
+      "Any medication for opioid use disorder or alcohol use disorder?",
+      "Any overdose reversal medication available, such as naloxone?",
+      "Do you want coordination with your prescriber?",
+    ],
+    documentation: [
+      "Client reports current medications include [list as reported]. Client reports [adherence/barriers/side effects].",
+      "Medication concerns appear relevant to ASAM Dimension [2/3] and treatment planning due to [reason].",
+      "ROI for prescriber coordination was [completed/offered/declined].",
+    ],
+    clientExplanation: [
+      "I ask about medications because they can affect withdrawal risk, mood, safety, cravings, and treatment planning. I will not tell you how to take them; that is for your medical provider.",
+    ],
+    cautions: [
+      "Do not document unverified medication information as fact beyond client report.",
+      "Urgent medication reactions, withdrawal concerns, overdose risk, pregnancy questions, or severe side effects need medical consultation.",
+    ],
+  },
+};
+
+function medicationBlocks(page: ContentPage): TopicBlock[] {
+  const guide = medicationGuides[page.path] ?? medicationGuides["/medications/overview"];
+  return [
+    { title: "Category", items: [guide.category] },
+    { title: "Generic names and common names", items: guide.names },
+    { title: "What it is used for", items: guide.usedFor },
+    { title: "What counselors need to pay attention to", items: guide.counselorFocus },
+    { title: "Assessment questions", items: guide.assessmentQuestions },
+    { title: "Documentation examples", items: guide.documentation },
+    { title: "Client-friendly explanation", items: guide.clientExplanation },
+    { title: "Safety and scope reminders", items: guide.cautions },
+  ];
+}
+
 function coreBlocks(page: ContentPage): TopicBlock[] {
+  const guide = coreFunctionGuides[page.path];
+  if (guide) {
+    return [
+      { title: "Definition", items: guide.definition },
+      { title: "When you use it", items: guide.whenUsed },
+      { title: "Forms and documentation connected to it", items: guide.forms },
+      { title: "Documentation examples", items: guide.documentation },
+      { title: "ASAM, ethics, and clinical connections", items: guide.clinicalConnections },
+      { title: "ADC/LADC exam prep points", items: guide.examPrep },
+      { title: "Common mistakes", items: guide.mistakes },
+    ];
+  }
+
   return [
     {
       title: "What this core function looks like",

@@ -1,7 +1,7 @@
 # LADC Compass Cloud Access
 
 You can host LADC Compass so it opens from any computer, like a normal website.
-The app is now prepared for optional Supabase login and cloud sync.
+The app is now prepared for optional invite-only Supabase login and cloud sync.
 
 ## Important Storage Note
 
@@ -12,8 +12,9 @@ Without Supabase keys, LADC Compass saves entries in each browser's local storag
 
 With Supabase connected:
 
-- Users can sign in by email link.
+- Invited users can sign in with email and password.
 - Saved hours, notes, plans, supervision notes, and documentation upload records sync across computers.
+- Public visitors can still read the learning content, but they cannot use your private synced workspace.
 - The app still warns against PHI and should not be used as a HIPAA client record system.
 
 Because this is not a HIPAA client management system, do not enter real client identifying information or PHI.
@@ -49,7 +50,19 @@ In Supabase, also go to Authentication, then URL Configuration:
 2. Add your Vercel URL to Redirect URLs.
 3. Save.
 
-## Step 2: Deploy the Website
+## Step 2: Make Login Invite-Only
+
+In Supabase:
+
+1. Go to Authentication, then Providers.
+2. Open Email.
+3. Keep email/password sign-in enabled.
+4. Turn off public self-signups if the setting is available in your Supabase project.
+5. Create or invite users manually from Authentication, then Users.
+
+The LADC Compass app does not show a Create Account button. Only invited users should receive working accounts. The database policies in `supabase-schema.sql` keep each signed-in user's saved entries separate.
+
+## Step 3: Deploy the Website
 
 ### Easiest: Vercel
 

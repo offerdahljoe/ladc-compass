@@ -24,4 +24,4 @@ If the page does not open automatically, copy that address into Chrome, Edge, or
 
 The Next.js app is configured for cloud/static hosting. See `CLOUD-DEPLOYMENT.md`.
 
-Cloud hosting lets you open the website from any computer. Supabase login and sync support has been added for saved entries once you add your Supabase keys.
+Cloud hosting lets you open the website from any computer. Invite-only Supabase email/password sign-in can sync saved entries once you add your Supabase keys and invite users.
