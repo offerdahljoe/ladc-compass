@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import HoursTrackerPlaceholder from "@/components/HoursTrackerPlaceholder";
 import PageTemplate from "@/components/PageTemplate";
 import ResourceDatabase from "@/components/ResourceDatabase";
-import StuckHelper from "@/components/StuckHelper";
 import WebsiteLibraryView from "@/components/WebsiteLibraryView";
 import { contentPages, getPageByPath } from "@/lib/siteContent";
 
@@ -37,14 +36,6 @@ export default async function DynamicContentPage({
         <section className="mt-5">
           <HoursTrackerPlaceholder />
         </section>
-      </PageTemplate>
-    );
-  }
-
-  if (path === "/helper/im-stuck") {
-    return (
-      <PageTemplate page={contentPage}>
-        <StuckHelper />
       </PageTemplate>
     );
   }

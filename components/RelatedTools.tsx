@@ -21,12 +21,6 @@ export default function RelatedTools({ paths }: { paths: string[] }) {
             {page.title}
           </Link>
         ))}
-        <Link
-          href="/helper/im-stuck"
-          className="focus-ring rounded-md border border-clay/20 bg-clay/10 px-3 py-2 text-sm font-semibold text-ink hover:border-clay"
-        >
-          I’m stuck. Guide me.
-        </Link>
       </div>
     </aside>
   );

@@ -281,16 +281,6 @@ export const mainNavigation: NavItem[] = [
       "42 CFR Part 2 Resources",
     ].map((title) => ({ title, path: `/website-library/${slugify(title)}` })),
   },
-  {
-    title: "I'm Stuck Helper",
-    path: "/helper/im-stuck",
-    items: [
-      { title: "I'm Stuck", path: "/helper/im-stuck" },
-      { title: "What Page Do I Need?", path: "/helper/what-page-do-i-need" },
-      { title: "What Wording Do I Need?", path: "/helper/what-wording-do-i-need" },
-      { title: "What Does This Connect To?", path: "/helper/what-does-this-connect-to" },
-    ],
-  },
 ];
 
 export const quickActions = [
@@ -303,7 +293,6 @@ export const quickActions = [
   { title: "Study 12 Core Functions", path: "/core-functions/screening" },
   { title: "Track Internship Hours", path: "/internship-licensure/hours-tracker" },
   { title: "Open Kai-Shin Hub", path: "/kai-shin/procentive" },
-  { title: "I'm Stuck", path: "/helper/im-stuck" },
   { title: "Find Clinical Wording", path: "/clinical-wording/assessment-wording" },
   { title: "Build a Group", path: "/group-therapy-hub/group-session-builder" },
 ];
@@ -513,17 +502,6 @@ const specialPages: Record<string, Partial<ContentPage>> = {
       "/procentive-workflow/assessment-entry-workflow",
       "/assessments/comprehensive-assessment",
       "/clinical-wording/procentive-copy-paste-wording",
-    ],
-  },
-  "/helper/im-stuck": {
-    summary:
-      "A guided triage helper for moments when you know the clinical task but not the next page, wording, form, or connection.",
-    related: [
-      "/assessments/comprehensive-assessment",
-      "/clinical-wording/assessment-wording",
-      "/client-scripts/opening-the-conversation",
-      "/documentation/progress-notes",
-      "/treatment-planning/problem-statements",
     ],
   },
   "/resource-hub/community-resources": {
@@ -987,16 +965,6 @@ const specialDetails: Record<string, Partial<PageDetails>> = {
       "Quality check: each field should answer a different question and should not contradict another field.",
     ],
   },
-  "/helper/im-stuck": {
-    examples: [
-      "If you do not know what to write, start with: What happened? Why does it matter? What is the next clinical step?",
-      "If you do not know where to go, choose assessment, wording, script, treatment plan, Procentive, resource, or supervision.",
-    ],
-    mistakes: [
-      "Staring at the blank field instead of choosing the clinical task.",
-      "Trying to write final wording before identifying the purpose of the note.",
-    ],
-  },
 };
 
 function defaultRelatedFor(path: string, section: string) {
@@ -1007,7 +975,6 @@ function defaultRelatedFor(path: string, section: string) {
     "/client-scripts/opening-the-conversation",
     "/treatment-planning/problem-statements",
     "/documentation/progress-notes",
-    "/helper/im-stuck",
   ];
   const sectionLinks: Record<string, string[]> = {
     Documentation: [
@@ -1060,6 +1027,747 @@ function defaultRelatedFor(path: string, section: string) {
   return [...(sectionLinks[section] ?? []), ...base]
     .filter((link, index, links) => link !== path && links.indexOf(link) === index)
     .slice(0, 8);
+}
+
+export type TopicBlock = {
+  title: string;
+  items: string[];
+};
+
+export function getTopicBlocks(page: ContentPage): TopicBlock[] {
+  const specific = specificTopicBlocks[page.path];
+  if (specific) return specific;
+
+  const title = page.title;
+  const lowerTitle = title.toLowerCase();
+  const section = page.section;
+
+  if (page.path === "/assessments/comprehensive-assessment") {
+    return [
+      {
+        title: "Assessment map",
+        items: [
+          "Start with why the person is being assessed now: self-referral, court/probation, family concern, treatment transfer, use recurrence, safety concern, or program requirement.",
+          "Build the clinical story across substance use, mental health, medical issues, legal concerns, education/employment, family/social context, recovery environment, strengths, and barriers.",
+          "End with DSM-5 diagnostic impression, ASAM placement summary, treatment recommendations, and initial treatment plan themes.",
+        ],
+      },
+      {
+        title: "Questions that actually help",
+        items: [
+          "What substance or behavior is causing the most current concern?",
+          "When was last use, how often is use happening, and what consequences are showing up?",
+          "What has helped before, even briefly?",
+          "What makes recovery harder at home, work, school, legally, medically, or emotionally?",
+          "What does the person want to be different 30 days from now?",
+        ],
+      },
+      {
+        title: "Documentation starters",
+        items: [
+          "Presenting Problem: The individual presents for assessment due to [current reason], reporting [pattern/concern] affecting [life areas].",
+          "Strengths: The individual identifies [supports/skills/values/prior success] as recovery assets.",
+          "Recommendations: Based on reported history and current needs, treatment should focus on [relapse prevention/coping/supports/coordination].",
+        ],
+      },
+      {
+        title: "Clinical traps to avoid",
+        items: [
+          "Do not turn the assessment into a transcript. Summarize patterns and clinical meaning.",
+          "Do not write an ASAM rating without evidence.",
+          "Do not forget strengths, readiness, and recovery environment.",
+          "Do not include client identifiers in learning notes or examples.",
+        ],
+      },
+    ];
+  }
+
+  if (lowerTitle.includes("asam")) {
+    return [
+      {
+        title: "Dimension-by-dimension use",
+        items: [
+          "Dimension 1: intoxication, withdrawal, last use, detox risk, history of severe withdrawal.",
+          "Dimension 2: medical conditions, pain, medications, pregnancy, sleep, nutrition, health access.",
+          "Dimension 3: mental health symptoms, cognition, trauma impact, safety, coping, behavioral risk.",
+          "Dimension 4: motivation, insight, ambivalence, treatment engagement, readiness barriers.",
+          "Dimension 5: cravings, triggers, recurrence pattern, coping plan, sober supports.",
+          "Dimension 6: housing, relationships, transportation, work/school, legal stressors, substances in environment.",
+        ],
+      },
+      {
+        title: "Wording formula",
+        items: [
+          "Dimension [#] risk is assessed as [0-4] based on [specific evidence].",
+          "Current need is [monitoring, stabilization, relapse prevention, coping skill development, referral, or case management].",
+          "This connects to treatment planning by [goal/objective/intervention].",
+        ],
+      },
+      {
+        title: "Examples",
+        items: [
+          "Dimension 5 risk appears elevated due to recent recurrence, cravings, and limited coping plan.",
+          "Dimension 4 risk appears moderate due to ambivalence about abstinence while continuing to attend sessions.",
+          "Dimension 6 risk appears high due to unstable housing and regular exposure to substance use in the home.",
+        ],
+      },
+    ];
+  }
+
+  if (lowerTitle.includes("dsm")) {
+    return [
+      {
+        title: "How to think about criteria",
+        items: [
+          "Look for a pattern of impaired control, social impairment, risky use, and pharmacological indicators.",
+          "Do not diagnose from one consequence alone; identify a pattern over the relevant timeframe.",
+          "Use severity specifiers carefully and follow site/supervisor guidance.",
+        ],
+      },
+      {
+        title: "Information to gather",
+        items: [
+          "Substance, frequency, amount, route, last use, tolerance, withdrawal, unsuccessful cut-down attempts.",
+          "Role impairment, relationship impact, risky situations, cravings, continued use despite consequences.",
+          "Periods of remission or sustained recovery.",
+        ],
+      },
+      {
+        title: "Documentation examples",
+        items: [
+          "Reported history is consistent with substance use disorder criteria including cravings, continued use despite consequences, and impaired role functioning.",
+          "Further diagnostic clarification is recommended due to incomplete information about duration, tolerance, and withdrawal.",
+        ],
+      },
+    ];
+  }
+
+  if (section === "Documentation") return documentationBlocks(page);
+  if (section === "Treatment Planning") return treatmentBlocks(page);
+  if (section === "Clinical Wording Library") return wordingBlocks(page);
+  if (section === "Client Scripts Library" || section === "Client Communication Toolkit") return scriptBlocks(page);
+  if (section === "Group Therapy Hub" || lowerTitle.includes("group")) return groupBlocks(page);
+  if (section === "Clinical Toolbox") return toolboxBlocks(page);
+  if (section === "12 Core Functions") return coreBlocks(page);
+  if (section === "Ethics & Compliance") return ethicsBlocks(page);
+  if (section === "Procentive Workflow" || section === "Kai-Shin Hub") return procentiveBlocks(page);
+  if (section === "Resource Hub") return resourceBlocks(page);
+  if (section === "Internship & Licensure") return internshipBlocks(page);
+  if (section === "Website Library") return websiteBlocks(page);
+
+  return [
+    {
+      title: `${title} in practice`,
+      items: [
+        `${title} should help the counselor decide what to do next, what to document, and what related tool to open.`,
+        "Add program-specific content, supervision notes, and examples as this section develops.",
+      ],
+    },
+  ];
+}
+
+const specificTopicBlocks: Record<string, TopicBlock[]> = {
+  "/documentation/progress-notes": [
+    {
+      title: "DAP note anatomy",
+      items: [
+        "Data: session focus, client statements, observed behavior, counselor intervention, skills practiced, risk updates, and clinically relevant events.",
+        "Assessment: counselor’s clinical impression of progress, barriers, readiness, risk, symptoms, or connection to treatment goals.",
+        "Plan: next appointment focus, homework, referral follow-up, safety step, treatment plan update, or supervision/consultation need.",
+      ],
+    },
+    {
+      title: "Strong progress note examples",
+      items: [
+        "D: Session focused on weekend cravings and conflict at home. Counselor used MI reflections and relapse prevention planning. Client identified two high-risk situations.",
+        "A: Client demonstrates increased awareness of triggers but continues to need coping practice and support planning.",
+        "P: Continue relapse prevention work, review coping card next session, and monitor Dimension 5 recurrence risk.",
+      ],
+    },
+    {
+      title: "Weak note → stronger note",
+      items: [
+        "Weak: Client talked about relapse. Stronger: Client processed recent recurrence, identified trigger sequence, and practiced two coping responses for future high-risk situations.",
+        "Weak: Client was resistant. Stronger: Client expressed ambivalence about abstinence and identified both perceived benefits and consequences of continued use.",
+      ],
+    },
+  ],
+  "/documentation/group-notes": [
+    {
+      title: "Group note anatomy",
+      items: [
+        "Topic: what the group was about and why it mattered clinically.",
+        "Intervention: psychoeducation, skills practice, worksheet, discussion, role play, MI exercise, CBT activity, or relapse prevention planning.",
+        "Participation: attendance alone is not enough; note engagement, response, insight, skill practice, or barriers.",
+        "Plan: next group focus, practice assignment, or treatment plan connection.",
+      ],
+    },
+    {
+      title: "Group note wording",
+      items: [
+        "Group focused on identifying relapse warning signs and early coping responses. Counselor provided psychoeducation and facilitated a trigger-mapping activity.",
+        "Participant engaged in discussion and identified one personal warning sign and one support contact. Plan is to continue relapse prevention skill practice.",
+      ],
+    },
+    {
+      title: "Common group documentation problems",
+      items: [
+        "Only documenting the topic, not the intervention.",
+        "Writing the same participation sentence for every person.",
+        "Including unnecessary personal disclosures from other group members.",
+        "Forgetting the treatment plan or ASAM connection.",
+      ],
+    },
+  ],
+  "/treatment-planning/problem-statements": [
+    {
+      title: "Problem statement formula",
+      items: [
+        "Name the clinical barrier without blaming the person.",
+        "Tie the problem to assessment findings: cravings, withdrawal risk, recurrence, ambivalence, coping deficits, legal stress, mental health symptoms, or recovery environment.",
+        "Keep it broad enough to support services, but specific enough to guide goals.",
+      ],
+    },
+    {
+      title: "Examples by presentation",
+      items: [
+        "Alcohol: Recovery stability is affected by alcohol cravings, high-risk social situations, and limited refusal skills.",
+        "Opioids: Recovery and safety are affected by opioid cravings, overdose risk, and need for coordinated recovery support.",
+        "Stimulants: Recovery stability is affected by stimulant use patterns, sleep disruption, and difficulty managing emotional triggers.",
+        "Co-occurring: Substance use recovery is complicated by anxiety symptoms and limited coping strategies.",
+      ],
+    },
+  ],
+  "/treatment-planning/goals": [
+    {
+      title: "Good goal qualities",
+      items: [
+        "Client-centered: sounds like something the person can understand.",
+        "Recovery-oriented: points toward stability, health, coping, support, safety, or functioning.",
+        "Connected: clearly follows from assessment findings and ASAM needs.",
+      ],
+    },
+    {
+      title: "Goal examples",
+      items: [
+        "Increase recovery stability and reduce recurrence risk.",
+        "Strengthen coping skills for cravings and emotional stressors.",
+        "Improve ability to maintain recovery-supportive routines.",
+        "Build sober support and reduce isolation.",
+      ],
+    },
+  ],
+  "/treatment-planning/objectives": [
+    {
+      title: "Objective formula",
+      items: [
+        "Client will + observable action + number/frequency/timeframe.",
+        "Use objectives that can be reviewed in session.",
+        "Avoid vague objectives such as “understand addiction” unless paired with a concrete behavior.",
+      ],
+    },
+    {
+      title: "Objective examples",
+      items: [
+        "Client will identify three personal triggers and three coping responses within 30 days.",
+        "Client will develop a written relapse prevention plan by the next treatment plan review.",
+        "Client will attend two recovery-supportive activities weekly and process barriers in session.",
+      ],
+    },
+  ],
+  "/treatment-planning/interventions": [
+    {
+      title: "Intervention formula",
+      items: [
+        "Counselor will + clinical method + purpose.",
+        "Name the intervention: MI, CBT, psychoeducation, relapse prevention planning, skills rehearsal, referral coordination, safety planning.",
+        "Match the intervention to the objective and assessed need.",
+      ],
+    },
+    {
+      title: "Intervention examples",
+      items: [
+        "Counselor will use MI to explore ambivalence and strengthen change talk related to substance use goals.",
+        "Counselor will use CBT skill practice to help client identify thoughts, feelings, triggers, and alternative coping responses.",
+        "Counselor will provide relapse prevention education and support development of a written prevention plan.",
+      ],
+    },
+  ],
+  "/assessments/risk-safety-assessment": [
+    {
+      title: "Risk areas to clarify",
+      items: [
+        "Suicidal ideation, intent, plan, access to means, past attempts, protective factors, and current supports.",
+        "Homicidal ideation or threats, duty-to-warn concerns, violence risk, and immediate safety needs.",
+        "Overdose risk, withdrawal risk, intoxication, impaired driving, unsafe environment, exploitation, or medical instability.",
+      ],
+    },
+    {
+      title: "Safety documentation",
+      items: [
+        "Document what was asked, what was reported or observed, risk level, protective factors, consultation, safety plan, referrals, and follow-up.",
+        "Use agency crisis policy and supervision immediately when risk is elevated.",
+      ],
+    },
+  ],
+  "/client-communication/confidentiality": [
+    {
+      title: "Plain-language explanation",
+      items: [
+        "Most of what you share is private.",
+        "There are exceptions related to safety, abuse/neglect reporting, court/legal requirements, and situations where you sign permission for information to be shared.",
+        "If something comes up that may require action, I will explain what is happening and involve you as much as possible.",
+      ],
+    },
+    {
+      title: "Questions clients often ask",
+      items: [
+        "Will my probation officer know? Answer depends on releases, court requirements, and agency policy.",
+        "Will my family know? Not without proper permission unless a legal/safety exception applies.",
+        "Can I choose what is shared? In many cases, releases can specify what information is shared and with whom.",
+      ],
+    },
+  ],
+  "/ethics-compliance/42-cfr-part-2": [
+    {
+      title: "Practical meaning",
+      items: [
+        "42 CFR Part 2 adds confidentiality protections for certain substance use disorder treatment records.",
+        "Do not assume HIPAA permission automatically means SUD treatment information can be shared.",
+        "Check agency policy, valid consent, redisclosure language, and supervision when unsure.",
+      ],
+    },
+    {
+      title: "Counselor decision checklist",
+      items: [
+        "Is this a Part 2 record?",
+        "Who is requesting information?",
+        "Is there a valid written consent or legal exception?",
+        "What exactly can be disclosed?",
+        "Does the client understand what they are authorizing?",
+      ],
+    },
+  ],
+  "/ethics-compliance/hipaa": [
+    {
+      title: "Practical meaning",
+      items: [
+        "HIPAA protects individually identifiable health information held by covered entities and business associates.",
+        "It sets limits on use/disclosure and gives people rights related to their health information.",
+        "For SUD treatment records, also check 42 CFR Part 2 and agency policy.",
+      ],
+    },
+    {
+      title: "LADC intern reminders",
+      items: [
+        "Do not use real client details in personal notes, AI tools, screenshots, or study examples.",
+        "Use minimum necessary information when discussing care.",
+        "Ask supervision before sharing anything that feels uncertain.",
+      ],
+    },
+  ],
+  "/ethics-compliance/245g": [
+    {
+      title: "Practical meaning",
+      items: [
+        "245G is a Minnesota substance use disorder treatment services statute area and should be read alongside agency policy.",
+        "For an intern, the key is knowing that documentation, assessment, treatment planning, and service delivery are compliance-sensitive.",
+        "Use official statute resources and supervision rather than relying on memory.",
+      ],
+    },
+    {
+      title: "How it shows up in daily work",
+      items: [
+        "Assessment requirements and timelines.",
+        "Treatment plan and review expectations.",
+        "Documentation standards.",
+        "Policies, client rights, and service coordination.",
+      ],
+    },
+  ],
+  "/clinical-toolbox/motivational-interviewing": [
+    {
+      title: "MI in real use",
+      items: [
+        "Use MI when the client feels mixed, pressured, unsure, defensive, or not ready.",
+        "Listen for change talk: desire, ability, reasons, need, commitment, activation, taking steps.",
+        "Use OARS: open questions, affirmations, reflections, summaries.",
+      ],
+    },
+    {
+      title: "Useful prompts",
+      items: [
+        "What do you like about using, and what concerns you about it?",
+        "Where does this fit with what you want for yourself?",
+        "On a scale of 0-10, how important is change right now? Why that number and not lower?",
+      ],
+    },
+  ],
+  "/clinical-toolbox/cbt-tools": [
+    {
+      title: "CBT in SUD counseling",
+      items: [
+        "Map situation → thought → feeling → urge → behavior → consequence.",
+        "Identify patterns that increase use risk.",
+        "Practice alternative thoughts, coping actions, and refusal skills.",
+      ],
+    },
+    {
+      title: "Session activities",
+      items: [
+        "Trigger chain analysis.",
+        "Thought record tied to cravings.",
+        "Coping card for high-risk moments.",
+        "Behavioral activation plan for recovery-supportive routines.",
+      ],
+    },
+  ],
+  "/clinical-toolbox/relapse-prevention": [
+    {
+      title: "Relapse prevention targets",
+      items: [
+        "Warning signs, triggers, cravings, high-risk routines, emotional states, support gaps, and recovery drift.",
+        "Early intervention steps before use happens.",
+        "Post-recurrence plan that reduces shame and increases learning.",
+      ],
+    },
+    {
+      title: "Plan components",
+      items: [
+        "Top five triggers.",
+        "Three coping actions.",
+        "Three support contacts.",
+        "Emergency/safety steps.",
+        "What to do after a lapse.",
+      ],
+    },
+  ],
+};
+
+function documentationBlocks(page: ContentPage): TopicBlock[] {
+  const title = page.title;
+  return [
+    {
+      title: `${title} structure`,
+      items: [
+        "Service focus: what the contact/session/group was about.",
+        "Counselor intervention: MI, CBT skill, psychoeducation, crisis response, case management, referral, review, or planning.",
+        "Client response: engagement, insight, barriers, skill practice, questions, refusal, or follow-up need.",
+        "Clinical link: treatment plan goal, ASAM need, risk issue, referral need, or discharge plan.",
+      ],
+    },
+    {
+      title: "Sample language",
+      items: [
+        "Counselor met with client to address [topic]. Counselor used [intervention]. Client responded by [observable response].",
+        "Progress is noted in [goal area] as evidenced by [specific behavior/report]. Continued focus is needed on [barrier/skill].",
+        "Plan is to [next step], monitor [risk/need], and review [homework/referral/support] at next contact.",
+      ],
+    },
+    {
+      title: "What makes the note stronger",
+      items: [
+        "Specific intervention instead of vague support.",
+        "Observable client response instead of judgment.",
+        "Clear tie to treatment plan or assessed need.",
+        "Next step that another counselor could understand.",
+      ],
+    },
+  ];
+}
+
+function treatmentBlocks(page: ContentPage): TopicBlock[] {
+  return [
+    {
+      title: "Assessment-to-plan translation",
+      items: [
+        "Assessment finding: cravings, recurrence, withdrawal risk, ambivalence, mental health symptoms, legal pressure, or recovery environment barrier.",
+        "Problem statement: phrase the barrier without blame.",
+        "Goal: state the recovery direction.",
+        "Objective: make the next step observable or reviewable.",
+        "Intervention: describe what the counselor or program will do.",
+      ],
+    },
+    {
+      title: "Disorder-specific examples",
+      items: [
+        "Stimulant use: build sleep/routine stabilization, trigger planning, refusal skills, emotional regulation, and support accountability.",
+        "Opioid use: include overdose prevention, MAT coordination when appropriate, cravings plan, recovery supports, and safety planning.",
+        "Alcohol use: assess withdrawal risk, high-risk situations, coping skills, sober supports, and medical coordination.",
+        "Cannabis use: connect use pattern to motivation, functioning, legal/work/school impact, coping alternatives, and relapse prevention.",
+      ],
+    },
+    {
+      title: "Strong wording examples",
+      items: [
+        "Problem: Recovery stability is affected by cravings and limited coping responses during high-risk situations.",
+        "Goal: Increase ability to maintain recovery during emotional and environmental stressors.",
+        "Objective: Identify three triggers and practice three coping strategies within 30 days.",
+        "Intervention: Counselor will use MI, CBT skill practice, psychoeducation, and relapse prevention planning.",
+      ],
+    },
+  ];
+}
+
+function wordingBlocks(page: ContentPage): TopicBlock[] {
+  return [
+    {
+      title: "Use this wording pattern",
+      items: [
+        "Start with observable or reported information.",
+        "Add clinical meaning only when supported.",
+        "Connect the statement to ASAM, diagnosis, treatment plan, or next step.",
+        "Keep language respectful, concise, and field-ready.",
+      ],
+    },
+    {
+      title: "Replace weak wording",
+      items: [
+        "Instead of “unmotivated,” write “reports ambivalence about changing use and identified mixed reasons for change.”",
+        "Instead of “noncompliant,” write “missed two appointments; barriers to attendance will be reviewed.”",
+        "Instead of “denies problem,” write “does not currently identify substance use as primary concern.”",
+      ],
+    },
+    {
+      title: "Copy/paste starters",
+      items: [
+        "The individual reports [pattern] with impact on [life area].",
+        "Current presentation suggests need for [skill/referral/monitoring/support].",
+        "Counselor will continue to assess [risk/need] and support [goal/objective].",
+      ],
+    },
+  ];
+}
+
+function scriptBlocks(page: ContentPage): TopicBlock[] {
+  return [
+    {
+      title: "Plain-language script",
+      items: [
+        "“I want to explain this in regular language before we move forward.”",
+        "“This helps us understand what support fits, what choices you have, and what information is needed.”",
+        "“You can ask questions, slow me down, or tell me if something does not make sense.”",
+      ],
+    },
+    {
+      title: "If the client asks why",
+      items: [
+        "“The reason we ask is to understand safety, support, and treatment needs.”",
+        "“This is not about judging you. It helps us match care to what is actually happening.”",
+        "“Some forms also protect your rights and clarify what information can be shared.”",
+      ],
+    },
+    {
+      title: "If the client refuses",
+      items: [
+        "“That is your choice. I can explain what we can still do and what may be limited without it.”",
+        "“Can you tell me what concerns you about signing or answering that?”",
+        "“We can pause and bring this back after you have more information.”",
+      ],
+    },
+  ];
+}
+
+function groupBlocks(page: ContentPage): TopicBlock[] {
+  return [
+    {
+      title: "Group plan ingredients",
+      items: [
+        "Topic: one focused recovery theme.",
+        "Opening question: safe, concrete, and related to the topic.",
+        "Skill or activity: something clients practice, not just discuss.",
+        "Processing questions: connect insight to behavior and recovery goals.",
+        "Documentation language: topic, intervention, participation, response, plan.",
+      ],
+    },
+    {
+      title: "Usable topic ideas",
+      items: [
+        "Relapse warning signs and early intervention.",
+        "Cravings: urge surfing, delay, distract, decide.",
+        "High-risk people, places, and routines.",
+        "Values and recovery motivation.",
+        "Repairing trust and communicating needs.",
+      ],
+    },
+    {
+      title: "Group note starter",
+      items: [
+        "Group focused on [topic]. Counselor provided [psychoeducation/skill practice/activity]. Participant [engagement level] and identified [skill/insight]. Plan is to continue practicing [next step].",
+      ],
+    },
+  ];
+}
+
+function toolboxBlocks(page: ContentPage): TopicBlock[] {
+  return [
+    {
+      title: "Use during session",
+      items: [
+        "Choose one concrete tool that matches the client’s current need.",
+        "Explain why the tool fits before using it.",
+        "Ask the client to apply it to a real situation from the week.",
+        "End with one practice step or homework item.",
+      ],
+    },
+    {
+      title: "Counselor prompts",
+      items: [
+        "What happened before the urge or behavior?",
+        "What did the client try already?",
+        "What would make this plan realistic outside the office?",
+        "What support or barrier needs to be addressed?",
+      ],
+    },
+  ];
+}
+
+function coreBlocks(page: ContentPage): TopicBlock[] {
+  return [
+    {
+      title: "What this core function looks like",
+      items: [
+        "A real counselor task connected to client care, documentation, ethics, and supervision.",
+        "A way to categorize internship activity and exam study.",
+        "A reminder that addiction counseling includes more than direct counseling sessions.",
+      ],
+    },
+    {
+      title: "Internship examples",
+      items: [
+        "Observe or practice the task with supervision.",
+        "Log the core function in internship hours.",
+        "Write one reflection about what was learned and one question for supervision.",
+      ],
+    },
+    {
+      title: "Exam prep angle",
+      items: [
+        "Know the purpose of the function.",
+        "Know what documentation or forms connect to it.",
+        "Know common ethical issues and referral/consultation points.",
+      ],
+    },
+  ];
+}
+
+function ethicsBlocks(page: ContentPage): TopicBlock[] {
+  return [
+    {
+      title: "Decision points",
+      items: [
+        "What information is protected?",
+        "Who is asking for it and why?",
+        "Is there a valid release or legal exception?",
+        "Is there safety risk, mandated reporting, or duty-to-warn concern?",
+        "What does agency policy or supervision require?",
+      ],
+    },
+    {
+      title: "Documentation language",
+      items: [
+        "Counselor reviewed confidentiality limits and answered client questions.",
+        "Counselor consulted supervisor regarding [ethical/compliance issue] and followed agency policy.",
+        "Client was informed of [requirement/limit] in plain language and next steps were reviewed.",
+      ],
+    },
+    {
+      title: "Do not do this",
+      items: [
+        "Do not promise absolute confidentiality.",
+        "Do not guess on legal requirements.",
+        "Do not share information without checking release/policy.",
+        "Do not document ethics issues with blaming or emotional language.",
+      ],
+    },
+  ];
+}
+
+function procentiveBlocks(page: ContentPage): TopicBlock[] {
+  return [
+    {
+      title: "Workflow checklist",
+      items: [
+        "Confirm which field you are completing and what question it should answer.",
+        "Paste only language that fits that specific field.",
+        "Check consistency across presenting problem, history, ASAM, diagnosis, plan, and notes.",
+        "Remove unnecessary detail and identifiers from learning examples.",
+      ],
+    },
+    {
+      title: "Field-ready language checks",
+      items: [
+        "Is it neutral?",
+        "Is it clinically specific?",
+        "Does it explain why the information matters?",
+        "Does it connect to ASAM, diagnosis, treatment plan, or follow-up?",
+      ],
+    },
+    {
+      title: "Common Procentive problems",
+      items: [
+        "Same language pasted into multiple unrelated fields.",
+        "ASAM summary with no rating rationale.",
+        "Treatment plan problem that does not match the assessment.",
+        "Progress note that names a topic but no intervention or response.",
+      ],
+    },
+  ];
+}
+
+function resourceBlocks(page: ContentPage): TopicBlock[] {
+  return [
+    {
+      title: "Referral thinking",
+      items: [
+        "Name the practical barrier: housing, food, transportation, legal, medical, mental health, MAT, or recovery support.",
+        "Clarify whether the client wants information only or help making contact.",
+        "Check release requirements before coordinating directly.",
+        "Document resource provided and follow-up plan.",
+      ],
+    },
+    {
+      title: "Case management note starter",
+      items: [
+        "Client identified need for [resource area]. Counselor provided information for [resource] and reviewed next steps. Client plans to [action]. Follow-up will occur [timeframe].",
+      ],
+    },
+  ];
+}
+
+function internshipBlocks(page: ContentPage): TopicBlock[] {
+  return [
+    {
+      title: "What to track",
+      items: [
+        "Date, hours, direct or indirect category, activity, core function, supervisor contact, and reflection.",
+        "Questions for supervision and exam prep themes.",
+        "Documentation practice without real client identifiers.",
+      ],
+    },
+    {
+      title: "Reflection prompts",
+      items: [
+        "What core function did I observe or practice?",
+        "What clinical judgment did I see?",
+        "What would I ask next time?",
+        "What documentation wording do I need to practice?",
+      ],
+    },
+  ];
+}
+
+function websiteBlocks(page: ContentPage): TopicBlock[] {
+  return [
+    {
+      title: "How to use outside links",
+      items: [
+        "Use official or professional sources for laws, ethics, licensure, ASAM, and federal resources.",
+        "Do not rely on memory for regulations that may change.",
+        "Bring legal/compliance uncertainty to supervision or agency leadership.",
+      ],
+    },
+  ];
 }
 
 export function getPageByPath(path: string) {

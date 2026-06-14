@@ -60,7 +60,6 @@ export default function DashboardHome() {
             ["Client Scripts Library", "/client-scripts/opening-the-conversation"],
             ["Procentive Workflow", "/procentive-workflow/intake-to-assessment"],
             ["Group Therapy Hub", "/group-therapy-hub/group-session-builder"],
-            ["I’m Stuck", "/helper/im-stuck"],
           ].map(([title, path]) => (
             <Link
               key={path}

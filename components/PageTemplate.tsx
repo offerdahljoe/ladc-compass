@@ -1,17 +1,6 @@
 import FavoriteButton from "@/components/FavoriteButton";
 import RelatedTools from "@/components/RelatedTools";
-import { getPageDetails, type ContentPage } from "@/lib/siteContent";
-
-const templateSections = [
-  "What is this?",
-  "Why does it matter?",
-  "When do I use it?",
-  "How do I explain it to a client?",
-  "How do I document it?",
-  "What does it connect to?",
-  "Examples",
-  "Common mistakes",
-];
+import { getPageDetails, getTopicBlocks, type ContentPage } from "@/lib/siteContent";
 
 export default function PageTemplate({
   page,
@@ -21,16 +10,7 @@ export default function PageTemplate({
   children?: React.ReactNode;
 }) {
   const details = getPageDetails(page);
-  const copyBySection = {
-    "What is this?": details.what,
-    "Why does it matter?": details.why,
-    "When do I use it?": details.when,
-    "How do I explain it to a client?": details.explain,
-    "How do I document it?": details.document,
-    "What does it connect to?": details.connects,
-    Examples: details.examples,
-    "Common mistakes": details.mistakes,
-  };
+  const topicBlocks = getTopicBlocks(page);
 
   return (
     <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_18rem]">
@@ -76,25 +56,19 @@ export default function PageTemplate({
         {children}
 
         <section className="mt-5 grid gap-4">
-          {templateSections.map((section) => (
+          {topicBlocks.map((block) => (
             <div
-              key={section}
+              key={block.title}
               className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft"
             >
-              <h2 className="text-xl font-semibold text-ink">{section}</h2>
-              {Array.isArray(copyBySection[section as keyof typeof copyBySection]) ? (
-                <ul className="mt-3 grid gap-2 text-sm leading-6 text-ink/72">
-                  {(copyBySection[section as keyof typeof copyBySection] as string[]).map((item) => (
-                    <li key={item} className="rounded-md bg-paper px-3 py-2">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="mt-3 text-sm leading-6 text-ink/72">
-                  {copyBySection[section as keyof typeof copyBySection] as string}
-                </p>
-              )}
+              <h2 className="text-xl font-semibold text-ink">{block.title}</h2>
+              <ul className="mt-3 grid gap-2 text-sm leading-6 text-ink/72">
+                {block.items.map((item) => (
+                  <li key={item} className="rounded-md bg-paper px-3 py-2">
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </section>
