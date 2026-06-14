@@ -1,5 +1,4 @@
 import MobileNav from "@/components/MobileNav";
-import PrivacyBanner from "@/components/PrivacyBanner";
 import Sidebar from "@/components/Sidebar";
 import TopSearch from "@/components/TopSearch";
 
@@ -16,7 +15,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             Google search, and detailed 12 Core Functions content are included
             in this build.
           </div>
-          <PrivacyBanner />
           <main className="mt-5">{children}</main>
         </div>
       </div>
