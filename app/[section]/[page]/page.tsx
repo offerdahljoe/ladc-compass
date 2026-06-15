@@ -1,13 +1,10 @@
 import { notFound } from "next/navigation";
 import ADCPracticeTest from "@/components/ADCPracticeTest";
-import {
-  ClientExplanationScriptsCompanion,
-  ClinicalWordingLibraryCompanion,
-  LearnClinicalThinkingCompanion,
-} from "@/components/CompanionLibraries";
 import { WorkflowPhasePage } from "@/components/ClientJourneyComponents";
+import GroupTherapyHub from "@/components/GroupTherapyHub";
 import HoursTrackerPlaceholder from "@/components/HoursTrackerPlaceholder";
 import KaiShinCompanionWorkspace from "@/components/KaiShinCompanionWorkspace";
+import KaiShinHubWorkspace from "@/components/KaiShinHubWorkspace";
 import PageTemplate from "@/components/PageTemplate";
 import ResourceDatabase from "@/components/ResourceDatabase";
 import WebsiteLibraryView from "@/components/WebsiteLibraryView";
@@ -44,24 +41,16 @@ export default async function DynamicContentPage({
     return <WorkflowPhasePage phase={phase} />;
   }
 
-  if (path === "/clinical-wording-library/wording") {
-    return <ClinicalWordingLibraryCompanion />;
+  if (path === "/group-therapy-hub/planner") {
+    return <GroupTherapyHub />;
   }
 
-  if (path === "/client-explanation-scripts/scripts") {
-    return <ClientExplanationScriptsCompanion />;
+  if (path === "/kai-shin/hub") {
+    return <KaiShinHubWorkspace />;
   }
 
-  if (section === "learn-clinical-thinking") {
-    return <LearnClinicalThinkingCompanion />;
-  }
-
-  if (path === "/resource-hub/community-resources" || path === "/resource-hub/contacts-database") {
-    return (
-      <PageTemplate page={contentPage}>
-        <ResourceDatabase />
-      </PageTemplate>
-    );
+  if (path === "/resource-hub/resources") {
+    return <ResourceDatabase />;
   }
 
   if (path === "/internship-survival-guide/hours-tracker") {

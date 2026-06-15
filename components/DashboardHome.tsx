@@ -11,10 +11,22 @@ type Favorite = {
 
 export default function DashboardHome() {
   const [favorites, setFavorites] = useState<Favorite[]>([]);
+  const [hourTotals, setHourTotals] = useState({ direct: 0, indirect: 0, total: 0 });
 
   useEffect(() => {
     setFavorites(JSON.parse(window.localStorage.getItem("ladc-favorites") || "[]"));
+    try {
+      const entries = JSON.parse(window.localStorage.getItem("ladc-internship-hours") || "[]") as Record<string, string>[];
+      const direct = entries.reduce((sum, entry) => sum + Number(entry.directHours || 0), 0);
+      const indirect = entries.reduce((sum, entry) => sum + Number(entry.indirectHours || 0), 0);
+      const legacy = entries.reduce((sum, entry) => sum + Number(entry.hours || 0), 0);
+      setHourTotals({ direct, indirect, total: direct + indirect + legacy });
+    } catch {
+      setHourTotals({ direct: 0, indirect: 0, total: 0 });
+    }
   }, []);
+
+  const hourProgress = Math.min(100, Math.round((hourTotals.total / 880) * 100));
 
   return (
     <>
@@ -30,6 +42,32 @@ export default function DashboardHome() {
           learning, documentation, resources, and internship work in one calm
           workspace.
         </p>
+      </section>
+
+      <section className="mt-5 rounded-lg border border-lagoon/20 bg-white p-5 shadow-soft">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-lagoon">
+              Internship Hours
+            </p>
+            <h2 className="mt-1 text-2xl font-semibold text-ink">
+              {hourTotals.total.toFixed(1)} / 880 hours logged
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-ink/70">
+              Direct: {hourTotals.direct.toFixed(1)} | Indirect:{" "}
+              {hourTotals.indirect.toFixed(1)}
+            </p>
+          </div>
+          <Link
+            href="/internship-survival-guide/hours-tracker"
+            className="focus-ring rounded-lg bg-lagoon px-5 py-3 text-sm font-semibold text-white hover:bg-ink"
+          >
+            Open Hours Tracker
+          </Link>
+        </div>
+        <div className="mt-4 h-3 rounded-full bg-paper">
+          <div className="h-3 rounded-full bg-lagoon" style={{ width: `${hourProgress}%` }} />
+        </div>
       </section>
 
       <section className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -48,19 +86,19 @@ export default function DashboardHome() {
       </section>
 
       <section className="mt-5 rounded-lg border border-lagoon/20 bg-white p-5 shadow-soft">
-        <h2 className="text-xl font-semibold text-ink">Connected clinical operating system</h2>
+        <h2 className="text-xl font-semibold text-ink">Main work areas</h2>
         <p className="mt-2 text-sm leading-6 text-ink/70">
-          These hubs are designed to keep assessment, wording, client
-          communication, Procentive workflow, groups, and treatment planning
-          connected instead of scattered.
+          These are the areas you are most likely to use during internship work:
+          client workflow, Kai-Shin assessment support, groups, resources, and
+          hour tracking.
         </p>
         <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
           {[
             ["Client Journey Navigator", "/client-journey/dashboard"],
             ["Kai-Shin Companion", "/kai-shin-procentive/companion"],
-            ["Clinical Wording Library", "/clinical-wording-library/wording"],
-            ["Client Explanation Scripts", "/client-explanation-scripts/scripts"],
-            ["Learn Clinical Thinking", "/learn-clinical-thinking/clinical-thinking"],
+            ["Group Therapy Hub", "/group-therapy-hub/planner"],
+            ["Resource Hub", "/resource-hub/resources"],
+            ["Kai-Shin Hub", "/kai-shin/hub"],
             ["Internship Survival Guide", "/internship-survival-guide/hours-tracker"],
           ].map(([title, path]) => (
             <Link

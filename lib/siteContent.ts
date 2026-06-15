@@ -53,41 +53,6 @@ export const mainNavigation: NavItem[] = [
     items: clientJourneyNavItems,
   },
   {
-    title: "Clinical Wording Library",
-    path: "/clinical-wording-library/wording",
-    items: [
-      { title: "Assessment Wording Library", path: "/clinical-wording-library/wording" },
-      { title: "Substance Use Severity", path: "/clinical-wording/substance-use-severity" },
-      { title: "Withdrawal Risk", path: "/clinical-wording/withdrawal-risk" },
-      { title: "Mental Health Symptoms", path: "/clinical-wording/mental-health-symptoms" },
-      { title: "Motivation / Readiness", path: "/clinical-wording/motivation-readiness" },
-      { title: "Relapse Risk", path: "/clinical-wording/relapse-risk" },
-      { title: "Recovery Environment", path: "/clinical-wording/recovery-environment" },
-      { title: "Treatment Recommendations", path: "/clinical-wording/treatment-recommendations" },
-    ],
-  },
-  {
-    title: "Client Explanation Scripts",
-    path: "/client-explanation-scripts/scripts",
-    items: [
-      { title: "Assessment Scripts", path: "/client-explanation-scripts/scripts" },
-      { title: "Explaining DSM-5", path: "/client-communication/dsm-5-diagnosis" },
-      { title: "Explaining ASAM", path: "/client-communication/asam-placement" },
-      { title: "Explaining Recommendations", path: "/client-communication/summary-recommendations" },
-      { title: "Explaining Confidentiality", path: "/client-communication/confidentiality" },
-    ],
-  },
-  {
-    title: "Learn Clinical Thinking",
-    path: "/learn-clinical-thinking/clinical-thinking",
-    items: [
-      { title: "Clinical Thinking Cards", path: "/learn-clinical-thinking/clinical-thinking" },
-      { title: "Assessment Simulator", path: "/learn-clinical-thinking/assessment-simulator" },
-      { title: "Missing Information Practice", path: "/learn-clinical-thinking/missing-information" },
-      { title: "Recommendation Rationale", path: "/learn-clinical-thinking/recommendation-rationale" },
-    ],
-  },
-  {
     title: "Documentation",
     path: "/documentation/progress-notes",
     items: [
@@ -154,19 +119,10 @@ export const mainNavigation: NavItem[] = [
   },
   {
     title: "Group Therapy Hub",
-    path: "/group-therapy-hub/group-session-builder",
+    path: "/group-therapy-hub/planner",
     items: [
-      "Group Session Builder",
-      "Topic Library",
-      "Opening Questions",
-      "Processing Questions",
-      "Skills Practice Activities",
-      "Psychoeducation Groups",
-      "Relapse Prevention Groups",
-      "Documentation Language",
-      "Group Expectations",
-      "Worksheet Ideas",
-    ].map((title) => ({ title, path: `/group-therapy-hub/${slugify(title)}` })),
+      { title: "Group Therapy Planner", path: "/group-therapy-hub/planner" },
+    ],
   },
   {
     title: "12 Core Functions",
@@ -220,52 +176,17 @@ export const mainNavigation: NavItem[] = [
   },
   {
     title: "Kai-Shin Hub",
-    path: "/kai-shin/procentive",
+    path: "/kai-shin/hub",
     items: [
-      "Procentive",
-      "Counselor Checklist",
-      "Documentation Codes",
-      "Intake Workflow",
-      "Templates",
-      "Company Information",
-      "Policies/Paperwork",
-      "Upload Kai-Shin Docs",
-    ].map((title) => ({ title, path: `/kai-shin/${slugify(title)}` })),
-  },
-  {
-    title: "Procentive Workflow",
-    path: "/procentive-workflow/intake-to-assessment",
-    items: [
-      "Intake to Assessment",
-      "Assessment Entry Workflow",
-      "ASAM Fields",
-      "Diagnosis Fields",
-      "Treatment Plan Fields",
-      "Progress Note Workflow",
-      "Group Note Workflow",
-      "Discharge Workflow",
-      "Copy/Paste Checks",
-    ].map((title) => ({ title, path: `/procentive-workflow/${slugify(title)}` })),
+      { title: "Kai-Shin Workspace", path: "/kai-shin/hub" },
+    ],
   },
   {
     title: "Resource Hub",
-    path: "/resource-hub/community-resources",
+    path: "/resource-hub/resources",
     items: [
-      "Community Resources",
-      "Contacts Database",
-      "Housing",
-      "Employment",
-      "Food Assistance",
-      "Transportation",
-      "Medical",
-      "Dental",
-      "Mental Health",
-      "Psychiatry",
-      "MAT Programs",
-      "Recovery Support",
-      "Legal Assistance",
-      "Crisis Resources",
-    ].map((title) => ({ title, path: `/resource-hub/${slugify(title)}` })),
+      { title: "Resource Directory", path: "/resource-hub/resources" },
+    ],
   },
   {
     title: "Website Library",
@@ -289,9 +210,8 @@ export const quickActions = [
   { title: "ROI / Collateral Scripts", path: "/client-journey/collateral-contacts-rois" },
   { title: "Open Kai-Shin Companion", path: "/kai-shin-procentive/companion" },
   { title: "Write Progress Note", path: "/documentation/progress-notes" },
-  { title: "Clinical Wording Library", path: "/clinical-wording-library/wording" },
-  { title: "Client Explanation Scripts", path: "/client-explanation-scripts/scripts" },
-  { title: "Assessment Simulator", path: "/learn-clinical-thinking/assessment-simulator" },
+  { title: "Plan a Group Session", path: "/group-therapy-hub/planner" },
+  { title: "Find or Add Resource", path: "/resource-hub/resources" },
   { title: "Study 12 Core Functions", path: "/core-functions/screening" },
   { title: "Track Internship Hours", path: "/internship-survival-guide/hours-tracker" },
 ];
@@ -1068,8 +988,8 @@ const specialPages: Record<string, Partial<ContentPage>> = {
       "/client-scripts/explaining-assessment",
       "/clinical-wording/assessment-wording",
       "/core-functions/assessment",
-      "/kai-shin/intake-workflow",
-      "/procentive-workflow/assessment-entry-workflow",
+      "/kai-shin/hub",
+      "/kai-shin-procentive/companion",
     ],
   },
   "/clinical-wording/assessment-wording": {
@@ -1079,7 +999,7 @@ const specialPages: Record<string, Partial<ContentPage>> = {
       "/assessments/comprehensive-assessment",
       "/clinical-wording/asam-wording",
       "/clinical-wording/dsm-5-diagnostic-wording",
-      "/procentive-workflow/assessment-entry-workflow",
+      "/kai-shin-procentive/companion",
       "/treatment-planning/problem-statements",
     ],
   },
@@ -1093,32 +1013,29 @@ const specialPages: Record<string, Partial<ContentPage>> = {
       "/ethics-compliance/confidentiality",
     ],
   },
-  "/group-therapy-hub/group-session-builder": {
+  "/group-therapy-hub/planner": {
     summary:
       "A practical group workflow for quickly choosing a topic, opening question, activity, processing questions, skill practice, and documentation language.",
     related: [
-      "/group-therapy-hub/topic-library",
-      "/group-therapy-hub/processing-questions",
+      "/group-therapy-hub/planner",
       "/documentation/group-notes",
-      "/clinical-wording/group-note-wording",
       "/core-functions/counseling",
     ],
   },
-  "/procentive-workflow/intake-to-assessment": {
+  "/kai-shin/hub": {
     summary:
-      "A workplace-specific workflow map for moving from intake information into assessment, ASAM, diagnosis, treatment planning, and documentation fields.",
+      "A single workplace-specific Kai-Shin reference for Procentive orientation, document codes, intake workflow, templates, policies, and de-identified upload reminders.",
     related: [
-      "/kai-shin/procentive",
-      "/procentive-workflow/assessment-entry-workflow",
+      "/kai-shin-procentive/companion",
+      "/client-journey/intake-packet",
       "/assessments/comprehensive-assessment",
-      "/clinical-wording/procentive-copy-paste-wording",
+      "/documentation/templates",
     ],
   },
-  "/resource-hub/community-resources": {
+  "/resource-hub/resources": {
     summary:
-      "A searchable working list for community resources, contact information, notes, web searches, and map searches.",
+      "A one-page resource directory for adding categories, saving resource contact information, filtering by category, and opening web or map searches.",
     related: [
-      "/resource-hub/contacts-database",
       "/client-communication/release-of-information",
       "/core-functions/referral",
       "/core-functions/case-management",
@@ -1577,7 +1494,7 @@ const specialDetails: Record<string, Partial<PageDetails>> = {
       "If asked why: “You deserve to know what is private and what situations require action before you decide what to share.”",
     ],
   },
-  "/procentive-workflow/assessment-entry-workflow": {
+  "/kai-shin-procentive/companion": {
     examples: [
       "Workflow: paste presenting problem first, then substance use history, then risk/strengths, then ASAM summary, then recommendations.",
       "Quality check: each field should answer a different question and should not contradict another field.",
@@ -1589,31 +1506,31 @@ function defaultRelatedFor(path: string, section: string) {
   const base = [
     "/assessments/comprehensive-assessment",
     "/assessments/asam-dimensions",
-    "/clinical-wording/assessment-wording",
-    "/client-scripts/opening-the-conversation",
+    "/kai-shin-procentive/companion",
+    "/client-journey/dashboard",
     "/treatment-planning/problem-statements",
     "/documentation/progress-notes",
   ];
   const sectionLinks: Record<string, string[]> = {
     Documentation: [
-      "/clinical-wording/progress-note-wording",
-      "/procentive-workflow/progress-note-workflow",
+      "/kai-shin/hub",
+      "/client-journey/dashboard",
       "/core-functions/reports-and-record-keeping",
     ],
     "Treatment Planning": [
       "/assessments/comprehensive-assessment",
-      "/clinical-wording/treatment-plan-wording",
-      "/procentive-workflow/treatment-plan-fields",
+      "/kai-shin-procentive/companion",
+      "/kai-shin/hub",
     ],
     "Clinical Toolbox": [
-      "/group-therapy-hub/group-session-builder",
-      "/client-scripts/opening-the-conversation",
+      "/group-therapy-hub/planner",
+      "/kai-shin-procentive/companion",
       "/documentation/progress-notes",
     ],
     "Client Communication Toolkit": [
-      "/client-scripts/opening-the-conversation",
+      "/client-journey/dashboard",
       "/ethics-compliance/confidentiality",
-      "/clinical-wording/assessment-wording",
+      "/kai-shin-procentive/companion",
     ],
     "12 Core Functions": [
       "/assessments/comprehensive-assessment",
@@ -1621,24 +1538,19 @@ function defaultRelatedFor(path: string, section: string) {
       "/ethics-compliance/documentation-compliance",
     ],
     "Ethics & Compliance": [
-      "/client-scripts/explaining-confidentiality",
+      "/client-journey/intake-packet",
       "/documentation/crisis-notes",
       "/core-functions/consultation",
     ],
     "Kai-Shin Hub": [
-      "/procentive-workflow/intake-to-assessment",
-      "/clinical-wording/procentive-copy-paste-wording",
+      "/kai-shin-procentive/companion",
+      "/client-journey/intake-packet",
       "/documentation/templates",
-    ],
-    "Procentive Workflow": [
-      "/kai-shin/procentive",
-      "/clinical-wording/procentive-copy-paste-wording",
-      "/documentation/examples",
     ],
     "Group Therapy Hub": [
       "/documentation/group-notes",
-      "/clinical-wording/group-note-wording",
       "/clinical-toolbox/group-therapy-ideas",
+      "/core-functions/counseling",
     ],
   };
 
