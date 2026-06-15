@@ -1,3 +1,5 @@
+import { assessmentNavItems } from "@/lib/assessmentSections";
+
 export type NavItem = {
   title: string;
   path: string;
@@ -39,16 +41,43 @@ export const mainNavigation: NavItem[] = [
     path: "/",
   },
   {
-    title: "Assessments",
-    path: "/assessments/comprehensive-assessment",
+    title: "Kai-Shin Procentive Companion",
+    path: "/kai-shin-procentive/assessment-summary",
+    items: assessmentNavItems,
+  },
+  {
+    title: "Clinical Wording Library",
+    path: "/clinical-wording-library/wording",
     items: [
-      { title: "Comprehensive Assessment", path: "/assessments/comprehensive-assessment" },
-      { title: "ASAM Dimensions", path: "/assessments/asam-dimensions" },
-      { title: "DSM-5 Substance Use Criteria", path: "/assessments/dsm-5-substance-use-criteria" },
-      { title: "Risk/Safety Assessment", path: "/assessments/risk-safety-assessment" },
-      { title: "Diagnostic Summary", path: "/assessments/diagnostic-summary" },
-      { title: "Placement Recommendation", path: "/assessments/placement-recommendation" },
-      { title: "Assessment Scripts", path: "/assessments/assessment-scripts" },
+      { title: "Assessment Wording Library", path: "/clinical-wording-library/wording" },
+      { title: "Substance Use Severity", path: "/clinical-wording/substance-use-severity" },
+      { title: "Withdrawal Risk", path: "/clinical-wording/withdrawal-risk" },
+      { title: "Mental Health Symptoms", path: "/clinical-wording/mental-health-symptoms" },
+      { title: "Motivation / Readiness", path: "/clinical-wording/motivation-readiness" },
+      { title: "Relapse Risk", path: "/clinical-wording/relapse-risk" },
+      { title: "Recovery Environment", path: "/clinical-wording/recovery-environment" },
+      { title: "Treatment Recommendations", path: "/clinical-wording/treatment-recommendations" },
+    ],
+  },
+  {
+    title: "Client Explanation Scripts",
+    path: "/client-explanation-scripts/scripts",
+    items: [
+      { title: "Assessment Scripts", path: "/client-explanation-scripts/scripts" },
+      { title: "Explaining DSM-5", path: "/client-communication/dsm-5-diagnosis" },
+      { title: "Explaining ASAM", path: "/client-communication/asam-placement" },
+      { title: "Explaining Recommendations", path: "/client-communication/summary-recommendations" },
+      { title: "Explaining Confidentiality", path: "/client-communication/confidentiality" },
+    ],
+  },
+  {
+    title: "Learn Clinical Thinking",
+    path: "/learn-clinical-thinking/clinical-thinking",
+    items: [
+      { title: "Clinical Thinking Cards", path: "/learn-clinical-thinking/clinical-thinking" },
+      { title: "Assessment Simulator", path: "/learn-clinical-thinking/assessment-simulator" },
+      { title: "Missing Information Practice", path: "/learn-clinical-thinking/missing-information" },
+      { title: "Recommendation Rationale", path: "/learn-clinical-thinking/recommendation-rationale" },
     ],
   },
   {
@@ -117,58 +146,6 @@ export const mainNavigation: NavItem[] = [
     ],
   },
   {
-    title: "Clinical Wording Library",
-    path: "/clinical-wording/assessment-wording",
-    items: [
-      "Assessment Wording",
-      "ASAM Wording",
-      "DSM-5 Diagnostic Wording",
-      "Progress Note Wording",
-      "Group Note Wording",
-      "Treatment Plan Wording",
-      "Risk and Safety Wording",
-      "Discharge Wording",
-      "Procentive Copy/Paste Wording",
-    ].map((title) => ({ title, path: `/clinical-wording/${slugify(title)}` })),
-  },
-  {
-    title: "Client Scripts Library",
-    path: "/client-scripts/opening-the-conversation",
-    items: [
-      "Opening the Conversation",
-      "Explaining Confidentiality",
-      "Explaining Releases",
-      "Explaining Assessment",
-      "Explaining ASAM",
-      "Explaining Treatment Plans",
-      "Explaining Groups",
-      "Discussing Positive UAs",
-      "Discussing Relapse",
-      "Discussing Discharge",
-      "Mandated Reporting",
-      "When a Client Refuses",
-    ].map((title) => ({ title, path: `/client-scripts/${slugify(title)}` })),
-  },
-  {
-    title: "Client Communication Toolkit",
-    path: "/client-communication/confidentiality",
-    items: [
-      { title: "Explaining Confidentiality", path: "/client-communication/confidentiality" },
-      { title: "Explaining Release of Information", path: "/client-communication/release-of-information" },
-      { title: "Explaining Treatment Consent", path: "/client-communication/treatment-consent" },
-      { title: "Explaining HIPAA", path: "/client-communication/hipaa" },
-      { title: "Explaining 42 CFR Part 2", path: "/client-communication/42-cfr-part-2" },
-      { title: "Explaining Comprehensive Assessment", path: "/client-communication/comprehensive-assessment" },
-      { title: "Explaining ASAM Placement", path: "/client-communication/asam-placement" },
-      { title: "Explaining Treatment Plans", path: "/client-communication/treatment-plans" },
-      { title: "Explaining Group Expectations", path: "/client-communication/group-expectations" },
-      { title: "Explaining Positive UAs", path: "/client-communication/positive-uas" },
-      { title: "Discussing Relapse", path: "/client-communication/relapse" },
-      { title: "Discussing Discharge", path: "/client-communication/discharge" },
-      { title: "Mandated Reporting Scripts", path: "/client-communication/mandated-reporting" },
-    ],
-  },
-  {
     title: "Group Therapy Hub",
     path: "/group-therapy-hub/group-session-builder",
     items: [
@@ -221,8 +198,8 @@ export const mainNavigation: NavItem[] = [
     ].map((title) => ({ title, path: `/ethics-compliance/${slugify(title)}` })),
   },
   {
-    title: "Internship & Licensure",
-    path: "/internship-licensure/hours-tracker",
+    title: "Internship Survival Guide",
+    path: "/internship-survival-guide/hours-tracker",
     items: [
       "Hours Tracker",
       "Supervision Log",
@@ -232,7 +209,7 @@ export const mainNavigation: NavItem[] = [
       "LADC Requirements",
       "Study Center",
       "Practice Questions",
-    ].map((title) => ({ title, path: `/internship-licensure/${slugify(title)}` })),
+    ].map((title) => ({ title, path: `/internship-survival-guide/${slugify(title)}` })),
   },
   {
     title: "Kai-Shin Hub",
@@ -300,18 +277,17 @@ export const mainNavigation: NavItem[] = [
 ];
 
 export const quickActions = [
-  { title: "Start Comprehensive Assessment", path: "/assessments/comprehensive-assessment" },
+  { title: "Start Kai-Shin Assessment", path: "/kai-shin-procentive/assessment-summary" },
+  { title: "Presenting Problem Coach", path: "/kai-shin-procentive/presenting-problem-referral-information" },
+  { title: "Substance Use History Coach", path: "/kai-shin-procentive/substance-use-history" },
+  { title: "ASAM Dimension Coach", path: "/kai-shin-procentive/asam-dimensions" },
+  { title: "Summary & Recommendations", path: "/kai-shin-procentive/summary-recommendations" },
   { title: "Write Progress Note", path: "/documentation/progress-notes" },
-  { title: "Build Treatment Plan", path: "/treatment-planning/problem-statements" },
-  { title: "Look Up Medications", path: "/medications/overview" },
-  { title: "Find ASAM Dimension", path: "/assessments/asam-dimensions" },
-  { title: "Explain Form to Client", path: "/client-communication/treatment-consent" },
-  { title: "Find Community Resource", path: "/resource-hub/community-resources" },
+  { title: "Clinical Wording Library", path: "/clinical-wording-library/wording" },
+  { title: "Client Explanation Scripts", path: "/client-explanation-scripts/scripts" },
+  { title: "Assessment Simulator", path: "/learn-clinical-thinking/assessment-simulator" },
   { title: "Study 12 Core Functions", path: "/core-functions/screening" },
-  { title: "Track Internship Hours", path: "/internship-licensure/hours-tracker" },
-  { title: "Open Kai-Shin Hub", path: "/kai-shin/procentive" },
-  { title: "Find Clinical Wording", path: "/clinical-wording/assessment-wording" },
-  { title: "Build a Group", path: "/group-therapy-hub/group-session-builder" },
+  { title: "Track Internship Hours", path: "/internship-survival-guide/hours-tracker" },
 ];
 
 export const resourceCategories = [
@@ -1043,7 +1019,7 @@ function pageSummaryFor(item: NavItem, section: string) {
   if (section === "Ethics & Compliance") {
     return `${item.title} explains the practical rule, counselor responsibility, client explanation, documentation expectation, supervision trigger, and official reference links for LADC work.`;
   }
-  if (section === "Internship & Licensure") {
+  if (section === "Internship Survival Guide" || section === "Internship & Licensure") {
     return `${item.title} supports LADC internship organization, licensure readiness, supervision preparation, exam study, and accountable hour tracking.`;
   }
   return `${item.title} gives practical guidance, examples, documentation language, related tools, and next-step questions for the ${section} workflow.`;
@@ -1133,14 +1109,14 @@ const specialPages: Record<string, Partial<ContentPage>> = {
       "/core-functions/case-management",
     ],
   },
-  "/internship-licensure/hours-tracker": {
+  "/internship-survival-guide/hours-tracker": {
     summary:
       "A working tracker for logging direct hours, indirect hours, core functions practiced, supervision contact, reflections, and total progress toward 880 hours.",
     related: [
-      "/internship-licensure/supervision-log",
+      "/internship-survival-guide/supervision-log",
       "/core-functions/screening",
-      "/internship-licensure/licensure-roadmap",
-      "/internship-licensure/adc-exam-prep",
+      "/internship-survival-guide/licensure-roadmap",
+      "/internship-survival-guide/adc-exam-prep",
     ],
   },
 };
@@ -1772,7 +1748,7 @@ export function getTopicBlocks(page: ContentPage): TopicBlock[] {
   if (section === "Documentation") return documentationBlocks(page);
   if (section === "Treatment Planning") return treatmentBlocks(page);
   if (section === "Clinical Wording Library") return wordingBlocks(page);
-  if (section === "Client Scripts Library" || section === "Client Communication Toolkit") return scriptBlocks(page);
+  if (section === "Client Explanation Scripts" || section === "Client Scripts Library" || section === "Client Communication Toolkit") return scriptBlocks(page);
   if (section === "Group Therapy Hub" || lowerTitle.includes("group")) return groupBlocks(page);
   if (section === "Clinical Toolbox") return toolboxBlocks(page);
   if (section === "Medications") return medicationBlocks(page);
@@ -1780,7 +1756,7 @@ export function getTopicBlocks(page: ContentPage): TopicBlock[] {
   if (section === "Ethics & Compliance") return ethicsBlocks(page);
   if (section === "Procentive Workflow" || section === "Kai-Shin Hub") return procentiveBlocks(page);
   if (section === "Resource Hub") return resourceBlocks(page);
-  if (section === "Internship & Licensure") return internshipBlocks(page);
+  if (section === "Internship Survival Guide" || section === "Internship & Licensure") return internshipBlocks(page);
   if (section === "Website Library") return websiteBlocks(page);
 
   return [
@@ -3130,7 +3106,7 @@ function resourceBlocks(page: ContentPage): TopicBlock[] {
 }
 
 const internshipGuides: Record<string, TopicBlock[]> = {
-  "/internship-licensure/hours-tracker": [
+  "/internship-survival-guide/hours-tracker": [
     {
       title: "How to use the tracker",
       items: [
@@ -3140,7 +3116,7 @@ const internshipGuides: Record<string, TopicBlock[]> = {
       ],
     },
   ],
-  "/internship-licensure/supervision-log": [
+  "/internship-survival-guide/supervision-log": [
     {
       title: "What to bring to supervision",
       items: [
@@ -3167,7 +3143,7 @@ const internshipGuides: Record<string, TopicBlock[]> = {
       ],
     },
   ],
-  "/internship-licensure/upload-internship-docs": [
+  "/internship-survival-guide/upload-internship-docs": [
     {
       title: "What belongs here",
       items: [
@@ -3177,7 +3153,7 @@ const internshipGuides: Record<string, TopicBlock[]> = {
       ],
     },
   ],
-  "/internship-licensure/licensure-roadmap": [
+  "/internship-survival-guide/licensure-roadmap": [
     {
       title: "LADC roadmap checklist",
       items: [
@@ -3204,7 +3180,7 @@ const internshipGuides: Record<string, TopicBlock[]> = {
       ],
     },
   ],
-  "/internship-licensure/adc-exam-prep": [
+  "/internship-survival-guide/adc-exam-prep": [
     {
       title: "What to study first",
       items: [
@@ -3233,7 +3209,7 @@ const internshipGuides: Record<string, TopicBlock[]> = {
       ],
     },
   ],
-  "/internship-licensure/ladc-requirements": [
+  "/internship-survival-guide/ladc-requirements": [
     {
       title: "What this page should help you organize",
       items: [
@@ -3257,7 +3233,7 @@ const internshipGuides: Record<string, TopicBlock[]> = {
       ],
     },
   ],
-  "/internship-licensure/study-center": [
+  "/internship-survival-guide/study-center": [
     {
       title: "Weekly study structure",
       items: [
@@ -3281,7 +3257,7 @@ const internshipGuides: Record<string, TopicBlock[]> = {
       ],
     },
   ],
-  "/internship-licensure/practice-questions": [
+  "/internship-survival-guide/practice-questions": [
     {
       title: "How to use the interactive test",
       items: [

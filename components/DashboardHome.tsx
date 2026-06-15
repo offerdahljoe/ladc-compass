@@ -56,10 +56,11 @@ export default function DashboardHome() {
         </p>
         <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
           {[
-            ["Clinical Wording Library", "/clinical-wording/assessment-wording"],
-            ["Client Scripts Library", "/client-scripts/opening-the-conversation"],
-            ["Procentive Workflow", "/procentive-workflow/intake-to-assessment"],
-            ["Group Therapy Hub", "/group-therapy-hub/group-session-builder"],
+            ["Kai-Shin Companion", "/kai-shin-procentive/assessment-summary"],
+            ["Clinical Wording Library", "/clinical-wording-library/wording"],
+            ["Client Explanation Scripts", "/client-explanation-scripts/scripts"],
+            ["Learn Clinical Thinking", "/learn-clinical-thinking/clinical-thinking"],
+            ["Internship Survival Guide", "/internship-survival-guide/hours-tracker"],
           ].map(([title, path]) => (
             <Link
               key={path}
