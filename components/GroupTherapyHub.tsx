@@ -337,14 +337,6 @@ export default function GroupTherapyHub() {
 
   return (
     <div className="grid gap-5">
-      <header className="rounded-lg border border-ink/10 bg-white p-6 shadow-soft">
-        <p className="text-sm font-semibold uppercase tracking-wide text-lagoon">Group Therapy Hub</p>
-        <h1 className="mt-2 text-3xl font-semibold text-ink sm:text-4xl">Group Session Planner</h1>
-        <p className="mt-3 max-w-4xl text-sm leading-6 text-ink/72">
-          Choose a therapy style, then a recovery topic, then a specific group session. Each session gives you the clinical purpose, opening question, activity, processing prompts, ASAM connection, and documentation language.
-        </p>
-      </header>
-
       <section className="rounded-lg border border-lagoon/20 bg-white p-5 shadow-soft">
         <div className="grid gap-4 lg:grid-cols-3">
           <label className="text-sm font-semibold text-ink">

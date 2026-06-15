@@ -301,18 +301,6 @@ export function DocumentationAtEachPhaseTracker({
 export function ClientJourneyDashboard() {
   return (
     <section className="grid gap-5">
-      <header className="rounded-lg border border-ink/10 bg-white p-6 shadow-soft">
-        <p className="text-sm font-semibold uppercase tracking-wide text-lagoon">
-          Client Journey Navigator
-        </p>
-        <h1 className="mt-2 text-3xl font-semibold text-ink">
-          Client Journey Dashboard
-        </h1>
-        <p className="mt-3 text-sm leading-6 text-ink/72">
-          Track what phase you are in, what documentation is missing, what
-          deadlines are coming, and what should happen next.
-        </p>
-      </header>
       <section className="rounded-lg border border-lagoon/20 bg-white p-5 shadow-soft">
         <h2 className="text-xl font-semibold text-ink">Visual Timeline</h2>
         <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
@@ -379,15 +367,6 @@ export function WorkflowPhasePage({ phase }: { phase: JourneyPhase }) {
   return (
     <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_20rem]">
       <article className="grid gap-5">
-        <header className="rounded-lg border border-ink/10 bg-white p-6 shadow-soft">
-          <p className="text-sm font-semibold uppercase tracking-wide text-lagoon">
-            Client Journey Navigator
-          </p>
-          <h1 className="mt-2 text-3xl font-semibold text-ink">{phase.title}</h1>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-ink/72">
-            {phase.description}
-          </p>
-        </header>
         <SimpleCard title="Phase Overview" items={[phase.purpose]} />
         <PhaseChecklist items={phase.whatToDoNext} />
         <RequiredDocumentsList documents={phase.requiredDocuments} />

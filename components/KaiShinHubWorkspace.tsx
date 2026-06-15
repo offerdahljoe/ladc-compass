@@ -150,14 +150,6 @@ export default function KaiShinHubWorkspace() {
 
   return (
     <div className="grid gap-5">
-      <header className="rounded-lg border border-ink/10 bg-white p-6 shadow-soft">
-        <p className="text-sm font-semibold uppercase tracking-wide text-lagoon">Kai-Shin Hub</p>
-        <h1 className="mt-2 text-3xl font-semibold text-ink sm:text-4xl">Kai-Shin Workspace</h1>
-        <p className="mt-3 max-w-4xl text-sm leading-6 text-ink/72">
-          A single workplace-specific reference page for Procentive orientation, daily counselor workflow, form codes, intake steps, documentation templates, and de-identified upload reminders.
-        </p>
-      </header>
-
       <section className="rounded-lg border border-lagoon/20 bg-white p-5 shadow-soft">
         <label className="block text-sm font-semibold text-ink">
           Choose Kai-Shin area

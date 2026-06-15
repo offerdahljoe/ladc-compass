@@ -222,20 +222,6 @@ export default function KaiShinCompanionWorkspace() {
 
   return (
     <div className="grid gap-5">
-      <header className="rounded-lg border border-ink/10 bg-white p-6 shadow-soft">
-        <p className="text-sm font-semibold uppercase tracking-wide text-lagoon">
-          Kai-Shin Procentive Companion
-        </p>
-        <h1 className="mt-2 text-3xl font-semibold text-ink sm:text-4xl">
-          Comprehensive Assessment Workspace
-        </h1>
-        <p className="mt-3 max-w-4xl text-sm leading-6 text-ink/72">
-          One guided page for understanding each assessment section, finding
-          supporting information, translating client language, and drafting
-          clinical wording without jumping across a dozen pages.
-        </p>
-      </header>
-
       <ConnectionStrip />
 
       <section className="rounded-lg border border-lagoon/20 bg-white p-5 shadow-soft">
