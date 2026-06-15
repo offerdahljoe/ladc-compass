@@ -14,30 +14,40 @@ export default function MobileNav() {
           Open navigation
         </summary>
         <nav className="mt-3 grid gap-2">
-          {mainNavigation.map((section) => (
-            <details key={section.title}>
-              <summary className="cursor-pointer rounded-md px-3 py-2 text-sm font-semibold text-ink">
+          {mainNavigation.map((section) =>
+            !section.items || section.items.length <= 1 ? (
+              <Link
+                key={section.title}
+                href={section.path}
+                className="rounded-md px-3 py-2 text-sm font-semibold text-ink hover:bg-paper"
+              >
                 {section.title}
-              </summary>
-              <div className="grid gap-1 pl-3">
-                <Link
-                  href={section.path}
-                  className="rounded-md px-3 py-2 text-sm text-ink/70 hover:bg-paper"
-                >
-                  Open {section.title}
-                </Link>
-                {section.items?.map((item) => (
+              </Link>
+            ) : (
+              <details key={section.title}>
+                <summary className="cursor-pointer rounded-md px-3 py-2 text-sm font-semibold text-ink">
+                  {section.title}
+                </summary>
+                <div className="grid gap-1 pl-3">
                   <Link
-                    key={item.path}
-                    href={item.path}
+                    href={section.path}
                     className="rounded-md px-3 py-2 text-sm text-ink/70 hover:bg-paper"
                   >
-                    {item.title}
+                    Open {section.title}
                   </Link>
-                ))}
-              </div>
-            </details>
-          ))}
+                  {section.items?.map((item) => (
+                    <Link
+                      key={item.path}
+                      href={item.path}
+                      className="rounded-md px-3 py-2 text-sm text-ink/70 hover:bg-paper"
+                    >
+                      {item.title}
+                    </Link>
+                  ))}
+                </div>
+              </details>
+            ),
+          )}
         </nav>
       </details>
     </div>

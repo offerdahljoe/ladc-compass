@@ -1,4 +1,3 @@
-import { assessmentNavItems } from "@/lib/assessmentSections";
 import { clientJourneyNavItems } from "@/lib/clientJourneyPhases";
 
 export type NavItem = {
@@ -43,8 +42,10 @@ export const mainNavigation: NavItem[] = [
   },
   {
     title: "Kai-Shin Procentive Companion",
-    path: "/kai-shin-procentive/assessment-summary",
-    items: assessmentNavItems,
+    path: "/kai-shin-procentive/companion",
+    items: [
+      { title: "Assessment Companion", path: "/kai-shin-procentive/companion" },
+    ],
   },
   {
     title: "Client Journey Navigator",
@@ -286,11 +287,7 @@ export const quickActions = [
   { title: "Open Client Journey", path: "/client-journey/dashboard" },
   { title: "Intake Packet Guide", path: "/client-journey/intake-packet" },
   { title: "ROI / Collateral Scripts", path: "/client-journey/collateral-contacts-rois" },
-  { title: "Start Kai-Shin Assessment", path: "/kai-shin-procentive/assessment-summary" },
-  { title: "Presenting Problem Coach", path: "/kai-shin-procentive/presenting-problem-referral-information" },
-  { title: "Substance Use History Coach", path: "/kai-shin-procentive/substance-use-history" },
-  { title: "ASAM Dimension Coach", path: "/kai-shin-procentive/asam-dimensions" },
-  { title: "Summary & Recommendations", path: "/kai-shin-procentive/summary-recommendations" },
+  { title: "Open Kai-Shin Companion", path: "/kai-shin-procentive/companion" },
   { title: "Write Progress Note", path: "/documentation/progress-notes" },
   { title: "Clinical Wording Library", path: "/clinical-wording-library/wording" },
   { title: "Client Explanation Scripts", path: "/client-explanation-scripts/scripts" },
@@ -1019,7 +1016,16 @@ function flatten(items: NavItem[]): NavItem[] {
   return items.flatMap((item) => [item, ...(item.items ? flatten(item.items) : [])]);
 }
 
-export const allNavItems = flatten(mainNavigation).filter((item) => item.path !== "/");
+function uniqueByPath(items: NavItem[]) {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    if (seen.has(item.path)) return false;
+    seen.add(item.path);
+    return true;
+  });
+}
+
+export const allNavItems = uniqueByPath(flatten(mainNavigation).filter((item) => item.path !== "/"));
 
 function pageSummaryFor(item: NavItem, section: string) {
   if (section === "Medications") {

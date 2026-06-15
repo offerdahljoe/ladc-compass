@@ -12,10 +12,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <MobileNav />
           <div className="mb-4 rounded-lg border border-lagoon/20 bg-white px-4 py-3 text-sm text-ink/70 shadow-soft">
             <strong className="text-ink">LADC Compass update:</strong> Build
-            marker 2026-06-15-client-journey-v1. Client Journey Navigator,
-            Kai-Shin Procentive Companion, sticky Google search, invite-only
-            sign-in, and interactive documentation support are included in this
-            build.
+            marker 2026-06-15-kai-shin-simplified-v1. Kai-Shin Procentive
+            Companion is now a single assessment workspace with a section
+            dropdown, clinical translator, paragraph builder, and ASAM helper.
           </div>
           <main className="mt-5">{children}</main>
         </div>

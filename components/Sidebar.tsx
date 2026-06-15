@@ -20,39 +20,41 @@ export default function Sidebar() {
           const active =
             pathname === item.path ||
             item.items?.some((child) => pathname === child.path);
+          if (!item.items || item.items.length <= 1) {
+            return (
+              <Link
+                key={item.title}
+                href={item.path}
+                className={`focus-ring rounded-md px-3 py-2 text-sm font-semibold ${
+                  active
+                    ? "bg-lagoon text-white"
+                    : "text-ink hover:bg-paper"
+                }`}
+              >
+                {item.title}
+              </Link>
+            );
+          }
           return (
             <details key={item.title} open={active || item.path === "/"}>
               <summary className="focus-ring cursor-pointer rounded-md px-3 py-2 text-sm font-semibold text-ink hover:bg-paper">
                 {item.title}
               </summary>
-              {item.items ? (
-                <div className="mt-1 grid gap-1 border-l border-ink/10 pl-3">
-                  {item.items.map((child) => (
-                    <Link
-                      key={child.path}
-                      href={child.path}
-                      className={`focus-ring rounded-md px-3 py-2 text-sm ${
-                        pathname === child.path
-                          ? "bg-lagoon text-white"
-                          : "text-ink/70 hover:bg-paper hover:text-ink"
-                      }`}
-                    >
-                      {child.title}
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                <Link
-                  href={item.path}
-                  className={`focus-ring mt-1 block rounded-md px-3 py-2 text-sm ${
-                    pathname === item.path
-                      ? "bg-lagoon text-white"
-                      : "text-ink/70 hover:bg-paper hover:text-ink"
-                  }`}
-                >
-                  Open
-                </Link>
-              )}
+              <div className="mt-1 grid gap-1 border-l border-ink/10 pl-3">
+                {item.items.map((child) => (
+                  <Link
+                    key={child.path}
+                    href={child.path}
+                    className={`focus-ring rounded-md px-3 py-2 text-sm ${
+                      pathname === child.path
+                        ? "bg-lagoon text-white"
+                        : "text-ink/70 hover:bg-paper hover:text-ink"
+                    }`}
+                  >
+                    {child.title}
+                  </Link>
+                ))}
+              </div>
             </details>
           );
         })}

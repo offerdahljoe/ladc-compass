@@ -891,6 +891,13 @@ export const assessmentNavItems = assessmentSections.map((item) => ({
   path: `/kai-shin-procentive/${item.id}`,
 }));
 
+export const compactAssessmentNavItems = [
+  {
+    title: "Assessment Companion",
+    path: "/kai-shin-procentive/companion",
+  },
+];
+
 export type WordingCategory = {
   title: string;
   plainMeaning: string;

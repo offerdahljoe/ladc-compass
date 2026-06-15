@@ -7,11 +7,10 @@ import {
 } from "@/components/CompanionLibraries";
 import { WorkflowPhasePage } from "@/components/ClientJourneyComponents";
 import HoursTrackerPlaceholder from "@/components/HoursTrackerPlaceholder";
-import KaiShinSectionPage from "@/components/KaiShinSectionPage";
+import KaiShinCompanionWorkspace from "@/components/KaiShinCompanionWorkspace";
 import PageTemplate from "@/components/PageTemplate";
 import ResourceDatabase from "@/components/ResourceDatabase";
 import WebsiteLibraryView from "@/components/WebsiteLibraryView";
-import { getAssessmentSection } from "@/lib/assessmentSections";
 import { getClientJourneyPhase } from "@/lib/clientJourneyPhases";
 import { contentPages, getPageByPath } from "@/lib/siteContent";
 
@@ -33,9 +32,10 @@ export default async function DynamicContentPage({
   if (!contentPage) notFound();
 
   if (section === "kai-shin-procentive") {
-    const assessmentSection = getAssessmentSection(pageSlug);
-    if (!assessmentSection) notFound();
-    return <KaiShinSectionPage section={assessmentSection} />;
+    if (pageSlug === "companion") {
+      return <KaiShinCompanionWorkspace />;
+    }
+    notFound();
   }
 
   if (section === "client-journey") {

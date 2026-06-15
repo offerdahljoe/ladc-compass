@@ -1,4 +1,4 @@
 LADC Compass deploy check
-Build marker: 2026-06-15-client-journey-v1
+Build marker: 2026-06-15-kai-shin-simplified-v1
 
 If you can read this at /deploy-check.txt on Vercel, Vercel is deploying the current project root.
