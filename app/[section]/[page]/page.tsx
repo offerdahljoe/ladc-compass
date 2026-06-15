@@ -5,12 +5,14 @@ import {
   ClinicalWordingLibraryCompanion,
   LearnClinicalThinkingCompanion,
 } from "@/components/CompanionLibraries";
+import { WorkflowPhasePage } from "@/components/ClientJourneyComponents";
 import HoursTrackerPlaceholder from "@/components/HoursTrackerPlaceholder";
 import KaiShinSectionPage from "@/components/KaiShinSectionPage";
 import PageTemplate from "@/components/PageTemplate";
 import ResourceDatabase from "@/components/ResourceDatabase";
 import WebsiteLibraryView from "@/components/WebsiteLibraryView";
 import { getAssessmentSection } from "@/lib/assessmentSections";
+import { getClientJourneyPhase } from "@/lib/clientJourneyPhases";
 import { contentPages, getPageByPath } from "@/lib/siteContent";
 
 export function generateStaticParams() {
@@ -34,6 +36,12 @@ export default async function DynamicContentPage({
     const assessmentSection = getAssessmentSection(pageSlug);
     if (!assessmentSection) notFound();
     return <KaiShinSectionPage section={assessmentSection} />;
+  }
+
+  if (section === "client-journey") {
+    const phase = getClientJourneyPhase(pageSlug);
+    if (!phase) notFound();
+    return <WorkflowPhasePage phase={phase} />;
   }
 
   if (path === "/clinical-wording-library/wording") {

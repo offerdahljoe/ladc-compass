@@ -1,4 +1,5 @@
 import { assessmentNavItems } from "@/lib/assessmentSections";
+import { clientJourneyNavItems } from "@/lib/clientJourneyPhases";
 
 export type NavItem = {
   title: string;
@@ -44,6 +45,11 @@ export const mainNavigation: NavItem[] = [
     title: "Kai-Shin Procentive Companion",
     path: "/kai-shin-procentive/assessment-summary",
     items: assessmentNavItems,
+  },
+  {
+    title: "Client Journey Navigator",
+    path: "/client-journey/dashboard",
+    items: clientJourneyNavItems,
   },
   {
     title: "Clinical Wording Library",
@@ -277,6 +283,9 @@ export const mainNavigation: NavItem[] = [
 ];
 
 export const quickActions = [
+  { title: "Open Client Journey", path: "/client-journey/dashboard" },
+  { title: "Intake Packet Guide", path: "/client-journey/intake-packet" },
+  { title: "ROI / Collateral Scripts", path: "/client-journey/collateral-contacts-rois" },
   { title: "Start Kai-Shin Assessment", path: "/kai-shin-procentive/assessment-summary" },
   { title: "Presenting Problem Coach", path: "/kai-shin-procentive/presenting-problem-referral-information" },
   { title: "Substance Use History Coach", path: "/kai-shin-procentive/substance-use-history" },

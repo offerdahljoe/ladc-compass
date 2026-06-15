@@ -12,10 +12,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <MobileNav />
           <div className="mb-4 rounded-lg border border-lagoon/20 bg-white px-4 py-3 text-sm text-ink/70 shadow-soft">
             <strong className="text-ink">LADC Compass update:</strong> Build
-            marker 2026-06-15-kai-shin-companion-v1. Kai-Shin Procentive
-            Companion, sticky Google search, invite-only sign-in, clinical
-            wording tools, and interactive assessment practice are included in
-            this build.
+            marker 2026-06-15-client-journey-v1. Client Journey Navigator,
+            Kai-Shin Procentive Companion, sticky Google search, invite-only
+            sign-in, and interactive documentation support are included in this
+            build.
           </div>
           <main className="mt-5">{children}</main>
         </div>

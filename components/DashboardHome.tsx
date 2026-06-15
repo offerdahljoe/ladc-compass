@@ -56,6 +56,7 @@ export default function DashboardHome() {
         </p>
         <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
           {[
+            ["Client Journey Navigator", "/client-journey/dashboard"],
             ["Kai-Shin Companion", "/kai-shin-procentive/assessment-summary"],
             ["Clinical Wording Library", "/clinical-wording-library/wording"],
             ["Client Explanation Scripts", "/client-explanation-scripts/scripts"],
