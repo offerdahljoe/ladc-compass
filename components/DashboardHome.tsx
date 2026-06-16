@@ -253,6 +253,7 @@ export default function DashboardHome() {
   const [selectedDate, setSelectedDate] = useState(todayKey);
   const [weekStart, setWeekStart] = useState(dateKeyFor(startOfWeek(new Date())));
   const [miniMonth, setMiniMonth] = useState(new Date());
+  const [calendarMode, setCalendarMode] = useState<"week" | "day">("week");
   const [monthOverlayOpen, setMonthOverlayOpen] = useState(false);
   const [resourceOverlayOpen, setResourceOverlayOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -265,7 +266,7 @@ export default function DashboardHome() {
   const [contactSuggestions, setContactSuggestions] = useState<string[]>([]);
 
   const weekDays = useMemo(
-    () => Array.from({ length: 7 }, (_, index) => addDays(parseDateKey(weekStart), index)),
+    () => Array.from({ length: 5 }, (_, index) => addDays(parseDateKey(weekStart), index)),
     [weekStart],
   );
 
@@ -438,6 +439,13 @@ export default function DashboardHome() {
     ]);
   }
 
+  function selectCalendarDate(dayKey: string, mode: "week" | "day" = "day") {
+    const day = parseDateKey(dayKey);
+    setSelectedDate(dayKey);
+    setWeekStart(dateKeyFor(startOfWeek(day)));
+    setCalendarMode(mode);
+  }
+
   function submitTask(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const clean = taskDraft.trim();
@@ -567,19 +575,119 @@ export default function DashboardHome() {
       <section className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-lagoon">This Week</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-lagoon">
+              {calendarMode === "week" ? "This Week" : "Selected Day"}
+            </p>
             <h2 className="text-2xl font-semibold text-ink">
-              {formatShortDate(weekDays[0])} - {formatShortDate(weekDays[6])}
+              {calendarMode === "week"
+                ? `${formatShortDate(weekDays[0])} - ${formatShortDate(weekDays[4])}`
+                : formatShortDate(parseDateKey(selectedDate))}
             </h2>
           </div>
           <div className="flex flex-wrap gap-2">
-            <button type="button" onClick={() => setWeekStart(dateKeyFor(addDays(parseDateKey(weekStart), -7)))} className="focus-ring rounded-md border border-ink/10 px-3 py-2 text-sm font-semibold hover:bg-paper">Previous</button>
-            <button type="button" onClick={() => setWeekStart(dateKeyFor(startOfWeek(new Date())))} className="focus-ring rounded-md border border-ink/10 px-3 py-2 text-sm font-semibold hover:bg-paper">Current</button>
-            <button type="button" onClick={() => setWeekStart(dateKeyFor(addDays(parseDateKey(weekStart), 7)))} className="focus-ring rounded-md border border-ink/10 px-3 py-2 text-sm font-semibold hover:bg-paper">Next</button>
+            <button
+              type="button"
+              onClick={() => selectCalendarDate(todayKey, "day")}
+              className={`focus-ring rounded-md border px-3 py-2 text-sm font-semibold ${
+                calendarMode === "day" && selectedDate === todayKey
+                  ? "border-lagoon bg-lagoon text-white"
+                  : "border-ink/10 hover:bg-paper"
+              }`}
+            >
+              Today
+            </button>
+            <button
+              type="button"
+              onClick={() => setCalendarMode("week")}
+              className={`focus-ring rounded-md border px-3 py-2 text-sm font-semibold ${
+                calendarMode === "week"
+                  ? "border-lagoon bg-lagoon text-white"
+                  : "border-ink/10 hover:bg-paper"
+              }`}
+            >
+              Weekly View
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                calendarMode === "week"
+                  ? setWeekStart(dateKeyFor(addDays(parseDateKey(weekStart), -7)))
+                  : selectCalendarDate(dateKeyFor(addDays(parseDateKey(selectedDate), -1)), "day")
+              }
+              className="focus-ring rounded-md border border-ink/10 px-3 py-2 text-sm font-semibold hover:bg-paper"
+            >
+              Previous
+            </button>
+            <button type="button" onClick={() => selectCalendarDate(todayKey, calendarMode)} className="focus-ring rounded-md border border-ink/10 px-3 py-2 text-sm font-semibold hover:bg-paper">Current</button>
+            <button
+              type="button"
+              onClick={() =>
+                calendarMode === "week"
+                  ? setWeekStart(dateKeyFor(addDays(parseDateKey(weekStart), 7)))
+                  : selectCalendarDate(dateKeyFor(addDays(parseDateKey(selectedDate), 1)), "day")
+              }
+              className="focus-ring rounded-md border border-ink/10 px-3 py-2 text-sm font-semibold hover:bg-paper"
+            >
+              Next
+            </button>
           </div>
         </div>
 
-        <div className="mt-4 grid min-h-[34rem] gap-2 lg:grid-cols-7">
+        {calendarMode === "day" ? (
+          <section className="mt-4 min-h-[34rem] rounded-xl border border-lagoon/25 bg-lagoon/5 p-4">
+            <div className="flex flex-col gap-3 border-b border-lagoon/15 pb-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-xl font-semibold text-ink">
+                  {formatShortDate(parseDateKey(selectedDate))}
+                </h3>
+                <p className="mt-1 text-sm text-ink/60">
+                  {selectedDateEvents.length} scheduled item{selectedDateEvents.length === 1 ? "" : "s"}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => openEventForm(selectedDate)}
+                  className="focus-ring rounded-md bg-lagoon px-4 py-2 text-sm font-semibold text-white hover:bg-ink"
+                >
+                  Add event
+                </button>
+                <button
+                  type="button"
+                  onClick={() => markUnavailable(selectedDate)}
+                  className="focus-ring rounded-md border border-clay/30 px-4 py-2 text-sm font-semibold text-clay hover:bg-clay hover:text-white"
+                >
+                  Make unavailable
+                </button>
+              </div>
+            </div>
+            <div
+              onClick={() => openEventForm(selectedDate)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") openEventForm(selectedDate);
+              }}
+              className="focus-ring mt-4 grid min-h-96 cursor-pointer content-start gap-3 rounded-lg border border-ink/10 bg-white p-4"
+            >
+              {selectedDateEvents.length === 0 ? (
+                <p className="rounded-md bg-paper p-4 text-sm text-ink/65">
+                  Nothing scheduled. Click here or use Add event.
+                </p>
+              ) : null}
+              {selectedDateEvents.map((event) => (
+                <EventCard
+                  key={`${event.id}-${selectedDate}`}
+                  event={event}
+                  dayKey={selectedDate}
+                  onStatus={updateStatus}
+                  onEdit={(item, occurrenceDay) => openEventForm(occurrenceDay, item)}
+                />
+              ))}
+            </div>
+          </section>
+        ) : (
+        <div className="mt-4 grid min-h-[38rem] gap-3 lg:grid-cols-5">
           {weekDays.map((day) => {
             const dayKey = dateKeyFor(day);
             const dayEvents = eventsForDay(dayKey);
@@ -593,12 +701,14 @@ export default function DashboardHome() {
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") openEventForm(dayKey);
                 }}
-                className={`focus-ring flex min-h-48 cursor-pointer flex-col rounded-lg border p-3 text-left ${
-                  isSelected ? "border-lagoon bg-lagoon/5" : "border-ink/10 bg-paper"
+                className={`focus-ring flex min-h-[34rem] cursor-pointer flex-col rounded-xl border p-4 text-left shadow-sm ${
+                  isSelected ? "border-lagoon bg-lagoon/5" : "border-ink/15 bg-paper"
                 }`}
               >
-                <span className="text-sm font-semibold text-ink">{formatShortDate(day)}</span>
-                <span className="mt-1 text-xs text-ink/55">Click to add</span>
+                <span className="rounded-md bg-white px-3 py-2 text-base font-semibold text-ink shadow-sm">
+                  {formatShortDate(day)}
+                </span>
+                <span className="mt-2 text-xs font-semibold uppercase tracking-wide text-lagoon">Click to add</span>
                 <span className="mt-3 grid gap-2">
                   {dayEvents.map((event) => (
                     <EventCard
@@ -614,6 +724,7 @@ export default function DashboardHome() {
             );
           })}
         </div>
+        )}
       </section>
 
       <aside className="grid content-start gap-4">
@@ -639,10 +750,7 @@ export default function DashboardHome() {
                 <button
                   key={dayKey}
                   type="button"
-                  onClick={() => {
-                    setSelectedDate(dayKey);
-                    setWeekStart(dateKeyFor(startOfWeek(day)));
-                  }}
+                  onClick={() => selectCalendarDate(dayKey, "day")}
                   className={`focus-ring relative rounded-md px-1 py-2 text-xs font-semibold ${
                     inMonth ? "text-ink hover:bg-paper" : "text-ink/25"
                   } ${dayKey === selectedDate ? "bg-lagoon text-white" : ""}`}
