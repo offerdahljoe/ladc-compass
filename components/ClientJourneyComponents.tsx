@@ -365,26 +365,73 @@ export function WorkflowPhasePage({ phase }: { phase: JourneyPhase }) {
   if (phase.id === "dashboard") return <ClientJourneyDashboard />;
 
   return (
-    <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_20rem]">
-      <article className="grid gap-5">
-        <SimpleCard title="Phase Overview" items={[phase.purpose]} />
-        <PhaseChecklist items={phase.whatToDoNext} />
-        <RequiredDocumentsList documents={phase.requiredDocuments} />
-        <ClientDialogueCard scripts={phase.clientDialogue} />
-        <CounselorThinkingCard items={phase.counselorThinking} />
-        <DocumentationGuidanceCard items={phase.documentationGuidance} />
-        <ClinicalWordingExamples items={phase.clinicalWordingExamples} />
-        <CommonMistakesCard items={phase.commonMistakes} />
-        <NextStepsCard items={phase.nextSteps} />
-        <DeadlineReminder items={phase.deadlines} />
-        <SimpleCard
-          title="Related ASAM / Treatment Planning Connections"
-          items={[...phase.relatedAsamDimensions, ...phase.relatedTreatmentPlanAreas]}
-        />
-        <DocumentationAtEachPhaseTracker phase={phase} />
-        {phase.id === "collateral-contacts-rois" ? <ROIContactScriptBuilder /> : null}
-      </article>
-      <WhatDoIDoNextPanel phase={phase} />
+    <div className="grid gap-6">
+      <section className="rounded-2xl border border-lagoon/20 bg-gradient-to-br from-white to-lagoon/10 p-6 shadow-soft">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-lagoon">
+              Client Journey Command Center
+            </p>
+            <h1 className="mt-2 text-3xl font-bold text-ink">{phase.title}</h1>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-ink/75">
+              {phase.purpose}
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-ink/10 bg-white p-4 text-sm shadow-soft lg:w-80">
+            <h2 className="font-semibold text-ink">Immediate Focus</h2>
+            <ul className="mt-3 grid gap-2 text-ink/75">
+              {phase.whatToDoNext.slice(0, 3).map((item) => (
+                <li key={item} className="rounded-lg bg-paper px-3 py-2">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_20rem]">
+        <article className="grid gap-5">
+          <section className="grid gap-5 lg:grid-cols-2">
+            <PhaseChecklist items={phase.whatToDoNext} />
+            <RequiredDocumentsList documents={phase.requiredDocuments} />
+          </section>
+
+          <section className="grid gap-5 lg:grid-cols-2">
+            <ClientDialogueCard scripts={phase.clientDialogue} />
+            <CounselorThinkingCard items={phase.counselorThinking} />
+          </section>
+
+          <section className="grid gap-5 lg:grid-cols-2">
+            <DocumentationGuidanceCard items={phase.documentationGuidance} />
+            <ClinicalWordingExamples items={phase.clinicalWordingExamples} />
+          </section>
+
+          <section className="grid gap-5 lg:grid-cols-2">
+            <CommonMistakesCard items={phase.commonMistakes} />
+            <NextStepsCard items={phase.nextSteps} />
+          </section>
+
+          <DeadlineReminder items={phase.deadlines} />
+
+          <SimpleCard
+            title="Related ASAM / Treatment Planning Connections"
+            items={[
+              ...phase.relatedAsamDimensions,
+              ...phase.relatedTreatmentPlanAreas,
+            ]}
+          />
+
+          <DocumentationAtEachPhaseTracker phase={phase} />
+
+          {phase.id === "collateral-contacts-rois" ? (
+            <ROIContactScriptBuilder />
+          ) : null}
+        </article>
+
+        <WhatDoIDoNextPanel phase={phase} />
+      </div>
     </div>
   );
 }
