@@ -1,39 +1,20 @@
-import InfoCard from "@/components/InfoCard";
-import PageHeader from "@/components/PageHeader";
-import TemplateBrowser from "@/components/TemplateBrowser";
-import { documentationTemplates } from "@/lib/content";
+import Link from "next/link";
 
-export default function DocumentationPage() {
+export default function DocumentationMovedPage() {
   return (
-    <>
-      <PageHeader
-        eyebrow="Documentation Center"
-        title="Template starters for learning notes"
-        description="These are practice structures, not legal advice or agency policy. Follow your site documentation standards and supervision guidance."
-      />
-      <TemplateBrowser />
-      <section className="mt-5 grid gap-4 lg:grid-cols-2">
-        {documentationTemplates.map((template, index) => (
-          <InfoCard
-            key={template.title}
-            title={template.title}
-            accent={["lagoon", "sage", "clay", "marigold"][index % 4] as "lagoon"}
-          >
-            <ul className="space-y-2">
-              {template.sections.map((section) => (
-                <li key={section} className="flex gap-2">
-                  <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-lagoon" />
-                  <span>{section}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="rounded-lg bg-paper p-3">
-              Example language: De-identified learning note reviewed in supervision;
-              next step is to clarify intervention, response, and follow-up plan.
-            </p>
-          </InfoCard>
-        ))}
-      </section>
-    </>
+    <section className="rounded-lg border border-lagoon/20 bg-white p-6 shadow-soft">
+      <p className="text-xs font-semibold uppercase tracking-wide text-lagoon">Moved</p>
+      <h1 className="mt-2 text-2xl font-semibold text-ink">Documentation now lives in Documentation Lab</h1>
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/70">
+        The old standalone documentation page has been retired. Use Documentation Lab for clinical wording,
+        progress notes, ASAM language, treatment plan wording, group notes, and Procentive-style templates.
+      </p>
+      <Link
+        href="/documentation-lab/lab"
+        className="focus-ring mt-5 inline-block rounded-md bg-lagoon px-4 py-2 text-sm font-semibold text-white hover:bg-ink"
+      >
+        Open Documentation Lab
+      </Link>
+    </section>
   );
 }

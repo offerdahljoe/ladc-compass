@@ -37,8 +37,13 @@ export type PageDetails = {
 
 export const mainNavigation: NavItem[] = [
   {
-    title: "Dashboard",
+    title: "Today",
     path: "/",
+  },
+  {
+    title: "Client Journey Navigator",
+    path: "/client-journey/dashboard",
+    items: clientJourneyNavItems,
   },
   {
     title: "Clinical Decision Navigator",
@@ -48,12 +53,35 @@ export const mainNavigation: NavItem[] = [
     ],
   },
   {
-    title: "Client Journey Navigator",
-    path: "/client-journey/dashboard",
-    items: clientJourneyNavItems,
+    title: "Group Studio",
+    path: "/group-studio/studio",
+    items: [
+      { title: "Session Builder", path: "/group-studio/studio" },
+    ],
   },
   {
-    title: "Medications",
+    title: "Calendar + Tasks",
+    path: "/calendar-tasks/planner",
+    items: [
+      { title: "Calendar Workspace", path: "/calendar-tasks/planner" },
+    ],
+  },
+  {
+    title: "Documentation Lab",
+    path: "/documentation-lab/lab",
+    items: [
+      { title: "Documentation Generator", path: "/documentation-lab/lab" },
+    ],
+  },
+  {
+    title: "Procentive Companion",
+    path: "/procentive-companion/companion",
+    items: [
+      { title: "Where Does This Go?", path: "/procentive-companion/companion" },
+    ],
+  },
+  {
+    title: "Medication Reference",
     path: "/medications/overview",
     items: [
       { title: "Medication Overview", path: "/medications/overview" },
@@ -65,19 +93,50 @@ export const mainNavigation: NavItem[] = [
       { title: "Alcohol Use Disorder Medications", path: "/medications/alcohol-use-disorder-medications" },
       { title: "Acamprosate", path: "/medications/acamprosate" },
       { title: "Disulfiram", path: "/medications/disulfiram" },
-      { title: "Withdrawal Support Medications", path: "/medications/withdrawal-support-medications" },
-      { title: "Antidepressants", path: "/medications/antidepressants" },
-      { title: "Anti-Anxiety Medications", path: "/medications/anti-anxiety-medications" },
-      { title: "Mood Stabilizers", path: "/medications/mood-stabilizers" },
-      { title: "Antipsychotic Medications", path: "/medications/antipsychotic-medications" },
+      { title: "Psychiatric Medications", path: "/medications/antidepressants" },
       { title: "Medication Questions for Assessment", path: "/medications/medication-questions-for-assessment" },
     ],
   },
   {
-    title: "Group Therapy Hub",
-    path: "/group-therapy-hub/planner",
+    title: "Resource Library",
+    path: "/resource-library/library",
     items: [
-      { title: "Group Therapy Planner", path: "/group-therapy-hub/planner" },
+      { title: "Reference Resources", path: "/resource-library/library" },
+    ],
+  },
+  {
+    title: "Smart Contacts",
+    path: "/smart-contacts/contacts",
+    items: [
+      { title: "Contacts Directory", path: "/smart-contacts/contacts" },
+    ],
+  },
+  {
+    title: "Billing Codes",
+    path: "/billing-codes/reference",
+    items: [
+      { title: "Code Reference", path: "/billing-codes/reference" },
+    ],
+  },
+  {
+    title: "LADC Academy",
+    path: "/ladc-academy/academy",
+    items: [
+      { title: "Learning Paths", path: "/ladc-academy/academy" },
+    ],
+  },
+  {
+    title: "Exam Academy",
+    path: "/exam-academy/practice",
+    items: [
+      { title: "Exam Practice", path: "/exam-academy/practice" },
+    ],
+  },
+  {
+    title: "Case Challenges",
+    path: "/case-challenges/challenges",
+    items: [
+      { title: "Clinical Scenarios", path: "/case-challenges/challenges" },
     ],
   },
   {
@@ -117,7 +176,7 @@ export const mainNavigation: NavItem[] = [
     ].map((title) => ({ title, path: `/ethics-compliance/${slugify(title)}` })),
   },
   {
-    title: "Internship Survival Guide",
+    title: "Licensure Journey",
     path: "/internship-survival-guide/hours-tracker",
     items: [
       "Hours Tracker",
@@ -131,44 +190,38 @@ export const mainNavigation: NavItem[] = [
     ].map((title) => ({ title, path: `/internship-survival-guide/${slugify(title)}` })),
   },
   {
-    title: "Kai-Shin Hub",
+    title: "Clinical Wisdom",
+    path: "/clinical-wisdom/wisdom",
+    items: [
+      { title: "Intern Wisdom", path: "/clinical-wisdom/wisdom" },
+    ],
+  },
+  {
+    title: "Reset Room",
+    path: "/reset-room/reset",
+    items: [
+      { title: "Reset Tools", path: "/reset-room/reset" },
+    ],
+  },
+  {
+    title: "Kai-Shin Reference",
     path: "/kai-shin/hub",
     items: [
       { title: "Kai-Shin Workspace", path: "/kai-shin/hub" },
     ],
-  },
-  {
-    title: "Resource Hub",
-    path: "/resource-hub/resources",
-    items: [
-      { title: "Resource Directory", path: "/resource-hub/resources" },
-    ],
-  },
-  {
-    title: "Website Library",
-    path: "/website-library/naadac",
-    items: [
-      "NAADAC",
-      "MAARCH",
-      "ASAM",
-      "DSM-5",
-      "Minnesota Board of Behavioral Health and Therapy",
-      "Minnesota DHS",
-      "SAMHSA",
-      "42 CFR Part 2 Resources",
-    ].map((title) => ({ title, path: `/website-library/${slugify(title)}` })),
   },
 ];
 
 export const quickActions = [
   { title: "Open Clinical Decision Navigator", path: "/clinical-decision-navigator/navigator" },
   { title: "Open Client Journey", path: "/client-journey/dashboard" },
-  { title: "Intake Packet Guide", path: "/client-journey/intake-packet" },
-  { title: "ROI / Collateral Scripts", path: "/client-journey/collateral-contacts-rois" },
-  { title: "Plan a Group Session", path: "/group-therapy-hub/planner" },
-  { title: "Find or Add Resource", path: "/resource-hub/resources" },
+  { title: "Open Calendar + Tasks", path: "/calendar-tasks/planner" },
+  { title: "Start Group Studio", path: "/group-studio/studio" },
+  { title: "Create Documentation", path: "/documentation-lab/lab" },
+  { title: "Find Resource", path: "/resource-library/library" },
+  { title: "Find Contact", path: "/smart-contacts/contacts" },
   { title: "Study 12 Core Functions", path: "/core-functions/screening" },
-  { title: "Track Internship Hours", path: "/internship-survival-guide/hours-tracker" },
+  { title: "Track Licensure", path: "/internship-survival-guide/hours-tracker" },
 ];
 
 export const resourceCategories = [

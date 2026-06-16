@@ -2,10 +2,19 @@ import { notFound } from "next/navigation";
 import ADCPracticeTest from "@/components/ADCPracticeTest";
 import ClinicalDecisionNavigator from "@/components/ClinicalDecisionNavigator";
 import { WorkflowPhasePage } from "@/components/ClientJourneyComponents";
+import DashboardHome from "@/components/DashboardHome";
 import GroupTherapyHub from "@/components/GroupTherapyHub";
 import HoursTrackerPlaceholder from "@/components/HoursTrackerPlaceholder";
 import KaiShinCompanionWorkspace from "@/components/KaiShinCompanionWorkspace";
 import KaiShinHubWorkspace from "@/components/KaiShinHubWorkspace";
+import {
+  BillingCodes,
+  DocumentationLab,
+  GroupStudio,
+  LearningWorkspace,
+  ProcentiveCompanion,
+  ResourceLibrary,
+} from "@/components/OperatingSystemWorkspaces";
 import PageTemplate from "@/components/PageTemplate";
 import ResourceDatabase from "@/components/ResourceDatabase";
 import WebsiteLibraryView from "@/components/WebsiteLibraryView";
@@ -40,10 +49,58 @@ export default async function DynamicContentPage({
     return <ClinicalDecisionNavigator />;
   }
 
+  if (path === "/calendar-tasks/planner") {
+    return <DashboardHome />;
+  }
+
   if (section === "client-journey") {
     const phase = getClientJourneyPhase(pageSlug);
     if (!phase) notFound();
     return <WorkflowPhasePage phase={phase} />;
+  }
+
+  if (path === "/group-studio/studio") {
+    return <GroupStudio />;
+  }
+
+  if (path === "/documentation-lab/lab") {
+    return <DocumentationLab />;
+  }
+
+  if (path === "/procentive-companion/companion") {
+    return <ProcentiveCompanion />;
+  }
+
+  if (path === "/resource-library/library") {
+    return <ResourceLibrary />;
+  }
+
+  if (path === "/smart-contacts/contacts") {
+    return <ResourceDatabase />;
+  }
+
+  if (path === "/billing-codes/reference") {
+    return <BillingCodes />;
+  }
+
+  if (path === "/ladc-academy/academy") {
+    return <LearningWorkspace title="LADC Academy" />;
+  }
+
+  if (path === "/exam-academy/practice") {
+    return <LearningWorkspace title="Exam Academy" />;
+  }
+
+  if (path === "/case-challenges/challenges") {
+    return <LearningWorkspace title="Case Challenges" />;
+  }
+
+  if (path === "/clinical-wisdom/wisdom") {
+    return <LearningWorkspace title="Clinical Wisdom" />;
+  }
+
+  if (path === "/reset-room/reset") {
+    return <LearningWorkspace title="Reset Room" />;
   }
 
   if (path === "/group-therapy-hub/planner") {

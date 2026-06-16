@@ -1,39 +1,20 @@
-"use client";
+import Link from "next/link";
 
-import LocalEntryManager from "@/components/LocalEntryManager";
-import PageHeader from "@/components/PageHeader";
-
-const fields = [
-  { name: "problem", label: "Problem statement", type: "textarea" as const, placeholder: "Example: Recovery is affected by cravings and limited coping strategies." },
-  { name: "goal", label: "Goal", type: "textarea" as const, placeholder: "Example: Build a sustainable relapse prevention plan." },
-  { name: "objective", label: "Objective", type: "textarea" as const, placeholder: "Example: Identify 3 triggers and 3 coping responses within 30 days." },
-  { name: "intervention", label: "Interventions", type: "textarea" as const, placeholder: "Example: Use MI, CBT skill practice, relapse prevention worksheet, and referral discussion." },
-];
-
-export default function TreatmentPlanLabPage() {
+export default function TreatmentPlanLabMovedPage() {
   return (
-    <>
-      <PageHeader
-        eyebrow="Treatment Plan Lab"
-        title="Build sample plans without client identifiers"
-        description="Practice turning assessed needs into problem statements, goals, measurable objectives, and counselor interventions."
-      />
-      <section className="mb-5 grid gap-4 md:grid-cols-4">
-        {["Problem statements", "Goals", "Objectives", "Interventions"].map((item) => (
-          <div key={item} className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
-            <h3 className="font-semibold text-ink">{item}</h3>
-            <p className="mt-2 text-sm leading-6 text-ink/70">
-              Keep language behavioral, measurable where possible, and connected to ASAM needs.
-            </p>
-          </div>
-        ))}
-      </section>
-      <LocalEntryManager
-        storageKey="ladc-treatment-plans"
-        fields={fields}
-        emptyLabel="No sample treatment plans saved yet."
-        titleField="problem"
-      />
-    </>
+    <section className="rounded-lg border border-lagoon/20 bg-white p-6 shadow-soft">
+      <p className="text-xs font-semibold uppercase tracking-wide text-lagoon">Moved</p>
+      <h1 className="mt-2 text-2xl font-semibold text-ink">Treatment planning now flows through Clinical Decision Navigator</h1>
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/70">
+        The old separate Treatment Plan Lab has been retired. Use Clinical Decision Navigator to connect
+        assessment findings, ASAM risk, treatment priorities, level of care, and treatment plan ideas.
+      </p>
+      <Link
+        href="/clinical-decision-navigator/navigator"
+        className="focus-ring mt-5 inline-block rounded-md bg-lagoon px-4 py-2 text-sm font-semibold text-white hover:bg-ink"
+      >
+        Open Clinical Decision Navigator
+      </Link>
+    </section>
   );
 }
