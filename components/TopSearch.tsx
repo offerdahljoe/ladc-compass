@@ -57,13 +57,13 @@ function CloudSyncStatus() {
     }
     setBusy(true);
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: window.location.origin,
+      redirectTo: `${window.location.origin}/set-password`,
     });
     setBusy(false);
     setMessage(
       error
         ? error.message
-        : "Password reset email sent. Use it only for an invited account.",
+        : "Password setup email sent. Open the email link to choose your password.",
     );
   }
 
@@ -142,7 +142,7 @@ function CloudSyncStatus() {
             disabled={busy}
             className="focus-ring rounded-md border border-ink/15 px-3 py-1.5 font-semibold text-ink hover:bg-paper"
           >
-            Reset password
+            Set/reset password
           </button>
         </div>
       </label>
