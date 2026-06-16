@@ -28,7 +28,9 @@ type ScheduleEvent = {
   reminderAmount: number;
   reminderUnit: "minutes" | "hours" | "days";
   emailReminder: boolean;
+  emailReminderAddress: string;
   textReminder: boolean;
+  textReminderPhone: string;
   notes: string;
   wrapUpMinutes: number;
   unavailable?: boolean;
@@ -395,7 +397,9 @@ export default function DashboardHome() {
         reminderAmount: event.reminderAmount ?? alarm.defaultWrapUpMinutes,
         reminderUnit: event.reminderUnit ?? "minutes",
         emailReminder: event.emailReminder ?? false,
+        emailReminderAddress: event.emailReminderAddress ?? "",
         textReminder: event.textReminder ?? false,
+        textReminderPhone: event.textReminderPhone ?? "",
       } : {
         id: crypto.randomUUID(),
         title: "",
@@ -412,7 +416,9 @@ export default function DashboardHome() {
         reminderAmount: alarm.defaultWrapUpMinutes,
         reminderUnit: "minutes",
         emailReminder: false,
+        emailReminderAddress: "",
         textReminder: false,
+        textReminderPhone: "",
         notes: "",
         wrapUpMinutes: alarm.defaultWrapUpMinutes,
         statusByDate: {},
@@ -477,7 +483,9 @@ export default function DashboardHome() {
         reminderAmount: 0,
         reminderUnit: "minutes",
         emailReminder: false,
+        emailReminderAddress: "",
         textReminder: false,
+        textReminderPhone: "",
         notes: "Marked unavailable.",
         wrapUpMinutes: 0,
         unavailable: true,
@@ -956,10 +964,22 @@ export default function DashboardHome() {
                   <input type="checkbox" checked={eventDraft.emailReminder} onChange={(event) => setEventDraft((current) => current ? { ...current, emailReminder: event.target.checked } : current)} />
                   Email reminder UI only
                 </label>
+                {eventDraft.emailReminder ? (
+                  <label className="mt-2 block text-xs font-semibold text-ink">
+                    Email address
+                    <input type="email" value={eventDraft.emailReminderAddress} onChange={(event) => setEventDraft((current) => current ? { ...current, emailReminderAddress: event.target.value } : current)} className="focus-ring mt-1 w-full rounded-md border border-ink/15 bg-white px-3 py-2 text-sm" placeholder="Future integration only" />
+                  </label>
+                ) : null}
                 <label className="mt-2 flex items-center gap-2">
                   <input type="checkbox" checked={eventDraft.textReminder} onChange={(event) => setEventDraft((current) => current ? { ...current, textReminder: event.target.checked } : current)} />
                   Text reminder UI only
                 </label>
+                {eventDraft.textReminder ? (
+                  <label className="mt-2 block text-xs font-semibold text-ink">
+                    Phone number
+                    <input type="tel" value={eventDraft.textReminderPhone} onChange={(event) => setEventDraft((current) => current ? { ...current, textReminderPhone: event.target.value } : current)} className="focus-ring mt-1 w-full rounded-md border border-ink/15 bg-white px-3 py-2 text-sm" placeholder="Future integration only" />
+                  </label>
+                ) : null}
                 <p className="mt-2 text-xs">These preferences are saved for future integration. The site does not send email or SMS yet.</p>
               </div>
             </div>

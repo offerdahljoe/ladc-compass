@@ -7,6 +7,7 @@ import { useLocalEntries } from "@/lib/useLocalEntries";
 type Resource = {
   id?: string;
   category: string;
+  favorite?: boolean;
   organization: string;
   contactNames: string;
   phone: string;
@@ -20,6 +21,7 @@ type Resource = {
   services: string;
   referralSteps: string;
   hours: string;
+  whyUseful: string;
   notes: string;
 };
 
@@ -32,6 +34,7 @@ const starterResources: Resource[] = [
   {
     id: "starter-crisis",
     category: "Crisis Resources",
+    favorite: true,
     organization: "988 Suicide & Crisis Lifeline",
     contactNames: "24/7 crisis support",
     phone: "988",
@@ -45,11 +48,13 @@ const starterResources: Resource[] = [
     services: "Crisis support, safety support, connection to local crisis resources.",
     referralSteps: "Client can call or text 988 directly. Use emergency services for immediate life-threatening danger.",
     hours: "24/7",
+    whyUseful: "Useful for crisis planning, safety conversations, and immediate support when risk concerns are present.",
     notes: "Use for crisis planning and client education. Not a replacement for emergency response when imminent danger is present.",
   },
   {
     id: "starter-samhsa",
     category: "MAT Programs",
+    favorite: true,
     organization: "SAMHSA Treatment Locator",
     contactNames: "FindTreatment.gov",
     phone: "1-800-662-HELP",
@@ -63,12 +68,14 @@ const starterResources: Resource[] = [
     services: "Search for treatment programs, MOUD/MAT providers, mental health services, and crisis supports.",
     referralSteps: "Search by location, service type, payment options, and treatment need.",
     hours: "Online 24/7",
+    whyUseful: "Useful when a client needs treatment options, MOUD/MAT referrals, or verified program information.",
     notes: "Good starting point when local resource information needs to be verified.",
   },
 ];
 
 const blankResource: Omit<Resource, "id"> = {
   category: resourceCategories[0],
+  favorite: false,
   organization: "",
   contactNames: "",
   phone: "",
@@ -82,6 +89,7 @@ const blankResource: Omit<Resource, "id"> = {
   services: "",
   referralSteps: "",
   hours: "",
+  whyUseful: "",
   notes: "",
 };
 
@@ -99,6 +107,7 @@ const fieldGroups = [
     ["website", "Website"],
     ["address", "Address"],
     ["hours", "Hours"],
+    ["whyUseful", "Why useful / when to use"],
     ["eligibility", "Eligibility / who it serves"],
     ["services", "Services provided"],
     ["referralSteps", "Referral steps"],
@@ -155,6 +164,11 @@ export default function ResourceDatabase() {
     resourceStore.addEntry(draft);
     setDraft({ ...blankResource, category: draft.category });
     setShowForm(false);
+  }
+
+  function toggleFavorite(resource: Resource) {
+    if (!resource.id || starterResources.some((item) => item.id === resource.id)) return;
+    resourceStore.updateEntry(resource.id, { ...resource, favorite: !resource.favorite });
   }
 
   function addCategory(event: FormEvent<HTMLFormElement>) {
@@ -237,14 +251,19 @@ export default function ResourceDatabase() {
           <article key={resource.id ?? resource.organization} className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-wide text-lagoon">{resource.category}</p>
+                <p className="text-sm font-semibold uppercase tracking-wide text-lagoon">{resource.favorite ? "Favorite | " : ""}{resource.category}</p>
                 <h2 className="mt-1 text-2xl font-semibold text-ink">{resource.organization}</h2>
                 {resource.contactNames ? <p className="mt-2 text-sm text-ink/70">Contact: {resource.contactNames}</p> : null}
               </div>
               {resourceStore.entries.some((entry) => entry.id === resource.id) ? (
-                <button type="button" onClick={() => resourceStore.removeEntry(resource.id)} className="focus-ring rounded-md border border-clay/30 px-3 py-2 text-sm font-semibold text-clay hover:bg-clay hover:text-white">
-                  Delete
-                </button>
+                <div className="flex flex-wrap gap-2">
+                  <button type="button" onClick={() => toggleFavorite(resource)} className="focus-ring rounded-md border border-lagoon/30 px-3 py-2 text-sm font-semibold text-lagoon hover:bg-lagoon hover:text-white">
+                    {resource.favorite ? "Unfavorite" : "Favorite"}
+                  </button>
+                  <button type="button" onClick={() => resourceStore.removeEntry(resource.id)} className="focus-ring rounded-md border border-clay/30 px-3 py-2 text-sm font-semibold text-clay hover:bg-clay hover:text-white">
+                    Delete
+                  </button>
+                </div>
               ) : null}
             </div>
             <div className="mt-4 grid gap-3 text-sm leading-6 text-ink/72 md:grid-cols-2 xl:grid-cols-3">
@@ -256,6 +275,7 @@ export default function ResourceDatabase() {
               {resource.address ? <p><strong>Address:</strong> {resource.address}</p> : null}
             </div>
             <div className="mt-4 grid gap-3 text-sm leading-6 text-ink/72 lg:grid-cols-2">
+              {resource.whyUseful ? <p><strong>Why useful:</strong> {resource.whyUseful}</p> : null}
               {resource.services ? <p><strong>Services:</strong> {resource.services}</p> : null}
               {resource.eligibility ? <p><strong>Eligibility:</strong> {resource.eligibility}</p> : null}
               {resource.referralSteps ? <p><strong>Referral steps:</strong> {resource.referralSteps}</p> : null}

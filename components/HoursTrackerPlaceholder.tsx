@@ -1,12 +1,21 @@
 "use client";
 
 import LocalEntryManager from "@/components/LocalEntryManager";
-import { mainNavigation } from "@/lib/siteContent";
 
-const coreFunctions =
-  mainNavigation
-    .find((item) => item.title === "12 Core Functions")
-    ?.items?.map((item) => item.title) ?? [];
+const coreFunctions = [
+  "Screening",
+  "Intake",
+  "Orientation",
+  "Assessment",
+  "Treatment Planning",
+  "Counseling",
+  "Case Management",
+  "Crisis Intervention",
+  "Client Education",
+  "Referral",
+  "Reports & Record Keeping",
+  "Consultation",
+];
 
 const fields = [
   { name: "date", label: "Date", type: "date" as const },

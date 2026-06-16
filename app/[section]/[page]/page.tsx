@@ -4,7 +4,6 @@ import ClinicalDecisionNavigator from "@/components/ClinicalDecisionNavigator";
 import { WorkflowPhasePage } from "@/components/ClientJourneyComponents";
 import DashboardHome from "@/components/DashboardHome";
 import GroupTherapyHub from "@/components/GroupTherapyHub";
-import HoursTrackerPlaceholder from "@/components/HoursTrackerPlaceholder";
 import KaiShinCompanionWorkspace from "@/components/KaiShinCompanionWorkspace";
 import KaiShinHubWorkspace from "@/components/KaiShinHubWorkspace";
 import {
@@ -12,6 +11,7 @@ import {
   DocumentationLab,
   GroupStudio,
   LearningWorkspace,
+  LicensureJourneyWorkspace,
   MedicationReference,
   ProcentiveCompanion,
   ResourceLibrary,
@@ -121,13 +121,7 @@ export default async function DynamicContentPage({
   }
 
   if (path === "/internship-survival-guide/hours-tracker") {
-    return (
-      <PageTemplate page={contentPage}>
-        <section className="mt-5">
-          <HoursTrackerPlaceholder />
-        </section>
-      </PageTemplate>
-    );
+    return <LicensureJourneyWorkspace />;
   }
 
   if (path === "/internship-survival-guide/practice-questions") {

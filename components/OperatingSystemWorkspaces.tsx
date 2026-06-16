@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, ReactNode, useMemo, useState } from "react";
+import HoursTrackerPlaceholder from "@/components/HoursTrackerPlaceholder";
 import { websiteLibrary } from "@/lib/siteContent";
 import { useLocalEntries } from "@/lib/useLocalEntries";
 
@@ -567,27 +568,309 @@ function toggleString(items: string[], item: string) {
 }
 
 const academyPaths = {
-  "LADC Academy": ["ADC-T Foundations", "12 Core Functions", "ASAM Foundations", "DSM-5 Foundations", "Documentation Foundations", "Group Facilitation", "Ethics and Boundaries", "Clinical Interviewing"],
-  "Exam Academy": ["Multiple choice drills", "Clinical scenarios", "ASAM questions", "DSM-5 questions", "Ethics questions", "Documentation questions", "Missed question review"],
-  "Case Challenges": ["Level 1 straightforward case", "Level 2 moderate complexity", "Level 3 co-occurring conditions", "Level 4 complex systems case"],
-  "Licensure Journey": ["Education requirements", "Internship hours", "Supervision documentation", "ADC exam steps", "Application materials", "Renewal reminders"],
-  "Clinical Wisdom": ["Common intern mistakes", "What supervisors wish interns knew", "Red flags", "Better questions", "Boundaries", "De-escalation", "Burnout prevention"],
-  "Reset Room": ["2-minute breathing reset", "5-minute grounding", "Post-group decompression", "Burnout check-in", "Positive reflection"],
+  "LADC Academy": [
+    {
+      name: "ADC-T Foundations",
+      modules: ["Terminology", "12 Core Functions", "245G basics", "Procentive basics", "ASAM foundations", "DSM-5 foundations"],
+      practice: "Explain the client journey from first call to discharge in plain language.",
+    },
+    {
+      name: "Documentation Mastery",
+      modules: ["Assessment summaries", "ASAM narratives", "Progress notes", "Group notes", "Treatment plan language", "Discharge summaries"],
+      practice: "Turn one de-identified client statement into assessment, plan, and progress-note language.",
+    },
+    {
+      name: "Group Facilitation",
+      modules: ["Opening questions", "Processing questions", "Skill practice", "Managing silence", "Redirecting conflict", "Closing groups"],
+      practice: "Build a relapse prevention group and connect it to ASAM Dimension 5.",
+    },
+    {
+      name: "Professional Development",
+      modules: ["Supervision", "Boundaries", "Burnout prevention", "Consultation", "Exam readiness", "Career planning"],
+      practice: "Write three supervision questions from a difficult clinical moment.",
+    },
+  ],
+  "Clinical Wisdom": [
+    "Common intern mistakes: documenting vague participation, skipping rationale, overusing labels, and waiting too long to consult.",
+    "Supervisor advice: bring facts, your clinical question, your risk concern, and what you think the next step might be.",
+    "Better questions: ask what changed, what helped, what got in the way, what the client wants next, and what support is realistic.",
+    "Things not to say: avoid shaming, arguing, diagnosing beyond scope, promising outcomes, or minimizing safety concerns.",
+    "Documentation mistakes: avoid client-identifying detail in learning tools, unsupported conclusions, and copy/paste wording that does not match the session.",
+    "Burnout prevention: reset after hard sessions, debrief appropriately, and remember you support recovery; you do not do recovery for the client.",
+  ],
+  "Reset Room": [
+    "2-minute breathing reset",
+    "5-minute grounding reset",
+    "Post-group decompression",
+    "Burnout check-in",
+    "Self-care reminder",
+    "Video link library",
+  ],
 };
 
-export function LearningWorkspace({ title }: { title: keyof typeof academyPaths }) {
+const examQuestions = [
+  {
+    level: "Beginner",
+    prompt: "A client says they are only attending treatment because probation requires it. Which ASAM dimension is most directly affected?",
+    choices: ["Dimension 1", "Dimension 2", "Dimension 4", "Dimension 6"],
+    answer: 2,
+    why: "Dimension 4 looks at readiness to change, motivation, insight, and engagement.",
+    wrong: "Dimension 1 is withdrawal, Dimension 2 is biomedical, and Dimension 6 is recovery environment.",
+    concept: "ASAM Dimension 4",
+    application: "Document external motivation and explore ambivalence using MI instead of labeling the client resistant.",
+  },
+  {
+    level: "Intermediate",
+    prompt: "A client has moderate cravings, limited coping skills, and repeated relapse after short abstinence. What treatment priority is most supported?",
+    choices: ["Medical detox", "Relapse prevention and coping-skill development", "Discharge with no follow-up", "Only employment counseling"],
+    answer: 1,
+    why: "The facts point to ASAM Dimension 5 relapse/continued use potential.",
+    wrong: "Detox may be needed only if withdrawal risk supports it; the other answers ignore relapse vulnerability.",
+    concept: "Treatment planning from ASAM Dimension 5",
+    application: "Create measurable objectives around triggers, coping skills, cravings, sober supports, and relapse response planning.",
+  },
+  {
+    level: "Advanced",
+    prompt: "A client reports recent overdose, fentanyl use, depression, and unstable housing. What is the safest documentation stance?",
+    choices: ["Client is fine for low-intensity care because they attended assessment.", "Client has multidimensional risk requiring supervisor review and careful level-of-care consideration.", "Client should be diagnosed with every listed disorder immediately.", "Do not document overdose unless asked."],
+    answer: 1,
+    why: "Recent overdose plus co-occurring and environmental concerns affects safety, ASAM, referrals, and level of care.",
+    wrong: "Attendance alone does not lower risk; overdiagnosing is unsafe; overdose is clinically relevant.",
+    concept: "Critical thinking and risk documentation",
+    application: "Flag overdose, consult supervisor, review ASAM Dimensions 1, 3, 5, and 6, and document referrals/safety steps.",
+  },
+  {
+    level: "Expert",
+    prompt: "A client meets severe SUD criteria but insists they only need a certificate for court. They lives with active users but denies cravings. Which concern should an exam question most likely test?",
+    choices: ["Only Dimension 2", "Mismatch between stated goal, readiness, relapse risk, and recovery environment", "No diagnosis is possible", "The counselor should challenge the client until they agree"],
+    answer: 1,
+    why: "The case tests integration: DSM severity, Dimension 4 readiness, Dimension 5 relapse risk, and Dimension 6 environment.",
+    wrong: "Biomedical is not the main issue; denial does not erase diagnosis support; confrontation is not MI-consistent.",
+    concept: "Integrated clinical reasoning",
+    application: "Use reflective language, document external motivation and environmental risk, and recommend services supported by ASAM rationale.",
+  },
+];
+
+const caseChallenges = [
+  {
+    level: "Level 1",
+    title: "Alcohol, DWI, employed, moderate insight",
+    facts: "Client reports weekend binge drinking, recent DWI, stable employment, supportive partner, and concern about legal consequences.",
+    expert: "Consider Alcohol Use Disorder criteria, Dimension 4 ambivalence, Dimension 5 relapse risk around weekends, and treatment priorities around decision-making, relapse prevention, and legal coordination with valid ROI.",
+  },
+  {
+    level: "Level 2",
+    title: "Methamphetamine, probation, anxiety, unstable peers",
+    facts: "Client reports stimulant use, probation referral, anxiety symptoms, limited sober support, and friends who continue using.",
+    expert: "Assess stimulant use disorder criteria, Dimension 3 anxiety contribution, Dimension 4 external motivation, Dimension 5 continued-use risk, Dimension 6 environmental risk, and treatment plan needs for coping skills and sober support.",
+  },
+  {
+    level: "Level 3",
+    title: "Opioid use, overdose history, MOUD interest",
+    facts: "Client reports fentanyl use, recent nonfatal overdose, interest in buprenorphine, unstable transportation, and fear of withdrawal.",
+    expert: "Prioritize safety, withdrawal/MOUD referral, overdose prevention, naloxone education, Dimension 1 review, Dimension 5 risk, Dimension 6 transportation barriers, and coordination with medical prescriber using ROI.",
+  },
+  {
+    level: "Level 4",
+    title: "Complex systems case",
+    facts: "Client reports active meth use, domestic violence concerns, housing instability, legal involvement, depression symptoms, and minimal supports.",
+    expert: "This requires supervisor review. Evaluate safety, mandated reporting questions if applicable, ASAM Dimensions 3, 4, 5, and 6, coordinated referrals, trauma-informed planning, and careful documentation of facts, risk, and next steps.",
+  },
+];
+
+const licensureSteps = [
+  "ADC-T registration",
+  "CPR certification",
+  "CPRS certification",
+  "CPRS-F endorsement",
+  "Begin internship",
+  "440 summer hours",
+  "440 fall hours",
+  "Graduation",
+  "IC&RC ADC exam",
+  "Submit LADC application",
+  "Continuing education tracking",
+  "Supervisor hours tracking",
+  "Obtain LADC",
+];
+
+function ExamAcademyWorkspace() {
+  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [submitted, setSubmitted] = useState(false);
+  const score = examQuestions.filter((question, index) => answers[String(index)] === question.answer).length;
+  return (
+    <Shell eyebrow="Exam Academy" title="Licensure Exam Training">
+      <NextStepEngine
+        steps={[
+          { label: "Review 12 Core Functions", href: "/core-functions/screening", note: "Anchor missed questions to the core functions." },
+          { label: "Practice case reasoning", href: "/case-challenges/challenges", note: "Move from memorizing to clinical decision-making." },
+          { label: "Track licensure tasks", href: "/internship-survival-guide/hours-tracker", note: "Connect exam prep to your licensure roadmap." },
+        ]}
+      />
+      <section className="grid gap-4">
+        {examQuestions.map((question, index) => {
+          const chosen = answers[String(index)];
+          const correct = chosen === question.answer;
+          return (
+            <article key={question.prompt} className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">
+              <p className="text-xs font-semibold uppercase tracking-wide text-lagoon">{question.level}</p>
+              <h2 className="mt-2 text-lg font-semibold text-ink">{question.prompt}</h2>
+              <div className="mt-4 grid gap-2">
+                {question.choices.map((choice, choiceIndex) => (
+                  <label key={choice} className="flex gap-2 rounded-md bg-paper p-3 text-sm text-ink/75">
+                    <input type="radio" name={`exam-${index}`} checked={chosen === choiceIndex} onChange={() => setAnswers((current) => ({ ...current, [index]: choiceIndex }))} />
+                    <span>{choice}</span>
+                  </label>
+                ))}
+              </div>
+              {submitted ? (
+                <div className={`mt-4 rounded-md p-3 text-sm leading-6 ${correct ? "bg-sage/15 text-ink" : "bg-clay/10 text-ink"}`}>
+                  <p><strong>{correct ? "Correct." : "Review this one."}</strong> {question.why}</p>
+                  <p><strong>Why the others are wrong:</strong> {question.wrong}</p>
+                  <p><strong>Concept tested:</strong> {question.concept}</p>
+                  <p><strong>Real-world application:</strong> {question.application}</p>
+                </div>
+              ) : null}
+            </article>
+          );
+        })}
+      </section>
+      <button type="button" onClick={() => setSubmitted(true)} className="focus-ring w-fit rounded-md bg-lagoon px-4 py-2 text-sm font-semibold text-white hover:bg-ink">
+        Submit answers {submitted ? `(${score}/${examQuestions.length})` : ""}
+      </button>
+    </Shell>
+  );
+}
+
+function CaseChallengesWorkspace() {
+  const [open, setOpen] = useState<string | null>(caseChallenges[0].title);
+  return (
+    <Shell eyebrow="Case Challenges" title="Clinical Reasoning Practice">
+      <NextStepEngine
+        steps={[
+          { label: "Try Clinical Decision Navigator", href: "/clinical-decision-navigator/navigator", note: "Enter the scenario facts and compare generated priorities." },
+          { label: "Write documentation", href: "/documentation-lab/lab", note: "Practice turning the scenario into clinical wording." },
+        ]}
+      />
+      <section className="grid gap-4">
+        {caseChallenges.map((challenge) => (
+          <article key={challenge.title} className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">
+            <button type="button" onClick={() => setOpen(open === challenge.title ? null : challenge.title)} className="w-full text-left">
+              <p className="text-xs font-semibold uppercase tracking-wide text-lagoon">{challenge.level}</p>
+              <h2 className="mt-1 text-xl font-semibold text-ink">{challenge.title}</h2>
+            </button>
+            <p className="mt-3 text-sm leading-6 text-ink/70">{challenge.facts}</p>
+            {open === challenge.title ? (
+              <div className="mt-4 rounded-md bg-paper p-4 text-sm leading-6 text-ink/75">
+                <p className="font-semibold text-ink">Your task</p>
+                <p>Identify DSM-5 considerations, ASAM dimensions, treatment priorities, level of care concerns, referrals, and documentation language.</p>
+                <p className="mt-3 font-semibold text-ink">Expert rationale</p>
+                <p>{challenge.expert}</p>
+              </div>
+            ) : null}
+          </article>
+        ))}
+      </section>
+    </Shell>
+  );
+}
+
+export function LicensureJourneyWorkspace() {
+  const [done, setDone] = useState<string[]>([]);
+  const progress = Math.round((done.length / licensureSteps.length) * 100);
+  return (
+    <Shell eyebrow="Licensure Journey" title="My LADC Roadmap">
+      <NextStepEngine
+        steps={[
+          { label: "Practice exam questions", href: "/exam-academy/practice", note: "Move from checklist completion to exam readiness." },
+          { label: "Study foundations", href: "/ladc-academy/academy", note: "Build knowledge around ASAM, DSM, ethics, documentation, and groups." },
+          { label: "Prepare supervision", href: "/clinical-wisdom/wisdom", note: "Bring better questions and clearer clinical reflections." },
+        ]}
+      />
+      <section className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-xl font-semibold text-ink">Licensure checklist</h2>
+          <p className="text-sm font-semibold text-lagoon">{progress}% complete</p>
+        </div>
+        <div className="mt-3 h-3 rounded-full bg-paper">
+          <div className="h-3 rounded-full bg-lagoon" style={{ width: `${progress}%` }} />
+        </div>
+        <div className="mt-4 grid gap-2 md:grid-cols-2">
+          {licensureSteps.map((step) => (
+            <label key={step} className="flex gap-2 rounded-md bg-paper p-3 text-sm text-ink/75">
+              <input type="checkbox" checked={done.includes(step)} onChange={() => setDone(toggleString(done, step))} />
+              <span>{step}</span>
+            </label>
+          ))}
+        </div>
+      </section>
+      <HoursTrackerPlaceholder />
+    </Shell>
+  );
+}
+
+export function LearningWorkspace({ title }: { title: "LADC Academy" | "Exam Academy" | "Case Challenges" | "Clinical Wisdom" | "Reset Room" }) {
+  if (title === "Exam Academy") return <ExamAcademyWorkspace />;
+  if (title === "Case Challenges") return <CaseChallengesWorkspace />;
+  if (title === "Clinical Wisdom") {
+    return (
+      <Shell eyebrow="Clinical Wisdom" title="What School Does Not Always Teach">
+        <NextStepEngine
+          steps={[
+            { label: "Bring to supervision", href: "/internship-survival-guide/supervision-log", note: "Turn uncertainty into a good supervision question." },
+            { label: "Practice with a case", href: "/case-challenges/challenges", note: "Apply the wisdom to realistic situations." },
+          ]}
+        />
+        <section className="grid gap-4 md:grid-cols-2">
+          {academyPaths["Clinical Wisdom"].map((item) => (
+            <article key={item} className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">
+              <p className="text-sm leading-6 text-ink/75">{item}</p>
+            </article>
+          ))}
+        </section>
+      </Shell>
+    );
+  }
+  if (title === "Reset Room") {
+    return (
+      <Shell eyebrow="Reset Room" title="Pause, Breathe, and Come Back Steady">
+        <section className="rounded-lg border border-lagoon/20 bg-lagoon/5 p-5 text-sm leading-6 text-ink/75">
+          <p className="text-lg font-semibold text-ink">You are not responsible for doing recovery for the client.</p>
+          <p className="mt-2">You are responsible for being ethical, prepared, present, and clinically thoughtful. Take two minutes before the next thing.</p>
+        </section>
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {academyPaths["Reset Room"].map((item) => (
+            <article key={item} className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">
+              <h2 className="text-lg font-semibold text-ink">{item}</h2>
+              <p className="mt-3 text-sm leading-6 text-ink/70">Use this as a non-clinical self-regulation break: breathe, name what happened, release what is not yours, and choose one grounded next step.</p>
+            </article>
+          ))}
+        </section>
+      </Shell>
+    );
+  }
   const [complete, setComplete] = useState<string[]>([]);
   return (
-    <Shell eyebrow={title} title={title === "Reset Room" ? "Reset Tools for the Workday" : "Guided Learning Workspace"}>
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {academyPaths[title].map((item) => (
-          <article key={item} className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">
+    <Shell eyebrow="LADC Academy" title="Apprenticeship Learning Paths">
+      <NextStepEngine
+        steps={[
+          { label: "Take exam practice", href: "/exam-academy/practice", note: "Convert learning into exam readiness." },
+          { label: "Try case challenges", href: "/case-challenges/challenges", note: "Practice clinical thinking with realistic cases." },
+          { label: "Use Documentation Lab", href: "/documentation-lab/lab", note: "Practice turning concepts into documentation." },
+        ]}
+      />
+      <section className="grid gap-4 md:grid-cols-2">
+        {academyPaths["LADC Academy"].map((path) => (
+          <article key={path.name} className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">
             <label className="flex items-start gap-3">
-              <input type="checkbox" checked={complete.includes(item)} onChange={() => setComplete(toggleString(complete, item))} />
+              <input type="checkbox" checked={complete.includes(path.name)} onChange={() => setComplete(toggleString(complete, path.name))} />
               <span>
-                <strong className="text-ink">{item}</strong>
+                <strong className="text-ink">{path.name}</strong>
                 <span className="mt-2 block text-sm leading-6 text-ink/70">
-                  Learn the concept, why it matters, a real-world example, a reflection question, and one practice activity. This module is ready to expand into deeper lessons.
+                  Modules: {path.modules.join(", ")}.
+                </span>
+                <span className="mt-2 block rounded-md bg-paper p-3 text-sm leading-6 text-ink/70">
+                  Practice: {path.practice}
                 </span>
               </span>
             </label>

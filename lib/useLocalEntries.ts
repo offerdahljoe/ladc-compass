@@ -134,6 +134,17 @@ export function useLocalEntries<T extends StoredEntry>(key: string) {
     setEntries((current) => current.filter((entry) => entry.id !== id));
   }
 
+  async function updateEntry(id: string | undefined, entry: T) {
+    if (!id) return;
+    const { id: _id, ...payload } = entry;
+    if (supabase && userId) {
+      await supabase.from("ladc_entries").update({ payload }).eq("id", id);
+    }
+    setEntries((current) =>
+      current.map((item) => (item.id === id ? { ...entry, id } : item)),
+    );
+  }
+
   async function clearEntries() {
     if (supabase && userId) {
       await supabase.from("ladc_entries").delete().eq("collection", key);
@@ -144,6 +155,7 @@ export function useLocalEntries<T extends StoredEntry>(key: string) {
   return {
     entries,
     addEntry,
+    updateEntry,
     removeEntry,
     clearEntries,
     cloudEnabled,
