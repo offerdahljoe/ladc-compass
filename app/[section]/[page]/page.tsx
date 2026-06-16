@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import ADCPracticeTest from "@/components/ADCPracticeTest";
+import ClinicalDecisionNavigator from "@/components/ClinicalDecisionNavigator";
 import { WorkflowPhasePage } from "@/components/ClientJourneyComponents";
 import GroupTherapyHub from "@/components/GroupTherapyHub";
 import HoursTrackerPlaceholder from "@/components/HoursTrackerPlaceholder";
@@ -33,6 +34,10 @@ export default async function DynamicContentPage({
       return <KaiShinCompanionWorkspace />;
     }
     notFound();
+  }
+
+  if (path === "/clinical-decision-navigator/navigator") {
+    return <ClinicalDecisionNavigator />;
   }
 
   if (section === "client-journey") {

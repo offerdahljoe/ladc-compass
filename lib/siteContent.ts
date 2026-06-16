@@ -41,60 +41,16 @@ export const mainNavigation: NavItem[] = [
     path: "/",
   },
   {
-    title: "Kai-Shin Procentive Companion",
-    path: "/kai-shin-procentive/companion",
+    title: "Clinical Decision Navigator",
+    path: "/clinical-decision-navigator/navigator",
     items: [
-      { title: "Assessment Companion", path: "/kai-shin-procentive/companion" },
+      { title: "Decision Workspace", path: "/clinical-decision-navigator/navigator" },
     ],
   },
   {
     title: "Client Journey Navigator",
     path: "/client-journey/dashboard",
     items: clientJourneyNavItems,
-  },
-  {
-    title: "Documentation",
-    path: "/documentation/progress-notes",
-    items: [
-      { title: "Progress Notes", path: "/documentation/progress-notes" },
-      { title: "Group Notes", path: "/documentation/group-notes" },
-      { title: "Individual Notes", path: "/documentation/individual-notes" },
-      { title: "Case Management Notes", path: "/documentation/case-management-notes" },
-      { title: "Crisis Notes", path: "/documentation/crisis-notes" },
-      { title: "Discharge Summaries", path: "/documentation/discharge-summaries" },
-      { title: "Client Form Explanations", path: "/documentation/client-form-explanations" },
-      { title: "Documentation Templates", path: "/documentation/templates" },
-      { title: "Documentation Examples", path: "/documentation/examples" },
-    ],
-  },
-  {
-    title: "Treatment Planning",
-    path: "/treatment-planning/problem-statements",
-    items: [
-      { title: "Problem Statements", path: "/treatment-planning/problem-statements" },
-      { title: "Goals", path: "/treatment-planning/goals" },
-      { title: "Objectives", path: "/treatment-planning/objectives" },
-      { title: "Interventions", path: "/treatment-planning/interventions" },
-      { title: "Treatment Plan Reviews", path: "/treatment-planning/reviews" },
-      { title: "Relapse Prevention Planning", path: "/treatment-planning/relapse-prevention-planning" },
-      { title: "Discharge Planning", path: "/treatment-planning/discharge-planning" },
-    ],
-  },
-  {
-    title: "Clinical Toolbox",
-    path: "/clinical-toolbox/group-therapy-ideas",
-    items: [
-      { title: "Group Therapy Ideas", path: "/clinical-toolbox/group-therapy-ideas" },
-      { title: "Individual Session Tools", path: "/clinical-toolbox/individual-session-tools" },
-      { title: "Motivational Interviewing", path: "/clinical-toolbox/motivational-interviewing" },
-      { title: "CBT Tools", path: "/clinical-toolbox/cbt-tools" },
-      { title: "Relapse Prevention", path: "/clinical-toolbox/relapse-prevention" },
-      { title: "De-escalation", path: "/clinical-toolbox/de-escalation" },
-      { title: "Safety Planning", path: "/clinical-toolbox/safety-planning" },
-      { title: "Client Education", path: "/clinical-toolbox/client-education" },
-      { title: "Worksheets", path: "/clinical-toolbox/worksheets" },
-      { title: "Processing Questions", path: "/clinical-toolbox/processing-questions" },
-    ],
   },
   {
     title: "Medications",
@@ -205,11 +161,10 @@ export const mainNavigation: NavItem[] = [
 ];
 
 export const quickActions = [
+  { title: "Open Clinical Decision Navigator", path: "/clinical-decision-navigator/navigator" },
   { title: "Open Client Journey", path: "/client-journey/dashboard" },
   { title: "Intake Packet Guide", path: "/client-journey/intake-packet" },
   { title: "ROI / Collateral Scripts", path: "/client-journey/collateral-contacts-rois" },
-  { title: "Open Kai-Shin Companion", path: "/kai-shin-procentive/companion" },
-  { title: "Write Progress Note", path: "/documentation/progress-notes" },
   { title: "Plan a Group Session", path: "/group-therapy-hub/planner" },
   { title: "Find or Add Resource", path: "/resource-hub/resources" },
   { title: "Study 12 Core Functions", path: "/core-functions/screening" },
@@ -1504,52 +1459,36 @@ const specialDetails: Record<string, Partial<PageDetails>> = {
 
 function defaultRelatedFor(path: string, section: string) {
   const base = [
-    "/assessments/comprehensive-assessment",
-    "/assessments/asam-dimensions",
-    "/kai-shin-procentive/companion",
+    "/clinical-decision-navigator/navigator",
     "/client-journey/dashboard",
-    "/treatment-planning/problem-statements",
-    "/documentation/progress-notes",
+    "/group-therapy-hub/planner",
+    "/resource-hub/resources",
+    "/kai-shin/hub",
   ];
   const sectionLinks: Record<string, string[]> = {
-    Documentation: [
-      "/kai-shin/hub",
-      "/client-journey/dashboard",
-      "/core-functions/reports-and-record-keeping",
-    ],
-    "Treatment Planning": [
-      "/assessments/comprehensive-assessment",
-      "/kai-shin-procentive/companion",
-      "/kai-shin/hub",
-    ],
-    "Clinical Toolbox": [
-      "/group-therapy-hub/planner",
-      "/kai-shin-procentive/companion",
-      "/documentation/progress-notes",
-    ],
     "Client Communication Toolkit": [
       "/client-journey/dashboard",
       "/ethics-compliance/confidentiality",
-      "/kai-shin-procentive/companion",
+      "/clinical-decision-navigator/navigator",
     ],
     "12 Core Functions": [
-      "/assessments/comprehensive-assessment",
-      "/documentation/progress-notes",
+      "/clinical-decision-navigator/navigator",
+      "/client-journey/dashboard",
       "/ethics-compliance/documentation-compliance",
     ],
     "Ethics & Compliance": [
       "/client-journey/intake-packet",
-      "/documentation/crisis-notes",
+      "/clinical-decision-navigator/navigator",
       "/core-functions/consultation",
     ],
     "Kai-Shin Hub": [
-      "/kai-shin-procentive/companion",
+      "/clinical-decision-navigator/navigator",
       "/client-journey/intake-packet",
-      "/documentation/templates",
+      "/resource-hub/resources",
     ],
     "Group Therapy Hub": [
-      "/documentation/group-notes",
-      "/clinical-toolbox/group-therapy-ideas",
+      "/clinical-decision-navigator/navigator",
+      "/client-journey/group-sessions",
       "/core-functions/counseling",
     ],
   };
