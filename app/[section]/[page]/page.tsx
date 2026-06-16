@@ -12,6 +12,7 @@ import {
   DocumentationLab,
   GroupStudio,
   LearningWorkspace,
+  MedicationReference,
   ProcentiveCompanion,
   ResourceLibrary,
 } from "@/components/OperatingSystemWorkspaces";
@@ -81,6 +82,10 @@ export default async function DynamicContentPage({
 
   if (path === "/billing-codes/reference") {
     return <BillingCodes />;
+  }
+
+  if (section === "medications") {
+    return <MedicationReference path={path} />;
   }
 
   if (path === "/ladc-academy/academy") {

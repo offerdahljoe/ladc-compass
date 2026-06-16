@@ -5,6 +5,10 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { mainNavigation } from "@/lib/siteContent";
 
+function hasActivePath(item: (typeof mainNavigation)[number], pathname: string): boolean {
+  return pathname === item.path || Boolean(item.items?.some((child) => hasActivePath(child, pathname)));
+}
+
 export default function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
@@ -47,9 +51,7 @@ export default function Sidebar() {
       {!collapsed ? (
       <nav className="mt-6 grid gap-2">
         {mainNavigation.map((item) => {
-          const active =
-            pathname === item.path ||
-            item.items?.some((child) => pathname === child.path);
+          const active = hasActivePath(item, pathname);
           if (!item.items || item.items.length <= 1) {
             return (
               <Link
@@ -71,19 +73,52 @@ export default function Sidebar() {
                 {item.title}
               </summary>
               <div className="mt-1 grid gap-1 border-l border-ink/10 pl-3">
-                {item.items.map((child) => (
-                  <Link
-                    key={child.path}
-                    href={child.path}
-                    className={`focus-ring rounded-md px-3 py-2 text-sm ${
-                      pathname === child.path
-                        ? "bg-lagoon text-white"
-                        : "text-ink/70 hover:bg-paper hover:text-ink"
-                    }`}
-                  >
-                    {child.title}
-                  </Link>
-                ))}
+                {item.items.map((child) =>
+                  child.items?.length ? (
+                    <details key={child.path} open={hasActivePath(child, pathname)}>
+                      <summary className="focus-ring cursor-pointer rounded-md px-3 py-2 text-sm font-semibold text-ink/80 hover:bg-paper">
+                        {child.title}
+                      </summary>
+                      <div className="ml-2 mt-1 grid gap-1 border-l border-ink/10 pl-2">
+                        <Link
+                          href={child.path}
+                          className={`focus-ring rounded-md px-3 py-2 text-sm ${
+                            pathname === child.path
+                              ? "bg-lagoon text-white"
+                              : "text-ink/70 hover:bg-paper hover:text-ink"
+                          }`}
+                        >
+                          Open {child.title}
+                        </Link>
+                        {child.items.map((grandchild) => (
+                          <Link
+                            key={grandchild.path}
+                            href={grandchild.path}
+                            className={`focus-ring rounded-md px-3 py-2 text-sm ${
+                              pathname === grandchild.path
+                                ? "bg-lagoon text-white"
+                                : "text-ink/70 hover:bg-paper hover:text-ink"
+                            }`}
+                          >
+                            {grandchild.title}
+                          </Link>
+                        ))}
+                      </div>
+                    </details>
+                  ) : (
+                    <Link
+                      key={child.path}
+                      href={child.path}
+                      className={`focus-ring rounded-md px-3 py-2 text-sm ${
+                        pathname === child.path
+                          ? "bg-lagoon text-white"
+                          : "text-ink/70 hover:bg-paper hover:text-ink"
+                      }`}
+                    >
+                      {child.title}
+                    </Link>
+                  ),
+                )}
               </div>
             </details>
           );

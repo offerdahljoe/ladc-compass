@@ -1,7 +1,39 @@
 "use client";
 
 import Link from "next/link";
-import { mainNavigation } from "@/lib/siteContent";
+import { mainNavigation, NavItem } from "@/lib/siteContent";
+
+function MobileLinkTree({ item }: { item: NavItem }) {
+  if (!item.items?.length) {
+    return (
+      <Link
+        href={item.path}
+        className="rounded-md px-3 py-2 text-sm text-ink/70 hover:bg-paper"
+      >
+        {item.title}
+      </Link>
+    );
+  }
+
+  return (
+    <details>
+      <summary className="cursor-pointer rounded-md px-3 py-2 text-sm font-semibold text-ink/80">
+        {item.title}
+      </summary>
+      <div className="grid gap-1 border-l border-ink/10 pl-3">
+        <Link
+          href={item.path}
+          className="rounded-md px-3 py-2 text-sm text-ink/70 hover:bg-paper"
+        >
+          Open {item.title}
+        </Link>
+        {item.items.map((child) => (
+          <MobileLinkTree key={child.path} item={child} />
+        ))}
+      </div>
+    </details>
+  );
+}
 
 export default function MobileNav() {
   return (
@@ -35,15 +67,7 @@ export default function MobileNav() {
                   >
                     Open {section.title}
                   </Link>
-                  {section.items?.map((item) => (
-                    <Link
-                      key={item.path}
-                      href={item.path}
-                      className="rounded-md px-3 py-2 text-sm text-ink/70 hover:bg-paper"
-                    >
-                      {item.title}
-                    </Link>
-                  ))}
+                  {section.items?.map((item) => <MobileLinkTree key={item.path} item={item} />)}
                 </div>
               </details>
             ),

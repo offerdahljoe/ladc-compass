@@ -21,6 +21,14 @@ type ScheduleEvent = {
   start: string;
   end: string;
   repeat: "none" | "daily" | "weekly" | "monthly";
+  repeatEndDate: string;
+  repeatCount: number;
+  editScope: "one" | "future" | "series";
+  deleteScope: "one" | "future" | "series";
+  reminderAmount: number;
+  reminderUnit: "minutes" | "hours" | "days";
+  emailReminder: boolean;
+  textReminder: boolean;
   notes: string;
   wrapUpMinutes: number;
   unavailable?: boolean;
@@ -136,8 +144,19 @@ function readStorage<T>(key: string, fallback: T): T {
 function occursOn(event: ScheduleEvent, dayKey: string) {
   if (event.date === dayKey) return true;
   if (event.repeat === "none" || !sameOrBefore(event.date, dayKey)) return false;
+  if (event.repeatEndDate && !sameOrBefore(dayKey, event.repeatEndDate)) return false;
   const first = parseDateKey(event.date);
   const day = parseDateKey(dayKey);
+  const daysSince = Math.floor((day.getTime() - first.getTime()) / 86400000);
+  if ((event.repeatCount ?? 0) > 0) {
+    const occurrenceIndex =
+      event.repeat === "daily"
+        ? daysSince
+        : event.repeat === "weekly"
+          ? Math.floor(daysSince / 7)
+          : (day.getFullYear() - first.getFullYear()) * 12 + day.getMonth() - first.getMonth();
+    if (occurrenceIndex >= event.repeatCount) return false;
+  }
   if (event.repeat === "daily") return true;
   if (event.repeat === "weekly") return first.getDay() === day.getDay();
   return first.getDate() === day.getDate();
@@ -367,7 +386,17 @@ export default function DashboardHome() {
   function openEventForm(dayKey: string, event?: ScheduleEvent) {
     setSelectedDate(dayKey);
     setEventDraft(
-      event ?? {
+      event ? {
+        ...event,
+        repeatEndDate: event.repeatEndDate ?? "",
+        repeatCount: event.repeatCount ?? 0,
+        editScope: event.editScope ?? "one",
+        deleteScope: event.deleteScope ?? "series",
+        reminderAmount: event.reminderAmount ?? alarm.defaultWrapUpMinutes,
+        reminderUnit: event.reminderUnit ?? "minutes",
+        emailReminder: event.emailReminder ?? false,
+        textReminder: event.textReminder ?? false,
+      } : {
         id: crypto.randomUUID(),
         title: "",
         contact: "",
@@ -376,6 +405,14 @@ export default function DashboardHome() {
         start: "09:00",
         end: "10:00",
         repeat: "none",
+        repeatEndDate: "",
+        repeatCount: 0,
+        editScope: "one",
+        deleteScope: "series",
+        reminderAmount: alarm.defaultWrapUpMinutes,
+        reminderUnit: "minutes",
+        emailReminder: false,
+        textReminder: false,
         notes: "",
         wrapUpMinutes: alarm.defaultWrapUpMinutes,
         statusByDate: {},
@@ -390,6 +427,8 @@ export default function DashboardHome() {
       ...eventDraft,
       title: eventDraft.title || `${eventDraft.action}${eventDraft.contact ? `: ${eventDraft.contact}` : ""}`,
       unavailable: eventDraft.action === "Unavailable" || eventDraft.unavailable,
+      repeatCount: Number(eventDraft.repeatCount || 0),
+      reminderAmount: Number(eventDraft.reminderAmount || 0),
     };
     setEvents((current) => {
       const exists = current.some((item) => item.id === clean.id);
@@ -431,6 +470,14 @@ export default function DashboardHome() {
         start: "08:00",
         end: "17:00",
         repeat: "none",
+        repeatEndDate: "",
+        repeatCount: 0,
+        editScope: "one",
+        deleteScope: "series",
+        reminderAmount: 0,
+        reminderUnit: "minutes",
+        emailReminder: false,
+        textReminder: false,
         notes: "Marked unavailable.",
         wrapUpMinutes: 0,
         unavailable: true,
@@ -865,9 +912,56 @@ export default function DashboardHome() {
                 </select>
               </label>
               <label className="text-sm font-semibold text-ink">
+                Repeat end date
+                <input type="date" value={eventDraft.repeatEndDate} onChange={(event) => setEventDraft((current) => current ? { ...current, repeatEndDate: event.target.value } : current)} className="focus-ring mt-1 w-full rounded-md border border-ink/15 px-3 py-2 text-sm" />
+              </label>
+              <label className="text-sm font-semibold text-ink">
+                End after occurrences
+                <input type="number" min="0" value={eventDraft.repeatCount} onChange={(event) => setEventDraft((current) => current ? { ...current, repeatCount: Number(event.target.value || 0) } : current)} className="focus-ring mt-1 w-full rounded-md border border-ink/15 px-3 py-2 text-sm" placeholder="0 = no count limit" />
+              </label>
+              <label className="text-sm font-semibold text-ink">
+                Edit scope
+                <select value={eventDraft.editScope} onChange={(event) => setEventDraft((current) => current ? { ...current, editScope: event.target.value as ScheduleEvent["editScope"] } : current)} className="focus-ring mt-1 w-full rounded-md border border-ink/15 px-3 py-2 text-sm">
+                  <option value="one">Edit this event only</option>
+                  <option value="future">Edit this and future events</option>
+                  <option value="series">Edit entire series</option>
+                </select>
+              </label>
+              <label className="text-sm font-semibold text-ink">
+                Delete scope
+                <select value={eventDraft.deleteScope} onChange={(event) => setEventDraft((current) => current ? { ...current, deleteScope: event.target.value as ScheduleEvent["deleteScope"] } : current)} className="focus-ring mt-1 w-full rounded-md border border-ink/15 px-3 py-2 text-sm">
+                  <option value="one">Delete this event only</option>
+                  <option value="future">Delete future events</option>
+                  <option value="series">Delete entire series</option>
+                </select>
+              </label>
+              <label className="text-sm font-semibold text-ink">
                 Wrap-up warning minutes
                 <input type="number" min="0" value={eventDraft.wrapUpMinutes} onChange={(event) => setEventDraft((current) => current ? { ...current, wrapUpMinutes: Number(event.target.value || 0) } : current)} className="focus-ring mt-1 w-full rounded-md border border-ink/15 px-3 py-2 text-sm" />
               </label>
+              <label className="text-sm font-semibold text-ink">
+                Reminder timing
+                <div className="mt-1 grid grid-cols-[1fr_1fr] gap-2">
+                  <input type="number" min="0" value={eventDraft.reminderAmount} onChange={(event) => setEventDraft((current) => current ? { ...current, reminderAmount: Number(event.target.value || 0) } : current)} className="focus-ring w-full rounded-md border border-ink/15 px-3 py-2 text-sm" />
+                  <select value={eventDraft.reminderUnit} onChange={(event) => setEventDraft((current) => current ? { ...current, reminderUnit: event.target.value as ScheduleEvent["reminderUnit"] } : current)} className="focus-ring w-full rounded-md border border-ink/15 px-3 py-2 text-sm">
+                    <option value="minutes">Minutes before</option>
+                    <option value="hours">Hours before</option>
+                    <option value="days">Days before</option>
+                  </select>
+                </div>
+              </label>
+              <div className="rounded-md border border-ink/10 bg-paper p-3 text-sm text-ink/70">
+                <p className="font-semibold text-ink">Future reminder integrations</p>
+                <label className="mt-2 flex items-center gap-2">
+                  <input type="checkbox" checked={eventDraft.emailReminder} onChange={(event) => setEventDraft((current) => current ? { ...current, emailReminder: event.target.checked } : current)} />
+                  Email reminder UI only
+                </label>
+                <label className="mt-2 flex items-center gap-2">
+                  <input type="checkbox" checked={eventDraft.textReminder} onChange={(event) => setEventDraft((current) => current ? { ...current, textReminder: event.target.checked } : current)} />
+                  Text reminder UI only
+                </label>
+                <p className="mt-2 text-xs">These preferences are saved for future integration. The site does not send email or SMS yet.</p>
+              </div>
             </div>
             <label className="mt-4 block text-sm font-semibold text-ink">
               Notes

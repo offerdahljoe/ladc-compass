@@ -386,7 +386,30 @@ function OutputCard({
   );
 }
 
+function NextStepEngine() {
+  const steps = [
+    { label: "Copy to Documentation Lab", href: "/documentation-lab/lab", note: "Turn the generated summary into the exact note or assessment wording you need." },
+    { label: "Open Procentive Companion", href: "/procentive-companion/companion", note: "Decide where each clinical detail belongs before entering it." },
+    { label: "Review Client Journey", href: "/client-journey/comprehensive-assessment", note: "Check which documents, deadlines, and next tasks follow this decision." },
+    { label: "Build Supervisor Talking Points", href: "/documentation-lab/lab", note: "Copy high-risk flags and uncertainty areas into supervision prep." },
+  ];
+  return (
+    <section className="rounded-lg border border-lagoon/20 bg-lagoon/5 p-4">
+      <p className="text-xs font-semibold uppercase tracking-wide text-lagoon">Next Step Engine</p>
+      <div className="mt-3 grid gap-2 md:grid-cols-2">
+        {steps.map((step) => (
+          <a key={step.label} href={step.href} className="focus-ring rounded-md border border-lagoon/20 bg-white p-3 text-sm hover:border-lagoon">
+            <strong className="block text-ink">{step.label}</strong>
+            <span className="mt-1 block text-ink/65">{step.note}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function ClinicalDecisionNavigator() {
+  const [mode, setMode] = useState("Beginner / Intern Mode");
   const [snapshot, setSnapshot] = useState<Snapshot>({
     label: "",
     age: "",
@@ -573,6 +596,15 @@ export default function ClinicalDecisionNavigator() {
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-lagoon">Clinical Decision Navigator</p>
               <p className="mt-1 text-sm text-ink/70">Learning tool only. Use initials or a non-identifying label. Supervisor, agency policy, DSM-5-TR, and ASAM criteria override this tool.</p>
+              <label className="mt-3 block max-w-xs text-xs font-semibold text-ink">
+                Output mode
+                <select value={mode} onChange={(event) => setMode(event.target.value)} className="focus-ring mt-1 w-full rounded-md border border-ink/15 px-3 py-2 text-sm">
+                  <option>Beginner / Intern Mode</option>
+                  <option>Concise Clinician Mode</option>
+                  <option>Procentive Wording Mode</option>
+                  <option>Supervisor Review Mode</option>
+                </select>
+              </label>
             </div>
             <div className="flex flex-wrap gap-2">
               <button onClick={loadSample} className="focus-ring rounded-md border border-ink/10 px-3 py-2 text-sm font-semibold hover:bg-paper">Sample client</button>
@@ -580,10 +612,15 @@ export default function ClinicalDecisionNavigator() {
               <button onClick={resetAll} className="focus-ring rounded-md border border-clay/30 px-3 py-2 text-sm font-semibold text-clay hover:bg-clay hover:text-white">Clear</button>
             </div>
           </div>
+          <p className="mt-3 rounded-md bg-paper px-3 py-2 text-xs text-ink/65">
+            Current mode: {mode}. This changes how you should read the output: learn the logic, tighten wording, prepare Procentive language, or identify supervision questions.
+          </p>
           <div className="mt-3 h-2 rounded-full bg-paper">
             <div className="h-2 rounded-full bg-lagoon" style={{ width: `${Math.min(100, Math.round(((criteria.length ? 1 : 0) + dimensionOutputs.filter((item) => item.finalRating !== "").length + (selectedStrengths.length ? 1 : 0) + (selectedBarriers.length ? 1 : 0) + (selectedGoals.length ? 1 : 0)) / 10 * 100))}%` }} />
           </div>
         </div>
+
+        <NextStepEngine />
 
         <details open className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
           <summary className="cursor-pointer text-lg font-semibold text-ink">1. Client Snapshot</summary>

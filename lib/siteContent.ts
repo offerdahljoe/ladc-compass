@@ -41,7 +41,7 @@ export const mainNavigation: NavItem[] = [
     path: "/",
   },
   {
-    title: "Client Journey Navigator",
+    title: "Client Journey",
     path: "/client-journey/dashboard",
     items: clientJourneyNavItems,
   },
@@ -53,147 +53,106 @@ export const mainNavigation: NavItem[] = [
     ],
   },
   {
-    title: "Group Studio",
-    path: "/group-studio/studio",
-    items: [
-      { title: "Session Builder", path: "/group-studio/studio" },
-    ],
-  },
-  {
-    title: "Calendar + Tasks",
-    path: "/calendar-tasks/planner",
-    items: [
-      { title: "Calendar Workspace", path: "/calendar-tasks/planner" },
-    ],
-  },
-  {
-    title: "Documentation Lab",
+    title: "Workspaces",
     path: "/documentation-lab/lab",
     items: [
-      { title: "Documentation Generator", path: "/documentation-lab/lab" },
+      { title: "Documentation Lab", path: "/documentation-lab/lab" },
+      { title: "Group Studio", path: "/group-studio/studio" },
+      { title: "Procentive Companion", path: "/procentive-companion/companion" },
+      { title: "Kai-Shin Reference", path: "/kai-shin/hub" },
     ],
   },
   {
-    title: "Procentive Companion",
-    path: "/procentive-companion/companion",
-    items: [
-      { title: "Where Does This Go?", path: "/procentive-companion/companion" },
-    ],
-  },
-  {
-    title: "Medication Reference",
-    path: "/medications/overview",
-    items: [
-      { title: "Medication Overview", path: "/medications/overview" },
-      { title: "MOUD: Opioid Use Disorder", path: "/medications/moud-opioid-use-disorder" },
-      { title: "Buprenorphine", path: "/medications/buprenorphine" },
-      { title: "Methadone", path: "/medications/methadone" },
-      { title: "Naltrexone", path: "/medications/naltrexone" },
-      { title: "Naloxone", path: "/medications/naloxone" },
-      { title: "Alcohol Use Disorder Medications", path: "/medications/alcohol-use-disorder-medications" },
-      { title: "Acamprosate", path: "/medications/acamprosate" },
-      { title: "Disulfiram", path: "/medications/disulfiram" },
-      { title: "Psychiatric Medications", path: "/medications/antidepressants" },
-      { title: "Medication Questions for Assessment", path: "/medications/medication-questions-for-assessment" },
-    ],
-  },
-  {
-    title: "Resource Library",
-    path: "/resource-library/library",
-    items: [
-      { title: "Reference Resources", path: "/resource-library/library" },
-    ],
-  },
-  {
-    title: "Smart Contacts",
-    path: "/smart-contacts/contacts",
-    items: [
-      { title: "Contacts Directory", path: "/smart-contacts/contacts" },
-    ],
-  },
-  {
-    title: "Billing Codes",
-    path: "/billing-codes/reference",
-    items: [
-      { title: "Code Reference", path: "/billing-codes/reference" },
-    ],
-  },
-  {
-    title: "LADC Academy",
+    title: "Learn",
     path: "/ladc-academy/academy",
     items: [
-      { title: "Learning Paths", path: "/ladc-academy/academy" },
+      { title: "LADC Academy", path: "/ladc-academy/academy" },
+      { title: "Exam Academy", path: "/exam-academy/practice" },
+      { title: "Clinical Wisdom", path: "/clinical-wisdom/wisdom" },
+      { title: "Case Challenges", path: "/case-challenges/challenges" },
+      {
+        title: "12 Core Functions",
+        path: "/core-functions/screening",
+        items: [
+          "Screening",
+          "Intake",
+          "Orientation",
+          "Assessment",
+          "Treatment Planning",
+          "Counseling",
+          "Case Management",
+          "Crisis Intervention",
+          "Client Education",
+          "Referral",
+          "Reports & Record Keeping",
+          "Consultation",
+        ].map((title) => ({
+          title,
+          path: `/core-functions/${slugify(title)}`,
+        })),
+      },
+      {
+        title: "Ethics & Compliance",
+        path: "/ethics-compliance/245g",
+        items: [
+          "245G",
+          "HIPAA",
+          "42 CFR Part 2",
+          "Confidentiality",
+          "Mandated Reporting",
+          "Duty to Warn",
+          "Boundaries",
+          "Dual Relationships",
+          "Documentation Compliance",
+        ].map((title) => ({ title, path: `/ethics-compliance/${slugify(title)}` })),
+      },
     ],
   },
   {
-    title: "Exam Academy",
-    path: "/exam-academy/practice",
+    title: "Reference",
+    path: "/medications/overview",
     items: [
-      { title: "Exam Practice", path: "/exam-academy/practice" },
+      {
+        title: "Medication Reference",
+        path: "/medications/overview",
+        items: [
+          { title: "Medication Overview", path: "/medications/overview" },
+          { title: "MOUD: Opioid Use Disorder", path: "/medications/moud-opioid-use-disorder" },
+          { title: "Buprenorphine", path: "/medications/buprenorphine" },
+          { title: "Methadone", path: "/medications/methadone" },
+          { title: "Naltrexone", path: "/medications/naltrexone" },
+          { title: "Naloxone", path: "/medications/naloxone" },
+          { title: "Alcohol Use Disorder Medications", path: "/medications/alcohol-use-disorder-medications" },
+          { title: "Acamprosate", path: "/medications/acamprosate" },
+          { title: "Disulfiram", path: "/medications/disulfiram" },
+          { title: "Psychiatric Medications", path: "/medications/antidepressants" },
+          { title: "Medication Questions for Assessment", path: "/medications/medication-questions-for-assessment" },
+        ],
+      },
+      { title: "Smart Contacts", path: "/smart-contacts/contacts" },
+      { title: "Resource Library", path: "/resource-library/library" },
+      { title: "Billing Codes", path: "/billing-codes/reference" },
     ],
   },
   {
-    title: "Case Challenges",
-    path: "/case-challenges/challenges",
-    items: [
-      { title: "Clinical Scenarios", path: "/case-challenges/challenges" },
-    ],
-  },
-  {
-    title: "12 Core Functions",
-    path: "/core-functions/screening",
-    items: [
-      "Screening",
-      "Intake",
-      "Orientation",
-      "Assessment",
-      "Treatment Planning",
-      "Counseling",
-      "Case Management",
-      "Crisis Intervention",
-      "Client Education",
-      "Referral",
-      "Reports & Record Keeping",
-      "Consultation",
-    ].map((title) => ({
-      title,
-      path: `/core-functions/${slugify(title)}`,
-    })),
-  },
-  {
-    title: "Ethics & Compliance",
-    path: "/ethics-compliance/245g",
-    items: [
-      "245G",
-      "HIPAA",
-      "42 CFR Part 2",
-      "Confidentiality",
-      "Mandated Reporting",
-      "Duty to Warn",
-      "Boundaries",
-      "Dual Relationships",
-      "Documentation Compliance",
-    ].map((title) => ({ title, path: `/ethics-compliance/${slugify(title)}` })),
-  },
-  {
-    title: "Licensure Journey",
+    title: "Career",
     path: "/internship-survival-guide/hours-tracker",
     items: [
-      "Hours Tracker",
-      "Supervision Log",
-      "Upload Internship Docs",
-      "Licensure Roadmap",
-      "ADC Exam Prep",
-      "LADC Requirements",
-      "Study Center",
-      "Practice Questions",
-    ].map((title) => ({ title, path: `/internship-survival-guide/${slugify(title)}` })),
-  },
-  {
-    title: "Clinical Wisdom",
-    path: "/clinical-wisdom/wisdom",
-    items: [
-      { title: "Intern Wisdom", path: "/clinical-wisdom/wisdom" },
+      {
+        title: "Licensure Journey",
+        path: "/internship-survival-guide/hours-tracker",
+        items: [
+          "Hours Tracker",
+          "Supervision Log",
+          "Upload Internship Docs",
+          "Licensure Roadmap",
+          "ADC Exam Prep",
+          "LADC Requirements",
+          "Study Center",
+          "Practice Questions",
+        ].map((title) => ({ title, path: `/internship-survival-guide/${slugify(title)}` })),
+      },
+      { title: "Calendar + Tasks", path: "/calendar-tasks/planner" },
     ],
   },
   {
@@ -201,13 +160,6 @@ export const mainNavigation: NavItem[] = [
     path: "/reset-room/reset",
     items: [
       { title: "Reset Tools", path: "/reset-room/reset" },
-    ],
-  },
-  {
-    title: "Kai-Shin Reference",
-    path: "/kai-shin/hub",
-    items: [
-      { title: "Kai-Shin Workspace", path: "/kai-shin/hub" },
     ],
   },
 ];
@@ -955,6 +907,16 @@ function uniqueByPath(items: NavItem[]) {
 
 export const allNavItems = uniqueByPath(flatten(mainNavigation).filter((item) => item.path !== "/"));
 
+function findTopSectionFor(path: string, items: NavItem[] = mainNavigation, topTitle?: string): string | undefined {
+  for (const item of items) {
+    const currentTop = topTitle ?? item.title;
+    if (item.path === path) return currentTop;
+    const nested = item.items ? findTopSectionFor(path, item.items, currentTop) : undefined;
+    if (nested) return nested;
+  }
+  return undefined;
+}
+
 function pageSummaryFor(item: NavItem, section: string) {
   if (section === "Medications") {
     return `${item.title} is a medication reference page for understanding clinical purpose, generic/common names, counseling relevance, assessment questions, documentation wording, and scope-of-practice cautions.`;
@@ -1062,10 +1024,7 @@ const specialPages: Record<string, Partial<ContentPage>> = {
 };
 
 export const contentPages: ContentPage[] = allNavItems.map((item) => {
-  const section =
-    mainNavigation.find((nav) =>
-      nav.path === item.path || nav.items?.some((child) => child.path === item.path),
-    )?.title ?? "LADC Compass";
+  const section = findTopSectionFor(item.path) ?? "LADC Compass";
   const override = specialPages[item.path] ?? {};
   const coreGuide = section === "12 Core Functions" ? coreFunctionGuides[item.path] : undefined;
   return {
