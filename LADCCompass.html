@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LADC Compass</title>
+  <style>
+    :root {
+      --ink: #24313f;
+      --muted: #667481;
+      --paper: #fbfaf7;
+      --line: rgba(36, 49, 63, 0.12);
+      --lagoon: #2f7f8f;
+      --sage: #6f8f7a;
+      --clay: #b66a55;
+      --gold: #d49b3d;
+      --white: rgba(255, 255, 255, 0.9);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top left, rgba(47,127,143,.14), transparent 30rem), linear-gradient(180deg, #fbfaf7, #f4f7f5 45%, #fbfaf7);
+      color: var(--ink);
+    }
+    a, button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .shell { max-width: 1180px; margin: 0 auto; padding: 18px; }
+    .topbar, .warning, .card, .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      box-shadow: 0 12px 35px rgba(36,49,63,.08);
+    }
+    .topbar { padding: 18px; display: grid; gap: 16px; }
+    .brand small { color: var(--lagoon); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .brand h1 { margin: 4px 0 0; font-size: clamp(28px, 4vw, 44px); }
+    .nav { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 3px; }
+    .nav button {
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--paper);
+      color: var(--ink);
+      padding: 10px 12px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .nav button.active { background: var(--lagoon); border-color: var(--lagoon); color: white; }
+    .warning { margin-top: 14px; padding: 13px 16px; background: rgba(182,106,85,.12); border-color: rgba(182,106,85,.35); line-height: 1.5; }
+    main { padding: 24px 0; }
+    .eyebrow { color: var(--lagoon); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 8px; font-size: 13px; }
+    h2 { margin: 0; font-size: clamp(30px, 5vw, 46px); }
+    .intro { color: rgba(36,49,63,.75); max-width: 760px; line-height: 1.65; }
+    .grid { display: grid; gap: 16px; }
+    .grid.two { grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); }
+    .grid.three { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+    .grid.four { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+    .card, .panel { padding: 18px; }
+    .card h3, .panel h3 { margin: 0 0 12px; font-size: 21px; }
+    .card p, .card li, .panel p { color: rgba(36,49,63,.78); line-height: 1.55; }
+    .accent-0 { border-color: rgba(47,127,143,.35); }
+    .accent-1 { border-color: rgba(111,143,122,.38); }
+    .accent-2 { border-color: rgba(182,106,85,.35); }
+    .accent-3 { border-color: rgba(212,155,61,.42); }
+    .stats { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin: 20px 0; }
+    .stat strong { display: block; font-size: 32px; margin-top: 6px; }
+    .bar { height: 12px; border-radius: 99px; background: rgba(36,49,63,.1); overflow: hidden; margin-top: 12px; }
+    .bar span { display: block; height: 100%; background: var(--lagoon); }
+    label { display: block; font-weight: 700; margin-bottom: 12px; }
+    input, select, textarea {
+      width: 100%;
+      margin-top: 6px;
+      border: 1px solid rgba(36,49,63,.18);
+      border-radius: 7px;
+      padding: 10px;
+      background: white;
+      color: var(--ink);
+    }
+    textarea { min-height: 96px; resize: vertical; }
+    .primary, .danger {
+      border: 0;
+      border-radius: 7px;
+      padding: 10px 14px;
+      font-weight: 800;
+    }
+    .primary { background: var(--lagoon); color: white; }
+    .danger { background: rgba(182,106,85,.12); color: var(--clay); }
+    .split { display: grid; gap: 16px; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
+    .entry { border: 1px solid var(--line); border-radius: 8px; background: var(--paper); padding: 14px; margin-top: 12px; }
+    .entry-head { display: flex; align-items: start; justify-content: space-between; gap: 12px; }
+    .search-tabs { display: flex; gap: 8px; overflow-x: auto; margin: 14px 0; }
+    .search-tabs button { border: 1px solid var(--line); border-radius: 7px; padding: 9px 11px; background: var(--paper); font-weight: 700; white-space: nowrap; }
+    .check { display: flex; gap: 10px; font-weight: 500; color: rgba(36,49,63,.78); margin: 8px 0; }
+    .coach-layout { display: grid; gap: 16px; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); }
+    .mode-list, .quick-list { display: grid; gap: 8px; }
+    .mode-list button, .quick-list button {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: var(--paper);
+      color: var(--ink);
+      padding: 10px;
+      font-weight: 700;
+      text-align: left;
+    }
+    .mode-list button.active, .quick-list button:hover { background: var(--lagoon); border-color: var(--lagoon); color: white; }
+    .chatbox { display: grid; grid-template-rows: auto minmax(320px, 1fr) auto; gap: 12px; min-height: 620px; }
+    .messages { overflow: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); padding: 12px; }
+    .msg { max-width: 88%; margin: 0 0 12px; padding: 12px; border-radius: 8px; line-height: 1.55; white-space: pre-wrap; }
+    .msg.coach { background: white; border: 1px solid rgba(47,127,143,.25); }
+    .msg.user { margin-left: auto; background: var(--lagoon); color: white; }
+    .chat-input { display: grid; gap: 8px; grid-template-columns: 1fr auto; align-items: end; }
+    .chat-input textarea { min-height: 72px; margin: 0; }
+    .assessment-section { border-top: 1px solid var(--line); padding-top: 14px; margin-top: 14px; }
+    .hidden { display: none; }
+    @media (max-width: 760px) {
+      .split { grid-template-columns: 1fr; }
+      .coach-layout { grid-template-columns: 1fr; }
+      .chat-input { grid-template-columns: 1fr; }
+      .shell { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <small>LADC Compass</small>
+        <h1>Counselor Learning Portal</h1>
+      </div>
+      <nav class="nav" id="nav"></nav>
+    </header>
+    <section class="warning"><strong>No PHI:</strong> This is a personal learning and internship organization tool only. Do not enter real client names, dates of birth, addresses, phone numbers, case numbers, or other identifying information. Saved items stay in this browser through local storage.</section>
+    <main id="app"></main>
+  </div>
+
+  <script>
+    const sections = [
+      ["assistant", "AI Coach"], ["uploads", "Uploads"], ["chatgpt", "ChatGPT"], ["assessment", "Assessment"], ["home", "Home"], ["core", "Core Functions"], ["asam", "ASAM"], ["docs", "Docs"],
+      ["plan", "Plan Lab"], ["groups", "Groups"], ["hours", "Hours"], ["supervision", "Supervision"], ["resources", "Resources"]
+    ];
+    const chatModes = ["Comprehensive Assessment Coach", "ASAM Wording Helper", "Treatment Plan Helper", "Progress Note Helper", "Group Note Helper", "Procentive Copy/Paste Helper"];
+    const quickPrompts = [
+      "Walk me through a Comprehensive Assessment",
+      "Help me word the presenting problem",
+      "Help me write substance use history",
+      "Help me write mental health history",
+      "Help me write ASAM Dimensions from this assessment",
+      "Tell me what information is missing",
+      "Convert this to Procentive-ready language",
+      "Generate treatment plan ideas from this assessment"
+    ];
+    let activeChatMode = "Comprehensive Assessment Coach";
+    let chatMessages = [
+      {
+        role: "coach",
+        text: "I am in Comprehensive Assessment Coach mode. Share de-identified assessment details, or choose a quick prompt. I will help you understand the section, ask follow-up questions, explain why the information matters, connect it to ASAM, and shape Procentive-ready wording."
+      }
+    ];
+    const coreFunctions = ["Screening","Intake","Orientation","Assessment","Treatment Planning","Counseling","Case Management","Crisis Intervention","Client Education","Referral","Reports and Record Keeping","Consultation"];
+    const asam = [
+      ["1. Acute Intoxication / Withdrawal","Current use, last use, withdrawal history, detox needs, medication needs, and immediate safety.","When was last use? Any withdrawal symptoms? Any history of seizures, delirium, or medical detox?","Dimension 1 risk appears moderate based on reported withdrawal symptoms and need for medical monitoring."],
+      ["2. Biomedical Conditions","Medical conditions, pain, medications, pregnancy, sleep, nutrition, and access to health care.","Are medical concerns affecting recovery? Are medications taken as prescribed? Any urgent symptoms?","Dimension 2 risk appears low with stable reported health and no acute biomedical barriers identified."],
+      ["3. Emotional / Behavioral / Cognitive","Mental health symptoms, trauma, cognition, safety, coping skills, and need for coordinated care.","Any thoughts of self-harm? What symptoms are hardest to manage? What helps you cope safely?","Dimension 3 risk appears elevated due to mood symptoms affecting recovery engagement."],
+      ["4. Readiness to Change","Motivation, insight, ambivalence, treatment engagement, goals, and barriers to participation.","What feels important about change right now? What feels difficult? What would make treatment useful?","Dimension 4 indicates ambivalence; motivational interviewing interventions are recommended."],
+      ["5. Relapse / Continued Use Potential","Cravings, triggers, recurrence history, coping plan, recovery skills, and recent patterns.","What situations increase risk? What warning signs show up first? What recovery supports are active?","Dimension 5 risk appears high due to frequent cravings and limited relapse prevention planning."],
+      ["6. Recovery Environment","Housing, relationships, transportation, work, legal concerns, sober supports, and environmental stressors.","Who supports recovery? Are there substances in the home? What practical barriers affect attendance?","Dimension 6 suggests environmental stressors that may require case management and support planning."]
+    ];
+    const templates = {
+      "DAP Note": ["Data: observable facts and client statements", "Assessment: clinical impression tied to goals", "Plan: next steps, referrals, homework, or follow-up"],
+      "SOAP Note": ["Subjective: reported experience", "Objective: observed information", "Assessment: counselor interpretation", "Plan: next steps"],
+      "Group Note": ["Topic and purpose", "Participation level", "Skills discussed", "Response to group", "Plan or assignment"],
+      "Individual Note": ["Session focus", "Progress toward goals", "Interventions used", "Client response", "Plan"],
+      "Case Management Note": ["Need identified", "Action taken", "Resource or referral", "Follow-up plan"],
+      "Assessment Summary": ["Presenting concerns", "Substance use pattern", "ASAM risk summary", "Strengths", "Recommended level of care"],
+      "Treatment Plan Review": ["Goals reviewed", "Progress", "Barriers", "Updates", "Client input"],
+      "Discharge Summary": ["Reason for discharge", "Services provided", "Progress at discharge", "Continuing care recommendations"]
+    };
+    const resources = ["Minnesota LADC rules", "IC&RC ADC exam", "245G", "MAT", "CBT", "Motivational Interviewing", "Relapse prevention", "Crisis resources"];
+    const app = document.getElementById("app");
+    const nav = document.getElementById("nav");
+
+    function get(key) { try { return JSON.parse(localStorage.getItem(key) || "[]"); } catch { return []; } }
+    function set(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+    function esc(value) { return String(value || "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c])); }
+    function header(eyebrow, title, intro) { return `<p class="eyebrow">${eyebrow}</p><h2>${title}</h2><p class="intro">${intro}</p>`; }
+    function card(title, body, i = 0) { return `<article class="card accent-${i % 4}"><h3>${title}</h3>${body}</article>`; }
+
+    function buildNav(active) {
+      nav.innerHTML = sections.map(([id, label]) => `<button class="${id === active ? "active" : ""}" onclick="go('${id}')">${label}</button>`).join("");
+    }
+
+    function go(id) {
+      location.hash = id;
+      buildNav(id);
+      render(id);
+    }
+
+    function statsHtml() {
+      const hours = get("ladc-hours").reduce((sum, row) => sum + Number(row.hours || 0), 0);
+      const pct = Math.min(100, Math.round(hours / 880 * 100));
+      return `<section class="stats">
+        <article class="panel stat"><span>Internship hours</span><strong>${hours.toFixed(1)} / 880</strong><div class="bar"><span style="width:${pct}%"></span></div></article>
+        <article class="panel stat"><span>Notes due</span><strong>${get("ladc-plans").length}</strong></article>
+        <article class="panel stat"><span>Groups planned</span><strong>${get("ladc-groups").length}</strong></article>
+        <article class="panel stat"><span>Supervision questions</span><strong>${get("ladc-supervision").length}</strong></article>
+      </section>`;
+    }
+
+    function home() {
+      app.innerHTML = header("Home Dashboard", "LADC Compass", "A calm command center for learning, internship organization, group planning, documentation practice, and supervision preparation.")
+        + `<section class="panel" style="margin:20px 0"><h3>Top Priority: Comprehensive Assessment Coach</h3><p>The AI Coach is the main documentation tool. It can walk through assessment sections, identify missing information, connect details to ASAM, and help shape clinical wording.</p><button class="primary" onclick="go('assistant')">Open AI Assessment Coach</button></section>`
+        + statsHtml()
+        + `<section class="grid three">${sections.filter(([id]) => id !== "home").map(([id, label], i) => card(label, `<p>Open tools, examples, checklists, and saved local practice entries.</p><button class="primary" onclick="go('${id}')">Open</button>`, i)).join("")}</section>`;
+    }
+
+    function assistantPage() {
+      app.innerHTML = header("Clinical Documentation Assistant", "Comprehensive Assessment Coach", "The default chat mode is built around Comprehensive Assessment work. It teaches, asks follow-up questions, connects answers to ASAM, and helps create Procentive-ready clinical wording.")
+        + `<section class="coach-layout">
+          <aside class="panel">
+            <h3>Chat modes</h3>
+            <div class="mode-list">${chatModes.map(mode => `<button class="${mode === activeChatMode ? "active" : ""}" onclick="setChatMode('${mode}')">${mode}</button>`).join("")}</div>
+            <div class="assessment-section">
+              <h3>Quick prompts</h3>
+              <div class="quick-list">${quickPrompts.map(prompt => `<button onclick="sendPrompt('${prompt.replace(/'/g, "\\'")}')">${prompt}</button>`).join("")}</div>
+            </div>
+          </aside>
+          <section class="panel chatbox">
+            <div>
+              <p class="eyebrow">${activeChatMode}</p>
+              <h3>Interactive documentation coaching</h3>
+            </div>
+            <div class="messages" id="messages">${chatMessages.map(messageHtml).join("")}</div>
+            <form class="chat-input" id="chatForm">
+              <textarea id="chatText" placeholder="Paste de-identified assessment notes or ask for help with wording, missing information, ASAM, Procentive language, or treatment plan ideas."></textarea>
+              <button class="primary">Send</button>
+            </form>
+          </section>
+        </section>`;
+      document.getElementById("chatForm").addEventListener("submit", event => {
+        event.preventDefault();
+        const input = document.getElementById("chatText");
+        const text = input.value.trim();
+        if (!text) return;
+        addChat(text);
+        input.value = "";
+      });
+      const messages = document.getElementById("messages");
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function messageHtml(message) {
+      return `<div class="msg ${message.role === "user" ? "user" : "coach"}">${esc(message.text)}</div>`;
+    }
+
+    function setChatMode(mode) {
+      activeChatMode = mode;
+      chatMessages.push({ role: "coach", text: modeIntro(mode) });
+      render("assistant");
+    }
+
+    function sendPrompt(prompt) {
+      addChat(prompt);
+    }
+
+    function addChat(text) {
+      chatMessages.push({ role: "user", text });
+      chatMessages.push({ role: "coach", text: coachReply(activeChatMode, text) });
+      render("assistant");
+    }
+
+    function modeIntro(mode) {
+      if (mode === "Comprehensive Assessment Coach") return "Comprehensive Assessment Coach is now active. I will prioritize assessment structure, follow-up questions, clinical meaning, ASAM links, missing information, Procentive wording, and treatment plan ideas.";
+      if (mode === "ASAM Wording Helper") return "ASAM Wording Helper is active. Paste de-identified details and I will help rate risk, explain the clinical rationale, and draft Dimension 1-6 language.";
+      if (mode === "Treatment Plan Helper") return "Treatment Plan Helper is active. Share assessment themes and I will help build problem statements, goals, measurable objectives, and interventions.";
+      if (mode === "Progress Note Helper") return "Progress Note Helper is active. I can help organize DAP or SOAP wording while keeping documentation observable, concise, and tied to the plan.";
+      if (mode === "Group Note Helper") return "Group Note Helper is active. I can help connect topic, participation, interventions, skills, client response, and plan language.";
+      return "Procentive Copy/Paste Helper is active. I will format clean, neutral, de-identified language that is easier to paste into documentation fields.";
+    }
+
+    function coachReply(mode, text) {
+      const lower = text.toLowerCase();
+      if (mode === "Comprehensive Assessment Coach") return assessmentCoachReply(lower, text);
+      if (mode === "ASAM Wording Helper") return `Let's coach the ASAM wording, not just fill boxes.\n\nClinical purpose: ASAM language explains why a level of care or treatment focus makes sense.\n\nDraft structure:\nDimension #: [risk level 0-4] based on [specific de-identified evidence]. Current need is [monitoring, skill-building, referral, coordination, or stabilization].\n\nFollow-up questions:\n- What is the current severity and immediacy?\n- What strengths reduce risk?\n- What barriers increase risk?\n- What intervention follows from this rating?`;
+      if (mode === "Treatment Plan Helper") return `I would turn the assessment into a treatment plan by looking for repeated clinical themes.\n\nProblem statement: Use the assessed barrier, not a judgment. Example: Recovery stability is affected by cravings, limited coping skills, and high-risk environmental stressors.\n\nGoal: Improve recovery stability and coping.\n\nObjectives: Identify triggers, practice coping skills, develop support plan, attend recommended services.\n\nInterventions: MI, CBT skill rehearsal, relapse prevention planning, psychoeducation, referral or case management as indicated.\n\nMissing piece to check: What does the person identify as their own priority for change?`;
+      if (mode === "Progress Note Helper") return `For a progress note, keep it tied to what happened in the service.\n\nTeach-back: Data is what was said or observed. Assessment is your clinical interpretation. Plan is what happens next.\n\nDAP starter:\nD: Focus of session was [topic]. Person reported [de-identified details]. Counselor used [intervention].\nA: Presentation is consistent with [progress/barrier] related to [goal/ASAM need].\nP: Continue [next step], review [skill/homework], and follow up on [risk/referral/support].`;
+      if (mode === "Group Note Helper") return `For a group note, document the service and response without over-sharing personal details.\n\nStrong group note ingredients:\n- Topic and skill taught\n- Participation level\n- Intervention used\n- Response to material\n- Plan or practice assignment\n\nExample: Group focused on relapse warning signs and coping responses. Participant engaged in discussion and identified de-identified personal warning signs. Counselor provided psychoeducation and facilitated skills practice. Plan is to continue relapse prevention work.`;
+      return `For Procentive copy/paste language, aim for clean, complete, neutral wording.\n\nFormatting approach:\n- Use complete sentences.\n- Avoid labels or judgmental phrasing.\n- Include only clinically relevant, de-identified information.\n- Connect assessment findings to ASAM, treatment needs, and next steps.\n\nPaste the rough wording you have, and I can convert it into a more polished field-ready version.`;
+    }
+
+    function assessmentCoachReply(lower, original) {
+      if (lower.includes("walk me through")) return `Absolutely. A Comprehensive Assessment is the clinical story that explains what is happening, why it matters, what risks and strengths are present, and what treatment should focus on.\n\nSuggested walkthrough:\n1. Presenting problem: Why services now, in the person's own words when possible.\n2. Substance use history: substances, frequency, amount, route, last use, consequences, withdrawal, tolerance, prior treatment.\n3. Mental health history: symptoms, diagnoses, safety concerns, trauma relevance, coping, current supports.\n4. Medical and medications: health issues that affect recovery or level of care.\n5. Family, social, legal, education, employment, culture, and recovery environment.\n6. Strengths and preferences.\n7. ASAM Dimensions 1-6.\n8. Diagnostic and treatment recommendations.\n\nWhy this matters: each section either clarifies risk, explains functioning, identifies barriers, or supports the treatment plan.\n\nStart with the presenting problem. What brings the person to assessment at this time, using no identifying details?`;
+      if (lower.includes("presenting problem")) return `Presenting problem should answer: Why this service, why now, and what is the main clinical concern?\n\nWhat it means: This is not the full history. It is the opening clinical snapshot.\n\nWhy it matters: It anchors medical necessity, ASAM risk, and initial treatment plan problems.\n\nProcentive-ready structure:\nThe individual presents for a substance use assessment due to [reason/referral/context]. They report [main substance-related concern] with impact on [functioning, relationships, legal, health, work, mental health, or recovery stability]. They identify [motivation or concern] and would benefit from further assessment of ASAM dimensions and treatment needs.\n\nFollow-up questions:\n- What prompted the assessment now?\n- Is this self-referred, court/probation, family, employer, treatment provider, or other?\n- What consequences or concerns are most current?\n- What does the person say they want help with?`;
+      if (lower.includes("substance use history")) return `Substance use history explains pattern, severity, consequences, and risk.\n\nWhat to include: primary substance, age of first use if relevant, current frequency, amount, route, last use, longest abstinence, withdrawal symptoms, tolerance, cravings, prior treatment, recurrence history, and consequences.\n\nASAM connections:\n- Dimension 1: intoxication and withdrawal risk.\n- Dimension 5: relapse or continued use potential.\n- Dimension 6: environmental triggers and supports.\n\nProcentive-ready starter:\nThe individual reports a history of [substance] use characterized by [frequency/amount/route] with last reported use on [general timing if de-identified]. Reported consequences include [areas of impact]. They report [withdrawal/cravings/tolerance/prior treatment]. These patterns suggest attention to ASAM Dimensions 1 and 5, with treatment focused on stabilization, relapse prevention, and recovery support.\n\nMissing information to check: withdrawal risk, last use, overdose history, MAT involvement, prior treatment response, and longest recovery period.`;
+      if (lower.includes("mental health history")) return `Mental health history helps clarify co-occurring needs, safety, coping, and coordination of care.\n\nWhat it means: You are documenting symptoms and treatment relevance, not trying to over-diagnose beyond your scope.\n\nASAM connection: This mainly informs Dimension 3, and may also affect readiness, relapse risk, and recovery environment.\n\nProcentive-ready starter:\nThe individual reports [symptoms/history] that may affect recovery functioning. They report [current counseling/medications/supports if known]. Safety concerns were [reported/denied/not yet assessed]. Mental health symptoms appear to [increase/not currently increase] recovery risk and should be addressed through [coordination, referral, coping skills, monitoring, or continued assessment].\n\nFollow-up questions:\n- Current symptoms and severity?\n- Any suicidal or homicidal ideation, self-harm, psychosis, or hospitalization history?\n- Current medications or therapy?\n- How do symptoms interact with substance use?`;
+      if (lower.includes("asam")) return `Here is how to turn assessment details into ASAM language.\n\nDimension 1: Current intoxication, withdrawal, last use, detox risk.\nDimension 2: Medical conditions, medications, pain, pregnancy, health barriers.\nDimension 3: Mental health, cognitive, behavioral, safety, trauma-related concerns.\nDimension 4: Motivation, insight, ambivalence, engagement.\nDimension 5: Cravings, triggers, recurrence history, coping skills.\nDimension 6: Housing, relationships, transportation, legal, work, sober supports.\n\nProcentive-ready format:\nDimension [#] risk is assessed as [0-4] based on [evidence]. This impacts treatment by [recommended focus/intervention/monitoring/referral].\n\nTeaching point: Do not just list facts. Explain what the facts mean for risk and treatment planning.`;
+      if (lower.includes("missing")) return `I would scan for missing assessment information in these areas:\n\n- Presenting problem: Why now, referral source, person's stated concern.\n- Substance use: last use, frequency, amount, route, withdrawal, cravings, consequences, prior treatment, overdose risk.\n- Mental health: current symptoms, safety, diagnoses, medications, hospitalizations, trauma relevance.\n- Medical: current conditions, medications, urgent needs.\n- Readiness: goals, motivation, ambivalence, barriers.\n- Recovery environment: housing, supports, substances in home, transportation, legal/work stressors.\n- Strengths: supports, coping, values, previous success.\n- Treatment recommendation: level of care rationale and initial plan.\n\nPaste a de-identified draft and I can mark what appears complete and what still needs follow-up.`;
+      if (lower.includes("procentive")) return `For Procentive-ready assessment language, use concise clinical paragraphs with clear headings.\n\nExample format:\nPresenting Problem: The individual presents for assessment due to [context]. They report [concerns] affecting [life areas].\n\nSubstance Use History: The individual reports [pattern] with [consequences]. Withdrawal/craving risk is [summary].\n\nASAM Summary: Dimension risks indicate [main level-of-care rationale]. Primary needs include [stabilization, relapse prevention, coping skills, coordination, recovery supports].\n\nTreatment Planning: Recommended focus includes [problems/goals/objectives/interventions].\n\nCoaching point: Procentive language should be complete enough to support care, but not bloated. Use neutral wording and avoid unsupported conclusions.`;
+      if (lower.includes("treatment plan")) return `Assessment findings become treatment plan ideas when you translate needs into workable change targets.\n\nPossible problems:\n- Continued use risk related to cravings/triggers.\n- Limited coping skills for emotional or environmental stressors.\n- Ambivalence about recovery changes.\n- Limited sober support or recovery environment barriers.\n\nGoals:\n- Increase recovery stability.\n- Strengthen relapse prevention skills.\n- Improve coping and emotional regulation.\n- Build sober support and follow-through with care.\n\nObjectives:\n- Identify 3 triggers and 3 coping strategies.\n- Develop a written relapse prevention plan.\n- Attend sessions/groups as scheduled.\n- Practice one recovery support activity weekly.\n\nInterventions:\n- MI for readiness and ambivalence.\n- CBT skill practice.\n- Psychoeducation on substance use and recovery.\n- Case management or referral as indicated.\n\nFollow-up: What are the top 2 assessed needs and what does the person want to work on first?`;
+      return `I hear you. I am going to coach this like an LADC documentation supervisor.\n\nClinical meaning: In a Comprehensive Assessment, the goal is to understand risk, need, strengths, functioning, and recommended care. Good wording should show how the information connects to ASAM and the treatment plan.\n\nBased on what you wrote, I would organize the next step this way:\n1. Identify the assessment section this belongs in.\n2. Clarify what is fact, what is clinical impression, and what still needs follow-up.\n3. Connect it to ASAM Dimensions if relevant.\n4. Draft neutral Procentive-ready language.\n5. Translate the theme into treatment plan problems, goals, objectives, or interventions.\n\nFollow-up questions:\n- Which section are you working on: presenting problem, substance use, mental health, ASAM, or recommendations?\n- What details are known, using no identifying information?\n- What are you trying to produce: wording, missing-info checklist, ASAM summary, or treatment plan ideas?`;
+    }
+
+    function assessmentPage() {
+      app.innerHTML = header("Comprehensive Assessment", "Assessment sections and clinical purpose", "Use this page as a map, then open the same work in the AI Assessment Coach for interactive guidance, follow-up questions, ASAM links, and Procentive-ready wording.")
+        + `<section class="panel" style="margin-bottom:16px"><h3>Work this inside the AI chatbox</h3><p>The Comprehensive Assessment Coach is the default AI mode and the top-priority feature. It can walk you through each section, explain why questions matter, identify missing information, and generate treatment plan ideas.</p><button class="primary" onclick="openAssessmentCoach()">Open in AI Assessment Coach</button></section>`
+        + `<section class="grid two">${[
+          ["Presenting Problem", "Why services now, referral context, primary concerns, and stated goals."],
+          ["Substance Use History", "Current and historical patterns, consequences, withdrawal, cravings, prior treatment, and recovery periods."],
+          ["Mental Health History", "Symptoms, diagnoses, safety, coping, medications, treatment, and interaction with substance use."],
+          ["Medical and Medication History", "Biomedical needs, pain, medications, pregnancy, sleep, nutrition, and care coordination."],
+          ["Family, Social, Legal, Employment", "Functioning, stressors, supports, culture, legal concerns, school or work impact."],
+          ["ASAM Summary", "Dimension 1-6 risk ratings, rationale, and treatment planning connection."],
+          ["Strengths and Preferences", "Protective factors, motivation, values, previous success, and preferred supports."],
+          ["Recommendations", "Level-of-care rationale, services, referrals, treatment plan themes, and next steps."]
+        ].map((item, i) => card(item[0], `<p>${item[1]}</p><p><strong>Coach prompt:</strong> Ask what is known, why it matters, what is missing, and how it connects to ASAM.</p>`, i)).join("")}</section>`;
+    }
+
+    function chatgptPage() {
+      const prompts = [
+        "Act as an LADC documentation coach. Help me improve this de-identified comprehensive assessment section. Teach me what the section means, identify missing information, connect it to ASAM, and draft Procentive-ready language.",
+        "Help me turn this de-identified assessment into ASAM Dimension 1-6 wording. Include risk level 0-4, clinical rationale, missing information, and treatment planning connection.",
+        "Help me create treatment plan problems, goals, objectives, and interventions from this de-identified assessment. Keep the language clinical, measurable, and appropriate for SUD treatment.",
+        "Review this de-identified progress note draft. Help me make it clearer, more objective, tied to the treatment plan, and appropriate for Procentive copy/paste.",
+        "Help me write a group note for this de-identified group session. Include topic, intervention, participation, client response, skill practiced, and plan."
+      ];
+      app.innerHTML = header("ChatGPT", "Open ChatGPT with LADC-ready prompts", "Use this tab when you want to continue documentation coaching in ChatGPT. Do not paste real client identifying information or protected health information.")
+        + `<section class="panel" style="margin-bottom:16px">
+          <h3>Open ChatGPT</h3>
+          <p>ChatGPT opens in a separate browser tab. Copy one of the prompts below, then paste de-identified practice details only.</p>
+          <p><a class="primary" style="display:inline-block;text-decoration:none" href="https://chatgpt.com/" target="_blank" rel="noreferrer">Open ChatGPT</a></p>
+        </section>
+        <section class="grid two">${prompts.map((prompt, i) => card(`Prompt ${i + 1}`, `<p>${esc(prompt)}</p><button class="primary" onclick="copyPrompt(${i})">Copy prompt</button>`, i)).join("")}</section>`;
+      window.chatgptPrompts = prompts;
+    }
+
+    function copyPrompt(index) {
+      const prompt = window.chatgptPrompts[index];
+      navigator.clipboard.writeText(prompt).then(() => {
+        alert("Prompt copied. Paste it into ChatGPT, then add de-identified practice details.");
+      }).catch(() => {
+        alert(prompt);
+      });
+    }
+
+    function documentationUploadsPage() {
+      const rows = get("ladc-documentation-uploads");
+      app.innerHTML = header("Documentation Uploads", "Save and analyze documentation examples", "Upload de-identified templates, assignment drafts, rubrics, or documentation examples. The analysis looks for content areas that suggest what LADC Compass should add, improve, or emphasize.")
+        + `<section class="warning" style="margin-bottom:16px"><strong>Upload safety:</strong> Do not upload files with real client names, dates of birth, addresses, phone numbers, case numbers, screenshots from client charts, or any protected health information.</section>
+        <section class="split">
+          <form class="panel" id="uploadForm">
+            <h3>Add documentation file</h3>
+            <label>Document file
+              <input id="docFile" name="docFile" type="file" accept=".txt,.md,.csv,.json,.html,.rtf,.doc,.docx,.pdf" />
+            </label>
+            <label>Document type
+              <select name="docType">
+                <option>Comprehensive Assessment</option>
+                <option>Progress Note</option>
+                <option>Group Note</option>
+                <option>Treatment Plan</option>
+                <option>ASAM Wording</option>
+                <option>Procentive Template</option>
+                <option>Class Assignment or Rubric</option>
+                <option>Other</option>
+              </select>
+            </label>
+            <label>What should the website learn from this?
+              <textarea name="purpose" placeholder="Example: Add a better assessment checklist, include 245G language, create a copy/paste section, add prompts for missing info..."></textarea>
+            </label>
+            <label>Paste de-identified text for analysis if the file is PDF/Word or if you want deeper analysis
+              <textarea name="pastedText" placeholder="Paste only de-identified content. No client identifiers or PHI."></textarea>
+            </label>
+            <button class="primary">Save and analyze locally</button>
+          </form>
+          <section class="panel">
+            <h3>Saved uploads</h3>
+            <p>${rows.length} saved document${rows.length === 1 ? "" : "s"}. Saved in this browser only.</p>
+            <div id="uploadList">${uploadEntriesHtml(rows)}</div>
+          </section>
+        </section>
+        <section class="panel" style="margin-top:16px">
+          <h3>How analysis is used</h3>
+          <p>The upload analysis creates website improvement ideas such as new checklists, copy/paste helpers, ASAM prompts, Procentive sections, treatment plan tools, or missing documentation templates. It does not send files anywhere.</p>
+        </section>`;
+      document.getElementById("uploadForm").addEventListener("submit", saveUpload);
+    }
+
+    function uploadEntriesHtml(rows) {
+      if (!rows.length) return `<p class="entry">No documentation uploads saved yet.</p>`;
+      return rows.map(row => `<article class="entry">
+        <div class="entry-head"><strong>${esc(row.name)}</strong><button class="danger" onclick="deleteUpload('${row.id}')">Delete</button></div>
+        <p><strong>Type:</strong> ${esc(row.docType)}</p>
+        <p><strong>Saved:</strong> ${esc(row.savedAt)}</p>
+        <p><strong>Website update notes:</strong><br>${esc(row.purpose || "No notes added.")}</p>
+        <p><strong>Analysis:</strong><br>${esc(row.analysis)}</p>
+        ${row.text ? `<details><summary>View saved de-identified text</summary><p>${esc(row.text)}</p></details>` : `<p><strong>Readable text:</strong> Not saved from this file type. Paste de-identified text when deeper analysis is needed.</p>`}
+      </article>`).join("");
+    }
+
+    function saveUpload(event) {
+      event.preventDefault();
+      const form = event.target;
+      const file = document.getElementById("docFile").files[0];
+      const data = new FormData(form);
+      const pastedText = String(data.get("pastedText") || "").trim();
+      const finish = text => {
+        const row = {
+          id: crypto.randomUUID(),
+          name: file ? file.name : "Pasted documentation text",
+          docType: String(data.get("docType") || "Other"),
+          purpose: String(data.get("purpose") || ""),
+          savedAt: new Date().toLocaleString(),
+          text,
+          analysis: analyzeUpload(`${data.get("docType")}\n${data.get("purpose")}\n${text}`)
+        };
+        set("ladc-documentation-uploads", [row, ...get("ladc-documentation-uploads")]);
+        documentationUploadsPage();
+      };
+      if (pastedText) {
+        finish(pastedText);
+        return;
+      }
+      if (!file) {
+        finish("");
+        return;
+      }
+      const readable = /\.(txt|md|csv|json|html|rtf)$/i.test(file.name) || /^text\//.test(file.type);
+      if (!readable) {
+        finish("");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => finish(String(reader.result || "").slice(0, 35000));
+      reader.readAsText(file);
+    }
+
+    function analyzeUpload(text) {
+      const lower = text.toLowerCase();
+      const ideas = [];
+      if (lower.includes("comprehensive") || lower.includes("assessment") || lower.includes("diagnostic")) ideas.push("Add more Comprehensive Assessment section prompts, missing-info checks, and Procentive-ready assessment wording.");
+      if (lower.includes("asam") || lower.includes("dimension") || lower.includes("level of care")) ideas.push("Expand ASAM Dimension support with rating rationale, risk examples, and level-of-care language.");
+      if (lower.includes("treatment plan") || lower.includes("goal") || lower.includes("objective") || lower.includes("intervention")) ideas.push("Improve Treatment Plan Lab with problem-goal-objective-intervention builders tied to assessment findings.");
+      if (lower.includes("progress note") || lower.includes("dap") || lower.includes("soap")) ideas.push("Add stronger Progress Note coaching with DAP/SOAP examples, common mistakes, and copy/paste note scaffolds.");
+      if (lower.includes("group")) ideas.push("Enhance Group Planner with group documentation language, topic libraries, and ASAM/Core Function mapping.");
+      if (lower.includes("procentive")) ideas.push("Create more Procentive copy/paste formatting helpers and field-specific wording blocks.");
+      if (lower.includes("245g") || lower.includes("minnesota")) ideas.push("Add Minnesota/245G reference prompts and compliance-oriented documentation reminders.");
+      if (lower.includes("discharge") || lower.includes("aftercare")) ideas.push("Add discharge and continuing-care templates with relapse prevention and referral language.");
+      if (lower.includes("risk") || lower.includes("suicid") || lower.includes("crisis")) ideas.push("Add risk/safety documentation prompts and reminders to follow agency crisis policy and supervision.");
+      if (!ideas.length) ideas.push("No strong category detected. Add a note describing what this document should teach the website, or paste de-identified text for a deeper scan.");
+      return ideas.map((idea, i) => `${i + 1}. ${idea}`).join("\n");
+    }
+
+    function deleteUpload(id) {
+      set("ladc-documentation-uploads", get("ladc-documentation-uploads").filter(row => row.id !== id));
+      documentationUploadsPage();
+    }
+
+    function openAssessmentCoach() {
+      activeChatMode = "Comprehensive Assessment Coach";
+      chatMessages.push({ role: "user", text: "Walk me through a Comprehensive Assessment" });
+      chatMessages.push({ role: "coach", text: assessmentCoachReply("walk me through a comprehensive assessment", "Walk me through a Comprehensive Assessment") });
+      go("assistant");
+    }
+
+    function core() {
+      app.innerHTML = header("12 Core Functions", "What each function means in practice", "Use these cards as a study map and internship reflection guide. Each example uses de-identified learning language.")
+        + `<section class="grid two">${coreFunctions.map((name, i) => card(name, `
+          <p><strong>Purpose:</strong> Support clear, ethical ${name.toLowerCase()} work within the substance use counseling process.</p>
+          <p><strong>What the counselor does:</strong> Gathers relevant information, uses supervision, stays within scope, and connects the task to the person's stage of care.</p>
+          <p><strong>Documentation:</strong> Agency forms, progress notes, releases, assessments, treatment plan updates, referrals, or supervision notes.</p>
+          <p><strong>Example language:</strong> Intern practiced this function using de-identified information and identified next clinical steps for supervision.</p>
+          <p><strong>Common mistakes:</strong> Vague language, skipping risk factors, writing beyond scope, missing follow-up tasks, or including identifying information.</p>
+          <p><strong>Internship connection:</strong> Log the activity, note the core function, reflect on learning, and bring questions to supervision.</p>`, i)).join("")}</section>`;
+    }
+
+    function asamPage() {
+      app.innerHTML = header("ASAM Dimensions", "Six dimensions for structured clinical thinking", "Use the 0-4 risk rating as a learning prompt: 0 no issue, 1 mild, 2 moderate, 3 serious, 4 severe or urgent.")
+        + `<section class="grid two">${asam.map((d, i) => card(d[0], `
+          <p><strong>What to assess:</strong> ${d[1]}</p>
+          <p><strong>Questions to ask:</strong> ${d[2]}</p>
+          <p><strong>Risk rating 0-4:</strong> 0, 1, 2, 3, 4</p>
+          <p><strong>Example wording:</strong> ${d[3]}</p>
+          <p><strong>Treatment planning connection:</strong> Translate the risk level into goals, interventions, referrals, monitoring, and level-of-care discussion.</p>`, i)).join("")}</section>`;
+    }
+
+    function docs() {
+      app.innerHTML = header("Documentation Center", "Template starters for learning notes", "These are practice structures. Follow your site documentation standards and supervision guidance.")
+        + `<section class="panel"><h3>Template checklist</h3><div class="search-tabs">${Object.keys(templates).map(name => `<button onclick="showTemplate('${name}')">${name}</button>`).join("")}</div><div id="templateBox"></div></section>`
+        + `<section class="grid two" style="margin-top:16px">${Object.entries(templates).map(([name, items], i) => card(name, `<ul>${items.map(item => `<li>${item}</li>`).join("")}</ul><p>Example: De-identified learning note reviewed in supervision; next step is to clarify intervention, response, and follow-up plan.</p>`, i)).join("")}</section>`;
+      showTemplate("DAP Note");
+    }
+    function showTemplate(name) {
+      document.getElementById("templateBox").innerHTML = `<h3>${name}</h3>${templates[name].map(item => `<label class="check"><input type="checkbox"> ${item}</label>`).join("")}`;
+    }
+
+    function formPage(config) {
+      const rows = get(config.key);
+      app.innerHTML = header(config.eyebrow, config.title, config.intro)
+        + (config.before || "")
+        + `<section class="split"><form class="panel" id="entryForm"><h3>Add an entry</h3>${config.fields.map(f => field(f)).join("")}<button class="primary">Save locally</button></form>
+        <section class="panel"><h3>Saved entries</h3>${config.summary ? config.summary(rows) : ""}<div id="saved">${entriesHtml(config, rows)}</div></section></section>`;
+      document.getElementById("entryForm").addEventListener("submit", event => {
+        event.preventDefault();
+        const row = { id: crypto.randomUUID() };
+        config.fields.forEach(f => row[f.name] = new FormData(event.target).get(f.name) || "");
+        set(config.key, [row, ...get(config.key)]);
+        formPage(config);
+      });
+    }
+
+    function field(f) {
+      if (f.type === "textarea") return `<label>${f.label}<textarea name="${f.name}" placeholder="${esc(f.placeholder || "")}"></textarea></label>`;
+      if (f.type === "select") return `<label>${f.label}<select name="${f.name}"><option value="">Choose one</option>${f.options.map(o => `<option>${o}</option>`).join("")}</select></label>`;
+      return `<label>${f.label}<input name="${f.name}" type="${f.type || "text"}" step="${f.type === "number" ? "0.25" : ""}" placeholder="${esc(f.placeholder || "")}"></label>`;
+    }
+    function entriesHtml(config, rows) {
+      if (!rows.length) return `<p class="entry">${config.empty}</p>`;
+      return rows.map(row => `<article class="entry"><div class="entry-head"><strong>${esc(row[config.titleField] || "Entry")}</strong><button class="danger" onclick="removeEntry('${config.key}','${row.id}','${config.route}')">Delete</button></div>${config.fields.filter(f => row[f.name]).map(f => `<p><strong>${f.label}:</strong><br>${esc(row[f.name])}</p>`).join("")}</article>`).join("");
+    }
+    function removeEntry(key, id, route) {
+      set(key, get(key).filter(row => row.id !== id));
+      render(route);
+    }
+
+    const configs = {
+      plan: { route:"plan", key:"ladc-plans", eyebrow:"Treatment Plan Lab", title:"Build sample plans without client identifiers", intro:"Practice turning assessed needs into problem statements, goals, measurable objectives, and counselor interventions.", empty:"No sample treatment plans saved yet.", titleField:"problem", before:`<section class="grid four" style="margin-bottom:16px">${["Problem statements","Goals","Objectives","Interventions"].map((x,i)=>card(x,"<p>Keep language behavioral, measurable, and connected to ASAM needs.</p>",i)).join("")}</section>`, fields:[
+        {name:"problem", label:"Problem statement", type:"textarea", placeholder:"Recovery is affected by cravings and limited coping strategies."}, {name:"goal", label:"Goal", type:"textarea"}, {name:"objective", label:"Objective", type:"textarea"}, {name:"intervention", label:"Interventions", type:"textarea"} ] },
+      groups: { route:"groups", key:"ladc-groups", eyebrow:"Group Planner", title:"Plan groups with purpose and documentation in mind", intro:"Create reusable group outlines that connect topic, questions, ASAM dimensions, Core Functions, and documentation language.", empty:"No group plans saved yet.", titleField:"topic", fields:[
+        {name:"topic", label:"Topic"}, {name:"opening", label:"Opening question", type:"textarea"}, {name:"main", label:"Main questions", type:"textarea"}, {name:"activity", label:"Activity", type:"textarea"}, {name:"worksheet", label:"Worksheet idea", type:"textarea"}, {name:"asam", label:"ASAM dimensions covered", type:"textarea"}, {name:"core", label:"Core functions covered", type:"select", options:coreFunctions}, {name:"documentation", label:"Documentation language", type:"textarea"} ] },
+      hours: { route:"hours", key:"ladc-hours", eyebrow:"Internship Tracker", title:"Track learning hours toward 880", intro:"Log de-identified internship activity, Core Function practice, reflection, and supervisor contact.", empty:"No internship hours saved yet.", titleField:"activity", summary: rows => { const total=rows.reduce((s,r)=>s+Number(r.hours||0),0); const pct=Math.min(100,Math.round(total/880*100)); return `<div class="entry"><strong>${total.toFixed(1)} of 880 hours</strong><div class="bar"><span style="width:${pct}%"></span></div></div>`; }, fields:[
+        {name:"date", label:"Date", type:"date"}, {name:"hours", label:"Hours", type:"number"}, {name:"activity", label:"Activity", type:"textarea"}, {name:"core", label:"Core function", type:"select", options:coreFunctions}, {name:"reflection", label:"Reflection", type:"textarea"}, {name:"supervisor", label:"Supervisor contact"} ] },
+      supervision: { route:"supervision", key:"ladc-supervision", eyebrow:"Supervision Notebook", title:"Prepare better questions and capture feedback", intro:"Organize scope questions, ethical concerns, clinical uncertainty, feedback, and growth edges.", empty:"No supervision notes saved yet.", titleField:"question", fields:[
+        {name:"question", label:"Question for supervisor", type:"textarea"}, {name:"ethical", label:"Ethical concern", type:"textarea"}, {name:"clinical", label:"Clinical question", type:"textarea"}, {name:"feedback", label:"Feedback received", type:"textarea"}, {name:"improve", label:"Things to improve", type:"textarea"} ] }
+    };
+
+    function resourcesPage() {
+      app.innerHTML = header("Resource Library", "Study shelves to fill over time", "Placeholder sections for rules, exam prep, clinical models, and crisis resources.")
+        + `<section class="grid four">${resources.map((r, i) => card(r, `<p>Placeholder for trusted links, reading notes, practice prompts, and supervision reminders.</p><label>Notes<textarea placeholder="Add a study note later..."></textarea></label>`, i)).join("")}</section>`;
+    }
+
+    function render(id) {
+      buildNav(id);
+      if (id === "assistant") assistantPage();
+      if (id === "uploads") documentationUploadsPage();
+      if (id === "chatgpt") chatgptPage();
+      if (id === "assessment") assessmentPage();
+      if (id === "home") home();
+      if (id === "core") core();
+      if (id === "asam") asamPage();
+      if (id === "docs") docs();
+      if (configs[id]) formPage(configs[id]);
+      if (id === "resources") resourcesPage();
+    }
+
+    window.addEventListener("hashchange", () => render((location.hash || "#assistant").slice(1)));
+    render((location.hash || "#assistant").slice(1));
+  </script>
+</body>
+</html>

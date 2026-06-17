@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { generateDocumentationOutputs } from "@/lib/clinicalDocumentationEngine";
 
 type DimensionId = "d1" | "d2" | "d3" | "d4" | "d5" | "d6";
 type Rating = 0 | 1 | 2 | 3 | 4;
@@ -235,7 +236,7 @@ const dimensions: AsamDimension[] = [
     raisesScore: ["multiple unsuccessful quit attempts", "high stress vulnerability", "limited coping", "poor trigger awareness", "no relapse plan"],
     questions: [
       { id: "quit", label: "Prior attempts to quit?", options: [
-        { label: "None", score: 1 }, { label: "1 attempt", score: 1 }, { label: "2-3 attempts", score: 2 }, { label: "4+ attempts", score: 3 },
+        { label: "None", score: 0 }, { label: "1 attempt", score: 1 }, { label: "2-3 attempts", score: 2 }, { label: "4+ attempts", score: 3 },
       ] },
       { id: "stress", label: "Vulnerability to use during stress?", options: [
         { label: "Very low", score: 0 }, { label: "Low", score: 1 }, { label: "Moderate", score: 2 }, { label: "High", score: 3 }, { label: "Very high", score: 4 },
@@ -390,7 +391,7 @@ function NextStepEngine() {
   const steps = [
     { label: "Copy to Documentation Lab", href: "/documentation-lab/lab", note: "Turn the generated summary into the exact note or assessment wording you need." },
     { label: "Open Procentive Companion", href: "/procentive-companion/companion", note: "Decide where each clinical detail belongs before entering it." },
-    { label: "Review Client Journey", href: "/client-journey/comprehensive-assessment", note: "Check which documents, deadlines, and next tasks follow this decision." },
+    { label: "Open Client Workflow", href: "/client-workflow/workflow", note: "Check which tasks, forms, and ROI steps follow this assessment." },
     { label: "Build Supervisor Talking Points", href: "/documentation-lab/lab", note: "Copy high-risk flags and uncertainty areas into supervision prep." },
   ];
   return (
@@ -468,33 +469,48 @@ export default function ClinicalDecisionNavigator() {
     ...selectedGoals.slice(0, 3).map((goal) => `Client goal support: ${goal}`),
   ].filter((item, index, all) => all.indexOf(item) === index);
 
-  const levelOfCare =
-    selectedSafetyFlags.some((flag) => ["Immediate safety concern", "Severe medical instability", "Significant withdrawal risk"].includes(flag)) || maxRating === 4
-      ? "Higher level of care or immediate supervisory/medical review may be indicated"
-      : highRisk.length >= 2
-        ? "ASAM Level 2.1 or higher may be worth considering depending on full criteria and agency policy"
-        : highRisk.length === 1
-          ? "ASAM Level 1.0 with enhanced supports or Level 2.1 may be considered depending on risk persistence"
-          : elevated.length > 0
-            ? "ASAM Level 1.0 outpatient services may be clinically appropriate if safety and stability are adequate"
-            : dsmCount >= 2
-              ? "ASAM Level 0.5 or 1.0 may be considered depending on impairment, risk, and client goals"
-              : "Current entries do not strongly support a specific treatment level; gather more information";
+  const documentation = useMemo(
+    () =>
+      generateDocumentationOutputs({
+        snapshot,
+        substance,
+        dsmCount,
+        dsmSeverity,
+        dimensionSummaries: dimensionOutputs.map(({ dimension, state, finalRating }) => ({
+          id: dimension.id,
+          title: dimension.title,
+          rating: finalRating,
+          rationale: state.rationale,
+        })),
+        selectedStrengths,
+        selectedBarriers,
+        selectedGoals,
+        selectedSafetyFlags,
+        elevatedDimensionIds: elevated.map((item) => item.dimension.id),
+        highRiskDimensionIds: highRisk.map((item) => item.dimension.id),
+        maxRating,
+      }),
+    [
+      dimensionOutputs,
+      dsmCount,
+      dsmSeverity,
+      elevated,
+      highRisk,
+      maxRating,
+      selectedBarriers,
+      selectedGoals,
+      selectedSafetyFlags,
+      selectedStrengths,
+      snapshot,
+      substance,
+    ],
+  );
 
-  const dsmSummary =
-    dsmCount < 2
-      ? `Client meets ${dsmCount} of 11 DSM-5 criteria for ${substance} use. Current entries do not generate SUD severity. Continue assessment and review with supervisor if clinical concern remains.`
-      : `Client meets ${dsmCount} of 11 DSM-5 criteria, which may support ${dsmSeverity} ${substance} Use Disorder. This wording is for documentation support only; diagnosis should be reviewed with supervisor and agency procedures.`;
-
-  const asamNarrative = dimensionOutputs
-    .map(({ dimension, state, finalRating, confidence }) => {
-      const rating = finalRating === "" ? "not yet rated" : `${finalRating}`;
-      const rationale = state.rationale.trim() || state.notes.trim() || "Additional clinical rationale is needed before finalizing this dimension.";
-      return `${dimension.title}: Dimension risk is ${rating}. ${rationale} Confidence: ${confidence}.`;
-    })
-    .join("\n\n");
-
-  const treatmentPlanText = `Problem: Client may have difficulty maintaining recovery stability related to ${treatmentPriorities[0]?.toLowerCase() || "substance use concerns and identified assessment needs"}.\n\nGoal: Client will increase recovery stability by addressing identified substance use patterns, ASAM risk areas, and personal treatment goals.\n\nObjectives:\n- Client will identify at least 5 personal triggers or risk factors.\n- Client will identify at least 3 coping strategies to support recovery.\n- Client will develop a written relapse prevention or support plan.\n- Client will identify at least 2 recovery supports or service connections.\n- Client will review progress toward treatment goals with counselor.\n\nInterventions:\n- Counselor will provide relapse prevention education and skill practice.\n- Counselor will use motivational interviewing to explore ambivalence and strengthen readiness.\n- Counselor will assist client in connecting assessment findings to treatment priorities.\n- Counselor will coordinate referrals or supports as clinically indicated and authorized.\n- Counselor will monitor ASAM risk areas and update treatment planning as needed.`;
+  const dsmSummary = documentation.diagnosticSupport;
+  const asamNarrative = documentation.asamSummary;
+  const treatmentPlanText = documentation.treatmentPlanSuggestions;
+  const clinicalSummary = documentation.clinicalSummary;
+  const levelOfCare = documentation.levelOfCareRationale;
 
   const referrals = [
     ...(dimensionOutputs.find((item) => item.dimension.id === "d1")?.finalRating || 0) >= 3 ? ["Detox / medical withdrawal monitoring"] : [],
@@ -527,19 +543,27 @@ export default function ClinicalDecisionNavigator() {
     ...(selectedGoals.length === 0 ? ["No client goals/preferences entered."] : []),
   ];
 
-  const clinicalSummary = `Based on information entered into this learning tool, the client's presentation may support ${dsmCount >= 2 ? `${dsmSeverity} ${substance} Use Disorder` : "continued diagnostic assessment"} with ASAM concerns most notable in ${elevated.map((item) => item.dimension.title.replace("Dimension ", "D")).join(", ") || "areas still being assessed"}. Strengths include ${selectedStrengths.join(", ") || "strengths not yet entered"}. Barriers include ${selectedBarriers.join(", ") || "barriers not yet entered"}. ${levelOfCare}. Treatment should consider ${treatmentPriorities.slice(0, 4).join(", ") || "further assessment, engagement, and treatment planning"}. Review all recommendations with supervisor, agency policy, DSM-5-TR, and ASAM criteria.`;
-
   const copyAll = [
-    "DSM-5 Diagnostic Summary",
-    dsmSummary,
-    "ASAM Narrative",
+    "Clinical Summary",
+    clinicalSummary,
+    "ASAM Summary",
     asamNarrative,
-    "Level of Care Consideration",
+    "Diagnostic Support",
+    dsmSummary,
+    "Medical Necessity",
+    documentation.medicalNecessity,
+    "Treatment Recommendations",
+    documentation.treatmentRecommendations,
+    "Level of Care Rationale",
     levelOfCare,
     "Treatment Plan Suggestions",
     treatmentPlanText,
-    "Clinical Summary",
-    clinicalSummary,
+    "Strengths and Barriers",
+    documentation.strengthsBarriers,
+    "Supervisor Flags",
+    documentation.supervisorFlags,
+    "Client Workflow Unlocks",
+    documentation.workflowUnlocks,
   ].join("\n\n");
 
   function updateDimension(id: DimensionId, update: Partial<DimensionState>) {
@@ -810,13 +834,15 @@ export default function ClinicalDecisionNavigator() {
 
         <OutputCard title="Clinical Summary Paragraph" text={clinicalSummary} />
 
-        <OutputCard title="Supervisor Review Flags" tone={highRisk.length || selectedSafetyFlags.length ? "warning" : "default"}>
-          <ul className="mt-3 grid gap-2 text-sm leading-6 text-ink/75">
-            {[...highRisk.map((item) => `${item.dimension.title} rated ${item.finalRating}`), ...selectedSafetyFlags].length
-              ? [...highRisk.map((item) => `${item.dimension.title} rated ${item.finalRating}`), ...selectedSafetyFlags].map((flag) => <li key={flag} className="rounded-md bg-paper px-3 py-2">{flag}</li>)
-              : <li className="rounded-md bg-paper px-3 py-2">No supervisor flag generated yet. Interns should still review uncertain cases.</li>}
-          </ul>
-        </OutputCard>
+        <OutputCard title="Medical Necessity Statement" text={documentation.medicalNecessity} />
+
+        <OutputCard title="Treatment Recommendations" text={documentation.treatmentRecommendations} />
+
+        <OutputCard title="Strengths and Barriers Summary" text={documentation.strengthsBarriers} />
+
+        <OutputCard title="What This Unlocks in Client Workflow" text={documentation.workflowUnlocks} />
+
+        <OutputCard title="Supervisor Review Flags" tone={highRisk.length || selectedSafetyFlags.length ? "warning" : "default"} text={documentation.supervisorFlags} />
 
         <OutputCard title="Missing Information Detector" tone={missingInfo.length ? "warning" : "default"}>
           <ul className="mt-3 grid gap-2 text-sm leading-6 text-ink/75">

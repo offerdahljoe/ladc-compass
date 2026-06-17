@@ -1,32 +1,41 @@
 import { notFound } from "next/navigation";
 import ADCPracticeTest from "@/components/ADCPracticeTest";
 import ClinicalDecisionNavigator from "@/components/ClinicalDecisionNavigator";
-import { WorkflowPhasePage } from "@/components/ClientJourneyComponents";
+import ClientWorkflow from "@/components/ClientWorkflow";
 import DashboardHome from "@/components/DashboardHome";
 import GroupTherapyHub from "@/components/GroupTherapyHub";
 import KaiShinCompanionWorkspace from "@/components/KaiShinCompanionWorkspace";
 import KaiShinHubWorkspace from "@/components/KaiShinHubWorkspace";
+import MedicationReferencePage from "@/components/MedicationReferencePage";
 import {
   BillingCodes,
   DocumentationLab,
   GroupStudio,
   LearningWorkspace,
   LicensureJourneyWorkspace,
-  MedicationReference,
   ProcentiveCompanion,
   ResourceLibrary,
 } from "@/components/OperatingSystemWorkspaces";
 import PageTemplate from "@/components/PageTemplate";
 import ResourceDatabase from "@/components/ResourceDatabase";
 import WebsiteLibraryView from "@/components/WebsiteLibraryView";
-import { getClientJourneyPhase } from "@/lib/clientJourneyPhases";
-import { contentPages, getPageByPath } from "@/lib/siteContent";
+import { contentPages, getPageByPath, medicationStaticParams } from "@/lib/siteContent";
 
 export function generateStaticParams() {
-  return contentPages.map((page) => {
+  const fromNav = contentPages.map((page) => {
     const [, section, pageSlug] = page.path.split("/");
     return { section, page: pageSlug };
   });
+  return [
+    ...fromNav,
+    { section: "calendar-tasks", page: "planner" },
+    { section: "client-workflow", page: "workflow" },
+    { section: "group-therapy-hub", page: "planner" },
+    { section: "resource-hub", page: "resources" },
+    ...medicationStaticParams.filter(
+      (item) => !fromNav.some((nav) => nav.section === item.section && nav.page === item.page),
+    ),
+  ];
 }
 
 export default async function DynamicContentPage({
@@ -36,6 +45,27 @@ export default async function DynamicContentPage({
 }) {
   const { section, page: pageSlug } = await params;
   const path = `/${section}/${pageSlug}`;
+
+  if (path === "/calendar-tasks/planner") {
+    return <DashboardHome />;
+  }
+
+  if (path === "/client-workflow/workflow") {
+    return <ClientWorkflow />;
+  }
+
+  if (path === "/clinical-decision-navigator/navigator") {
+    return <ClinicalDecisionNavigator />;
+  }
+
+  if (path === "/group-therapy-hub/planner") {
+    return <GroupTherapyHub />;
+  }
+
+  if (path === "/resource-hub/resources") {
+    return <ResourceDatabase />;
+  }
+
   const contentPage = getPageByPath(path);
   if (!contentPage) notFound();
 
@@ -44,20 +74,6 @@ export default async function DynamicContentPage({
       return <KaiShinCompanionWorkspace />;
     }
     notFound();
-  }
-
-  if (path === "/clinical-decision-navigator/navigator") {
-    return <ClinicalDecisionNavigator />;
-  }
-
-  if (path === "/calendar-tasks/planner") {
-    return <DashboardHome />;
-  }
-
-  if (section === "client-journey") {
-    const phase = getClientJourneyPhase(pageSlug);
-    if (!phase) notFound();
-    return <WorkflowPhasePage phase={phase} />;
   }
 
   if (path === "/group-studio/studio") {
@@ -85,7 +101,8 @@ export default async function DynamicContentPage({
   }
 
   if (section === "medications") {
-    return <MedicationReference path={path} />;
+    const medId = pageSlug === "overview" ? undefined : pageSlug;
+    return <MedicationReferencePage medId={medId} />;
   }
 
   if (path === "/ladc-academy/academy") {
@@ -108,20 +125,12 @@ export default async function DynamicContentPage({
     return <LearningWorkspace title="Reset Room" />;
   }
 
-  if (path === "/group-therapy-hub/planner") {
-    return <GroupTherapyHub />;
+  if (path === "/internship-survival-guide/hours-tracker") {
+    return <LicensureJourneyWorkspace />;
   }
 
   if (path === "/kai-shin/hub") {
     return <KaiShinHubWorkspace />;
-  }
-
-  if (path === "/resource-hub/resources") {
-    return <ResourceDatabase />;
-  }
-
-  if (path === "/internship-survival-guide/hours-tracker") {
-    return <LicensureJourneyWorkspace />;
   }
 
   if (path === "/internship-survival-guide/practice-questions") {

@@ -1,8 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
-  clientJourneyPhases,
+  clientJourneyNavItems,
   coordinationTemplates,
   documentationTemplates,
   journeyTimeline,
@@ -11,35 +12,97 @@ import {
   type JourneyPhase,
 } from "@/lib/clientJourneyPhases";
 
+function JourneySection({
+  title,
+  defaultOpen = false,
+  tone = "default",
+  children,
+}: {
+  title: string;
+  defaultOpen?: boolean;
+  tone?: "default" | "clay" | "lagoon";
+  children: React.ReactNode;
+}) {
+  const border =
+    tone === "clay"
+      ? "border-clay/30"
+      : tone === "lagoon"
+        ? "border-lagoon/25"
+        : "border-ink/10";
+  return (
+    <details
+      open={defaultOpen}
+      className={`rounded-lg border bg-white p-4 shadow-soft ${border}`}
+    >
+      <summary className="cursor-pointer text-sm font-semibold text-ink">
+        {title}
+      </summary>
+      <div className="mt-3">{children}</div>
+    </details>
+  );
+}
+
+function BulletList({ items, tone = "default" }: { items: string[]; tone?: "default" | "clay" | "lagoon" }) {
+  const itemClass =
+    tone === "clay"
+      ? "rounded-md bg-clay/10 px-3 py-2"
+      : tone === "lagoon"
+        ? "rounded-md bg-lagoon/10 px-3 py-2"
+        : "rounded-md bg-paper px-3 py-2";
+  return (
+    <ul className="grid gap-2 text-sm leading-6 text-ink/75">
+      {items.map((item) => (
+        <li key={item} className={itemClass}>
+          {item}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function PhaseContextHeader({ phase }: { phase: JourneyPhase }) {
+  return (
+    <div className="sticky top-28 z-10 rounded-lg border border-lagoon/20 bg-white p-4 shadow-soft">
+      <p className="text-xs font-semibold uppercase tracking-wide text-lagoon">
+        Client Journey · {phase.title}
+      </p>
+      <p className="mt-1 text-sm leading-6 text-ink/70">{phase.description}</p>
+      {phase.requiredDocuments.length ? (
+        <p className="mt-2 text-xs text-ink/60">
+          Procentive forms this phase:{" "}
+          {phase.requiredDocuments.map((doc) => doc.code).join(", ")}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 export function PhaseChecklist({ items }: { items: string[] }) {
   const [checked, setChecked] = useState<Record<string, boolean>>({});
 
   return (
-    <section className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">
-      <h2 className="text-xl font-semibold text-ink">What I Do Next</h2>
-      <div className="mt-4 grid gap-2">
-        {items.map((item) => (
-          <label
-            key={item}
-            className="flex cursor-pointer gap-3 rounded-md bg-paper px-3 py-2 text-sm leading-6 text-ink/75"
-          >
-            <input
-              type="checkbox"
-              checked={Boolean(checked[item])}
-              onChange={(event) =>
-                setChecked((current) => ({
-                  ...current,
-                  [item]: event.target.checked,
-                }))
-              }
-            />
-            <span className={checked[item] ? "line-through opacity-60" : ""}>
-              {item}
-            </span>
-          </label>
-        ))}
-      </div>
-    </section>
+    <div className="grid gap-2">
+      {items.map((item) => (
+        <label
+          key={item}
+          className="flex cursor-pointer gap-3 rounded-md bg-paper px-3 py-2 text-sm leading-6 text-ink/75"
+        >
+          <input
+            type="checkbox"
+            checked={Boolean(checked[item])}
+            onChange={(event) =>
+              setChecked((current) => ({
+                ...current,
+                [item]: event.target.checked,
+              }))
+            }
+          />
+          <span className={checked[item] ? "line-through opacity-60" : ""}>
+            {item}
+          </span>
+        </label>
+      ))}
+    </div>
   );
 }
 
@@ -64,21 +127,18 @@ export function DocumentExplanationCard({ document }: { document: JourneyDocumen
 
 export function RequiredDocumentsList({ documents }: { documents: JourneyDocument[] }) {
   return (
-    <section className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">
-      <h2 className="text-xl font-semibold text-ink">Required Documents</h2>
-      <div className="mt-4 grid gap-3">
-        {documents.length ? (
-          documents.map((document) => (
-            <DocumentExplanationCard key={`${document.code}-${document.name}`} document={document} />
-          ))
-        ) : (
-          <p className="rounded-md bg-paper px-3 py-2 text-sm text-ink/70">
-            No specific form has been added yet. Use this phase to verify the
-            required Kai-Shin/Procentive document and document next steps.
-          </p>
-        )}
-      </div>
-    </section>
+    <div className="grid gap-3">
+      {documents.length ? (
+        documents.map((document) => (
+          <DocumentExplanationCard key={`${document.code}-${document.name}`} document={document} />
+        ))
+      ) : (
+        <p className="rounded-md bg-paper px-3 py-2 text-sm text-ink/70">
+          No specific form is listed for this phase. Open Procentive, confirm the
+          Kai-Shin workflow form for this step, and document what you completed.
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -92,63 +152,6 @@ function InfoBlock({ title, items }: { title: string; items: string[] }) {
         ))}
       </ul>
     </div>
-  );
-}
-
-export function ClientDialogueCard({ scripts }: { scripts: string[] }) {
-  return <SimpleCard title="Dialogue / Client Explanation" items={scripts} />;
-}
-
-export function CounselorThinkingCard({ items }: { items: string[] }) {
-  return <SimpleCard title="Counselor Thinking" items={items} />;
-}
-
-export function DocumentationGuidanceCard({ items }: { items: string[] }) {
-  return <SimpleCard title="Documentation Guidance" items={items} />;
-}
-
-export function ClinicalWordingExamples({ items }: { items: string[] }) {
-  return <SimpleCard title="Clinical Wording Examples" items={items} />;
-}
-
-export function CommonMistakesCard({ items }: { items: string[] }) {
-  return <SimpleCard title="Common Mistakes" items={items} tone="clay" />;
-}
-
-export function NextStepsCard({ items }: { items: string[] }) {
-  return <SimpleCard title="Next Logical Steps" items={items} />;
-}
-
-export function DeadlineReminder({ items }: { items: string[] }) {
-  return <SimpleCard title="Deadline / Compliance Reminders" items={items} tone="lagoon" />;
-}
-
-function SimpleCard({
-  title,
-  items,
-  tone = "default",
-}: {
-  title: string;
-  items: string[];
-  tone?: "default" | "clay" | "lagoon";
-}) {
-  const border =
-    tone === "clay"
-      ? "border-clay/30 bg-clay/10"
-      : tone === "lagoon"
-        ? "border-lagoon/25 bg-lagoon/10"
-        : "border-ink/10 bg-white";
-  return (
-    <section className={`rounded-lg border p-5 shadow-soft ${border}`}>
-      <h2 className="text-xl font-semibold text-ink">{title}</h2>
-      <ul className="mt-3 grid gap-2 text-sm leading-6 text-ink/75">
-        {items.map((item) => (
-          <li key={item} className="rounded-md bg-white/75 px-3 py-2">
-            {item}
-          </li>
-        ))}
-      </ul>
-    </section>
   );
 }
 
@@ -171,15 +174,15 @@ export function ROIContactScriptBuilder() {
   }, [contactType, followUp, purpose, requested, shared]);
 
   return (
-    <section className="rounded-lg border border-lagoon/20 bg-white p-5 shadow-soft">
-      <h2 className="text-xl font-semibold text-ink">ROI Contact Script Builder</h2>
+    <div className="mt-4 rounded-lg border border-lagoon/20 bg-paper p-4">
+      <h3 className="text-sm font-semibold text-ink">ROI Contact Script Builder</h3>
       <div className="mt-4 grid gap-3 md:grid-cols-2">
         <label className="text-sm font-medium text-ink">
           Contact type
           <select
             value={contactType}
             onChange={(event) => setContactType(event.target.value)}
-            className="focus-ring mt-1 w-full rounded-md border border-ink/15 bg-paper px-3 py-2 text-sm"
+            className="focus-ring mt-1 w-full rounded-md border border-ink/15 bg-white px-3 py-2 text-sm"
           >
             {roiContactTypes.map((type) => (
               <option key={type}>{type}</option>
@@ -191,7 +194,7 @@ export function ROIContactScriptBuilder() {
           <select
             value={consent}
             onChange={(event) => setConsent(event.target.value)}
-            className="focus-ring mt-1 w-full rounded-md border border-ink/15 bg-paper px-3 py-2 text-sm"
+            className="focus-ring mt-1 w-full rounded-md border border-ink/15 bg-white px-3 py-2 text-sm"
           >
             <option value="yes">Yes, signed ROI confirmed</option>
             <option value="no">No, do not contact</option>
@@ -212,7 +215,7 @@ export function ROIContactScriptBuilder() {
                   event.target.value,
                 )
               }
-              className="focus-ring mt-1 min-h-20 w-full rounded-md border border-ink/15 bg-paper px-3 py-2 text-sm"
+              className="focus-ring mt-1 min-h-20 w-full rounded-md border border-ink/15 bg-white px-3 py-2 text-sm"
             />
           </label>
         ))}
@@ -222,15 +225,15 @@ export function ROIContactScriptBuilder() {
         valid ROI unless there is a legally required safety exception. Always
         document the contact in Contact Log PRO-1081.
       </div>
-      <div className="mt-4 rounded-md bg-paper p-4 text-sm leading-6 text-ink/75">
-        <h3 className="font-semibold text-ink">Script draft</h3>
+      <div className="mt-4 rounded-md bg-white p-4 text-sm leading-6 text-ink/75">
+        <h4 className="font-semibold text-ink">Script draft</h4>
         <p className="mt-2">
           {consent === "yes"
             ? script
             : "Do not contact. Obtain a valid ROI or consult supervision/policy if a safety exception may apply."}
         </p>
       </div>
-    </section>
+    </div>
   );
 }
 
@@ -240,198 +243,161 @@ export function DocumentationAtEachPhaseTracker({
   phase: JourneyPhase;
 }) {
   const fallbackDocs: JourneyDocument[] = documentationTemplates.map((template) => ({
-        name: template.title,
-        code: template.code,
-        purpose: "Documentation support template for this phase.",
-        clientExplanation: "This document records services, coordination, or planning.",
-        acknowledgement: "Documentation completed as clinically indicated.",
-        counselorWatchFor: ["Correct form", "Timing", "Required content"],
-        commonQuestions: ["What is documented?"],
-        suggestedResponse: "The record explains the service and next steps.",
-        nextStep: "Complete follow-up.",
-        billable: template.billable as JourneyDocument["billable"],
-        wordingTemplate: template.template,
-      }));
+    name: template.title,
+    code: template.code,
+    purpose: "Documentation support template for this phase.",
+    clientExplanation: "This document records services, coordination, or planning.",
+    acknowledgement: "Documentation completed as clinically indicated.",
+    counselorWatchFor: ["Correct form", "Timing", "Required content"],
+    commonQuestions: ["What is documented?"],
+    suggestedResponse: "The record explains the service and next steps.",
+    nextStep: "Complete follow-up.",
+    billable: template.billable as JourneyDocument["billable"],
+    wordingTemplate: template.template,
+  }));
   const docs: JourneyDocument[] = phase.requiredDocuments.length
     ? phase.requiredDocuments
     : fallbackDocs;
 
   return (
-    <section className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">
-      <h2 className="text-xl font-semibold text-ink">
-        Documentation at This Phase
-      </h2>
-      <div className="mt-4 grid gap-3">
-        {docs.map((document) => (
-          <article
-            key={`${document.code}-${document.name}`}
-            className="rounded-lg border border-ink/10 bg-paper p-4 text-sm leading-6 text-ink/75"
-          >
-            <div className="flex flex-wrap items-center gap-2">
-              <h3 className="font-semibold text-ink">{document.name}</h3>
-              <span className="rounded-md bg-white px-2 py-1 text-xs font-semibold text-lagoon">
-                {document.code}
+    <div className="mt-4 grid gap-3">
+      {docs.map((document) => (
+        <article
+          key={`${document.code}-${document.name}`}
+          className="rounded-lg border border-ink/10 bg-paper p-4 text-sm leading-6 text-ink/75"
+        >
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="font-semibold text-ink">{document.name}</h3>
+            <span className="rounded-md bg-white px-2 py-1 text-xs font-semibold text-lagoon">
+              {document.code}
+            </span>
+            {document.billable ? (
+              <span className="rounded-md bg-white px-2 py-1 text-xs font-semibold text-ink/70">
+                {document.billable}
               </span>
-              {document.billable ? (
-                <span className="rounded-md bg-white px-2 py-1 text-xs font-semibold text-ink/70">
-                  {document.billable}
-                </span>
-              ) : null}
-            </div>
-            <p className="mt-2">
-              <strong>When:</strong>{" "}
-              {document.whenToComplete ?? "Complete during this phase as required by workflow."}
-            </p>
-            <p>
-              <strong>Must include:</strong>{" "}
-              {(document.mustInclude ?? ["Purpose", "client response", "action taken", "follow-up"]).join(", ")}
-            </p>
-            {document.wordingTemplate ? (
-              <p className="mt-2 whitespace-pre-wrap rounded-md bg-white p-3">
-                {document.wordingTemplate}
-              </p>
             ) : null}
-          </article>
-        ))}
-      </div>
-    </section>
+          </div>
+          <p className="mt-2">
+            <strong>When:</strong>{" "}
+            {document.whenToComplete ?? "Complete during this phase as required by workflow."}
+          </p>
+          <p>
+            <strong>Must include:</strong>{" "}
+            {(document.mustInclude ?? ["Purpose", "client response", "action taken", "follow-up"]).join(", ")}
+          </p>
+          {document.wordingTemplate ? (
+            <p className="mt-2 whitespace-pre-wrap rounded-md bg-white p-3">
+              {document.wordingTemplate}
+            </p>
+          ) : null}
+        </article>
+      ))}
+    </div>
   );
 }
 
 export function ClientJourneyDashboard() {
+  const phases = clientJourneyNavItems.filter((item) => !item.path.endsWith("/dashboard"));
+
   return (
-    <section className="grid gap-5">
-      <section className="rounded-lg border border-lagoon/20 bg-white p-5 shadow-soft">
-        <h2 className="text-xl font-semibold text-ink">Visual Timeline</h2>
-        <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
+    <section className="grid gap-4">
+      <div className="rounded-lg border border-lagoon/20 bg-white p-4 shadow-soft">
+        <p className="text-xs font-semibold uppercase tracking-wide text-lagoon">
+          Client Journey
+        </p>
+        <p className="mt-1 text-sm text-ink/70">
+          Pick the phase that matches where the client is right now. Use the left
+          sidebar to jump between phases while the chart is open in Procentive.
+        </p>
+      </div>
+      <details open className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
+        <summary className="cursor-pointer text-sm font-semibold text-ink">
+          Workflow timeline
+        </summary>
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
           {journeyTimeline.map((item, index) => (
             <div key={item} className="flex items-center gap-2">
-              <span className="rounded-md bg-paper px-3 py-2 font-medium text-ink">
+              <span className="rounded-md bg-paper px-2 py-1 font-medium text-ink">
                 {item}
               </span>
               {index < journeyTimeline.length - 1 ? (
-                <span className="text-lagoon">-&gt;</span>
+                <span className="text-lagoon">→</span>
               ) : null}
             </div>
           ))}
         </div>
-      </section>
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {[
-          ["Current phase", "Choose the phase from the left sidebar."],
-          ["Completed documents", "Use each phase checklist to track forms reviewed/signed."],
-          ["Missing documents", "Look for required documents and deadline reminders."],
-          ["Upcoming deadlines", "Assessment, plans, reviews, transition, and discharge."],
-          ["Collateral contacts needed", "Check ROIs and Contact Log PRO-1081."],
-          ["Discharge planning status", "Begin transition planning before final discharge."],
-        ].map(([title, body]) => (
-          <article
-            key={title}
-            className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft"
-          >
-            <h2 className="text-lg font-semibold text-ink">{title}</h2>
-            <p className="mt-2 text-sm leading-6 text-ink/70">{body}</p>
-          </article>
-        ))}
-      </section>
+      </details>
+      <details open className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
+        <summary className="cursor-pointer text-sm font-semibold text-ink">
+          Jump to a phase
+        </summary>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          {phases.map((item) => (
+            <Link
+              key={item.path}
+              href={item.path}
+              className="focus-ring rounded-md border border-ink/10 bg-paper px-3 py-2 text-sm font-medium text-ink hover:border-lagoon"
+            >
+              {item.title}
+            </Link>
+          ))}
+        </div>
+      </details>
     </section>
-  );
-}
-
-export function WhatDoIDoNextPanel({ phase }: { phase: JourneyPhase }) {
-  return (
-    <aside className="sticky top-36 hidden max-h-[calc(100vh-10rem)] overflow-auto rounded-lg border border-lagoon/20 bg-paper p-4 shadow-soft xl:block">
-      <h2 className="text-lg font-semibold text-ink">What Do I Do Next?</h2>
-      <ol className="mt-3 grid gap-2 text-sm leading-6 text-ink/75">
-        {phase.whatToDoNext.slice(0, 8).map((item) => (
-          <li key={item} className="rounded-md bg-white px-3 py-2">
-            {item}
-          </li>
-        ))}
-      </ol>
-      <h3 className="mt-4 text-sm font-semibold text-ink">Watch deadlines</h3>
-      <ul className="mt-2 grid gap-2 text-xs leading-5 text-ink/70">
-        {phase.deadlines.map((item) => (
-          <li key={item} className="rounded-md bg-white px-3 py-2">
-            {item}
-          </li>
-        ))}
-      </ul>
-    </aside>
   );
 }
 
 export function WorkflowPhasePage({ phase }: { phase: JourneyPhase }) {
   if (phase.id === "dashboard") return <ClientJourneyDashboard />;
 
+  const clinicalThinking = [
+    ...phase.counselorThinking,
+    ...phase.relatedAsamDimensions.map((item) => `ASAM: ${item}`),
+    ...phase.relatedTreatmentPlanAreas.map((item) => `Treatment plan: ${item}`),
+  ];
+  const documentationItems = [
+    ...phase.documentationGuidance,
+    ...phase.clinicalWordingExamples.map((item) => `Wording: ${item}`),
+  ];
+  const nextStepItems = [...phase.nextSteps, ...phase.deadlines.map((item) => `Deadline: ${item}`)];
+
   return (
-    <div className="grid gap-6">
-      <section className="rounded-2xl border border-lagoon/20 bg-gradient-to-br from-white to-lagoon/10 p-6 shadow-soft">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-lagoon">
-              Client Journey Command Center
-            </p>
-            <h1 className="mt-2 text-3xl font-bold text-ink">{phase.title}</h1>
-            <p className="mt-3 max-w-3xl text-sm leading-6 text-ink/75">
-              {phase.purpose}
-            </p>
-          </div>
+    <section className="grid gap-3">
+      <PhaseContextHeader phase={phase} />
 
-          <div className="rounded-xl border border-ink/10 bg-white p-4 text-sm shadow-soft lg:w-80">
-            <h2 className="font-semibold text-ink">Immediate Focus</h2>
-            <ul className="mt-3 grid gap-2 text-ink/75">
-              {phase.whatToDoNext.slice(0, 3).map((item) => (
-                <li key={item} className="rounded-lg bg-paper px-3 py-2">
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
+      <JourneySection title="Purpose" defaultOpen>
+        <p className="text-sm leading-6 text-ink/75">{phase.purpose}</p>
+      </JourneySection>
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_20rem]">
-        <article className="grid gap-5">
-          <section className="grid gap-5 lg:grid-cols-2">
-            <PhaseChecklist items={phase.whatToDoNext} />
-            <RequiredDocumentsList documents={phase.requiredDocuments} />
-          </section>
+      <JourneySection title="What am I doing?" defaultOpen>
+        <PhaseChecklist items={phase.whatToDoNext} />
+      </JourneySection>
 
-          <section className="grid gap-5 lg:grid-cols-2">
-            <ClientDialogueCard scripts={phase.clientDialogue} />
-            <CounselorThinkingCard items={phase.counselorThinking} />
-          </section>
+      <JourneySection title="Questions to ask">
+        <BulletList items={phase.clientDialogue} />
+      </JourneySection>
 
-          <section className="grid gap-5 lg:grid-cols-2">
-            <DocumentationGuidanceCard items={phase.documentationGuidance} />
-            <ClinicalWordingExamples items={phase.clinicalWordingExamples} />
-          </section>
+      <JourneySection title="Documents involved" defaultOpen={phase.requiredDocuments.length > 0}>
+        <RequiredDocumentsList documents={phase.requiredDocuments} />
+        {phase.id === "collateral-contacts-rois" ? <ROIContactScriptBuilder /> : null}
+      </JourneySection>
 
-          <section className="grid gap-5 lg:grid-cols-2">
-            <CommonMistakesCard items={phase.commonMistakes} />
-            <NextStepsCard items={phase.nextSteps} />
-          </section>
+      <JourneySection title="Clinical thinking">
+        <BulletList items={clinicalThinking} />
+      </JourneySection>
 
-          <DeadlineReminder items={phase.deadlines} />
+      <JourneySection title="What do I document?">
+        <BulletList items={documentationItems} />
+        <DocumentationAtEachPhaseTracker phase={phase} />
+      </JourneySection>
 
-          <SimpleCard
-            title="Related ASAM / Treatment Planning Connections"
-            items={[
-              ...phase.relatedAsamDimensions,
-              ...phase.relatedTreatmentPlanAreas,
-            ]}
-          />
+      <JourneySection title="Common mistakes" tone="clay">
+        <BulletList items={phase.commonMistakes} tone="clay" />
+      </JourneySection>
 
-          <DocumentationAtEachPhaseTracker phase={phase} />
-
-          {phase.id === "collateral-contacts-rois" ? (
-            <ROIContactScriptBuilder />
-          ) : null}
-        </article>
-
-        <WhatDoIDoNextPanel phase={phase} />
-      </div>
-    </div>
+      <JourneySection title="Next step" tone="lagoon">
+        <BulletList items={nextStepItems} tone="lagoon" />
+      </JourneySection>
+    </section>
   );
 }

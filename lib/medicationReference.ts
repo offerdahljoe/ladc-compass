@@ -1,0 +1,332 @@
+export type MedicationCategory =
+  | "MAT Medications"
+  | "Antidepressants"
+  | "Mood Stabilizers"
+  | "Antipsychotics"
+  | "ADHD Medications"
+  | "Sleep/Anxiety Medications"
+  | "Benzodiazepines / Higher Caution";
+
+export type MedicationEntry = {
+  id: string;
+  name: string;
+  pronunciation: string;
+  brandNames: string[];
+  genericName: string;
+  category: MedicationCategory;
+  drugType: string;
+  usedFor: string;
+  ladcShouldKnow: string[];
+  questionsToAsk: string[];
+  redFlags: string[];
+  commonSideEffects: string[];
+  counselorConsiderations: string[];
+  whenToCoordinate: string[];
+  documentationExample: string;
+  curiousAbout: string[];
+};
+
+export const neverPanicContent = {
+  title: "Client lists 12 medications. Don't panic.",
+  body: [
+    "You do not need to memorize medications or act like a prescriber.",
+    "As an LADC, focus on: why is the client taking it, who prescribes it, are they taking it as prescribed, does it affect attendance/alertness/cravings/withdrawal/mood/sleep/safety, is ROI/coordination needed, and are there misuse or stopping-suddenly concerns.",
+  ],
+  disclaimer:
+    "This tool is for LADC clinical awareness and documentation support only. It is not medical advice, prescribing guidance, or a substitute for consultation with a medical provider.",
+};
+
+export const medicationCategories: MedicationCategory[] = [
+  "MAT Medications",
+  "Antidepressants",
+  "Mood Stabilizers",
+  "Antipsychotics",
+  "ADHD Medications",
+  "Sleep/Anxiety Medications",
+  "Benzodiazepines / Higher Caution",
+];
+
+export const medications: MedicationEntry[] = [
+  {
+    id: "suboxone",
+    name: "Suboxone",
+    pronunciation: "Sub-OX-own. Buprenorphine: byoo-preh-NOR-feen. Naloxone: nah-LOX-own.",
+    brandNames: ["Suboxone", "Subutex", "Zubsolv"],
+    genericName: "Buprenorphine/Naloxone",
+    category: "MAT Medications",
+    drugType: "Partial opioid agonist + opioid antagonist combination",
+    usedFor: "Opioid Use Disorder",
+    ladcShouldKnow: [
+      "Can reduce cravings and withdrawal symptoms",
+      "Should be taken only as prescribed",
+      "Abrupt discontinuation may increase relapse risk",
+      "Client may experience MAT stigma or pressure from others",
+    ],
+    questionsToAsk: [
+      "How long have you been taking it?",
+      "Who prescribes it?",
+      "Are you taking it as prescribed?",
+      "Any missed doses or running out early?",
+      "Is it helping cravings or withdrawal?",
+      "Any mixing with alcohol, benzodiazepines, or sedatives?",
+    ],
+    redFlags: [
+      "Buying/selling medication",
+      "Running out early",
+      "Mixing with alcohol or benzodiazepines",
+      "Stopping suddenly without medical guidance",
+      "Cravings despite medication",
+    ],
+    commonSideEffects: ["Constipation", "Headache", "Nausea", "Sweating", "Sedation"],
+    counselorConsiderations: [
+      "Do not shame MAT use",
+      "Explore adherence as relapse prevention",
+      "Coordinate with prescriber if ROI exists",
+    ],
+    whenToCoordinate: [
+      "Missed doses or running out",
+      "Significant side effects",
+      "Ongoing cravings or return to use",
+      "Client wants to stop medication",
+    ],
+    documentationExample:
+      "Client reported being prescribed buprenorphine/naloxone for opioid use disorder and stated medication has helped reduce cravings. Counselor explored adherence, side effects, and recovery supports. Client denied current misuse of medication.",
+    curiousAbout: ["Opioid use history", "Cravings", "Adherence", "Prescriber involvement", "Sedative/alcohol mixing"],
+  },
+  {
+    id: "vivitrol",
+    name: "Vivitrol",
+    pronunciation: "Viv-TROLL. Naltrexone: nal-TREX-own.",
+    brandNames: ["Vivitrol", "Revia"],
+    genericName: "Naltrexone",
+    category: "MAT Medications",
+    drugType: "Opioid antagonist (injectable or oral)",
+    usedFor: "Opioid or alcohol use disorder after appropriate opioid-free period",
+    ladcShouldKnow: [
+      "Blocks opioid effects — attempting to override can increase overdose risk",
+      "Injection requires follow-through on appointments",
+      "Must not start while physically dependent on opioids without medical clearance",
+    ],
+    questionsToAsk: [
+      "Oral or injection?",
+      "When was last opioid use?",
+      "Any recent overdose history?",
+      "Injection site issues?",
+      "Cravings or drinking since starting?",
+    ],
+    redFlags: ["Recent opioid use while on naltrexone", "Missed injections", "Attempting to use through blockade"],
+    commonSideEffects: ["Nausea", "Headache", "Injection site soreness", "Fatigue"],
+    counselorConsiderations: ["Overdose education is critical", "Track appointment adherence for Vivitrol"],
+    whenToCoordinate: ["Missed dose/injection", "Return to opioid use", "Severe side effects"],
+    documentationExample:
+      "Client reported monthly naltrexone injection for opioid use disorder. Counselor reviewed adherence to injection schedule and discussed overdose risk if attempting to use opioids while medication is active.",
+    curiousAbout: ["Last use", "Injection schedule", "Cravings", "Overdose history"],
+  },
+  {
+    id: "methadone",
+    name: "Methadone",
+    pronunciation: "METH-uh-dohn",
+    brandNames: ["Methadose", "Dolophine"],
+    genericName: "Methadone",
+    category: "MAT Medications",
+    drugType: "Full opioid agonist / OTP medication",
+    usedFor: "Opioid Use Disorder in opioid treatment programs",
+    ladcShouldKnow: ["Daily clinic dosing often required", "Sedation and cardiac monitoring concerns in OTP setting", "Transportation barriers affect adherence"],
+    questionsToAsk: ["Which OTP?", "Daily attendance?", "Take-home doses?", "Sedation?", "Other substances used?"],
+    redFlags: ["Sedation", "Mixing with benzodiazepines", "Missing clinic doses", "Diversion"],
+    commonSideEffects: ["Constipation", "Sweating", "Sedation", "Sexual side effects"],
+    counselorConsiderations: ["Coordinate with OTP when ROI allows", "Do not advise dose changes"],
+    whenToCoordinate: ["Sedation", "Missed dosing pattern", "Concurrent benzo/alcohol use"],
+    documentationExample: "Client reported daily methadone dosing at OTP. Counselor explored transportation barriers and concurrent substance use without advising medication changes.",
+    curiousAbout: ["OTP coordination", "Transportation", "Sedation", "Concurrent use"],
+  },
+  {
+    id: "sertraline",
+    name: "Sertraline (Zoloft)",
+    pronunciation: "SER-truh-leen",
+    brandNames: ["Zoloft"],
+    genericName: "Sertraline",
+    category: "Antidepressants",
+    drugType: "SSRI antidepressant",
+    usedFor: "Depression, anxiety, PTSD, and other mental health conditions",
+    ladcShouldKnow: [
+      "May take weeks for mood benefit",
+      "Stopping suddenly can cause discontinuation symptoms",
+      "May affect sleep, energy, and engagement in treatment",
+    ],
+    questionsToAsk: ["Who prescribes?", "How long on it?", "Missed doses?", "Mood/sleep changes?", "Side effects?"],
+    redFlags: ["Worsening depression or SI", "Stopping without prescriber", "Multiple prescribers"],
+    commonSideEffects: ["Nausea", "Sexual side effects", "Insomnia or sedation", "Headache"],
+    counselorConsiderations: ["Screen mood and safety", "Encourage prescriber follow-up — do not adjust meds"],
+    whenToCoordinate: ["SI worsening", "Severe side effects", "Client wants to stop"],
+    documentationExample: "Client reported sertraline prescribed for depression. Counselor explored adherence and mood impact on treatment engagement without providing medication advice.",
+    curiousAbout: ["Mood symptoms", "Sleep", "SI", "Adherence", "Psychiatry ROI"],
+  },
+  {
+    id: "quetiapine",
+    name: "Quetiapine (Seroquel)",
+    pronunciation: "kweh-TYE-uh-peen",
+    brandNames: ["Seroquel"],
+    genericName: "Quetiapine",
+    category: "Antipsychotics",
+    drugType: "Atypical antipsychotic",
+    usedFor: "Bipolar disorder, schizophrenia, sometimes sleep or augmentation",
+    ladcShouldKnow: ["Often sedating — may affect group participation", "Sometimes used off-label for sleep", "Monitor for oversedation with other CNS depressants"],
+    questionsToAsk: ["Why prescribed?", "Sedation during day?", "Taken at bedtime?", "Other sedatives?"],
+    redFlags: ["Excessive sedation", "Using more than prescribed", "Mixing with alcohol/benzos"],
+    commonSideEffects: ["Sedation", "Weight gain", "Dry mouth", "Dizziness"],
+    counselorConsiderations: ["Note alertness in sessions", "Coordinate with prescriber via ROI if concerns"],
+    whenToCoordinate: ["Severe sedation affecting safety", "Suspected misuse"],
+    documentationExample: "Client reported quetiapine at bedtime for mood symptoms. Counselor noted intermittent morning sedation and explored impact on group attendance.",
+    curiousAbout: ["Sleep", "Daytime alertness", "Diagnosis", "Other sedatives"],
+  },
+  {
+    id: "alprazolam",
+    name: "Alprazolam (Xanax)",
+    pronunciation: "al-PRAZ-oh-lam",
+    brandNames: ["Xanax"],
+    genericName: "Alprazolam",
+    category: "Benzodiazepines / Higher Caution",
+    drugType: "Benzodiazepine anxiolytic",
+    usedFor: "Anxiety and panic — high misuse potential especially with opioids/alcohol",
+    ladcShouldKnow: [
+      "High addiction potential",
+      "Dangerous combined with opioids, alcohol, or methadone/buprenorphine",
+      "Withdrawal can be medically serious",
+    ],
+    questionsToAsk: ["Prescriber?", "Dose and frequency?", "Running out early?", "Mixing with alcohol/opioids?", "History of benzo misuse?"],
+    redFlags: ["Early refill requests", "Obtaining from multiple sources", "Sedation/incoherence in session", "Combined with opioids/alcohol"],
+    commonSideEffects: ["Sedation", "Memory problems", "Dizziness", "Tolerance"],
+    counselorConsiderations: ["Document sedated presentation", "Harm reduction and prescriber coordination", "Never advise stopping abruptly"],
+    whenToCoordinate: ["Misuse concerns", "Sedation affecting safety", "Concurrent opioid/alcohol use"],
+    documentationExample: "Client reported alprazolam prescribed for anxiety. Counselor explored frequency of use and concurrent alcohol use; discussed safety concerns and encouraged prescriber follow-up.",
+    curiousAbout: ["Opioid/alcohol co-use", "Dose changes", "Withdrawal history", "Multiple prescribers"],
+  },
+  {
+    id: "adderall",
+    name: "Amphetamine salts (Adderall)",
+    pronunciation: "am-FET-uh-meen",
+    brandNames: ["Adderall", "Adderall XR"],
+    genericName: "Mixed amphetamine salts",
+    category: "ADHD Medications",
+    drugType: "Stimulant",
+    usedFor: "ADHD — also has misuse potential in substance use populations",
+    ladcShouldKnow: ["Can be misused for energy/focus", "May affect sleep and appetite", "Document if client appears overstimulated or crashes"],
+    questionsToAsk: ["Prescribed or shared?", "Dose timing?", "Sleep impact?", "Crashing later in day?", "History of stimulant misuse?"],
+    redFlags: ["Non-prescribed use", "Snorting/injecting", "Running out early", "Severe insomnia"],
+    commonSideEffects: ["Insomnia", "Decreased appetite", "Anxiety", "Increased heart rate"],
+    counselorConsiderations: ["Separate ADHD treatment from stimulant use disorder history", "Monitor misuse cues"],
+    whenToCoordinate: ["Suspected misuse", "Cardiac symptoms", "Severe insomnia affecting treatment"],
+    documentationExample: "Client reported prescribed amphetamine salts for ADHD. Counselor explored timing of dose, sleep patterns, and denied non-prescribed stimulant use.",
+    curiousAbout: ["Stimulant use history", "Sleep", "Prescriber", "Route of use"],
+  },
+  {
+    id: "trazodone",
+    name: "Trazodone",
+    pronunciation: "TRAZ-oh-dohn",
+    brandNames: ["Desyrel"],
+    genericName: "Trazodone",
+    category: "Sleep/Anxiety Medications",
+    drugType: "Sedating antidepressant often used for sleep",
+    usedFor: "Insomnia, depression (at higher doses)",
+    ladcShouldKnow: ["Often taken at bedtime", "Sedation next morning possible", "Do not combine carelessly with other sedatives"],
+    questionsToAsk: ["Bedtime dose?", "Morning grogginess?", "Other sleep meds?", "Alcohol with it?"],
+    redFlags: ["Excessive sedation", "Mixing with alcohol/benzos", "Orthostatic dizziness/falls"],
+    commonSideEffects: ["Sedation", "Dizziness", "Dry mouth", "Morning grogginess"],
+    counselorConsiderations: ["Note alertness in morning groups"],
+    whenToCoordinate: ["Severe sedation", "Fall risk"],
+    documentationExample: "Client reported trazodone at bedtime for sleep. Counselor explored sleep quality and morning alertness in relation to group participation.",
+    curiousAbout: ["Sleep quality", "Other sedatives", "Mood symptoms"],
+  },
+  {
+    id: "acamprosate",
+    name: "Acamprosate (Campral)",
+    pronunciation: "a-KAM-proh-sate",
+    brandNames: ["Campral"],
+    genericName: "Acamprosate",
+    category: "MAT Medications",
+    drugType: "AUD medication",
+    usedFor: "Alcohol use disorder — supports abstinence",
+    ladcShouldKnow: ["Requires consistent dosing", "Kidney function relevant for prescribers", "Does not treat acute withdrawal"],
+    questionsToAsk: ["Taking three times daily?", "Cravings for alcohol?", "Kidney issues?", "Abstinence goal?"],
+    redFlags: ["Continued heavy drinking without prescriber aware", "Stopping without follow-up"],
+    commonSideEffects: ["Diarrhea", "Nausea", "Anxiety", "Insomnia"],
+    counselorConsiderations: ["Support abstinence-oriented goals", "Do not shame if still drinking — coordinate care"],
+    whenToCoordinate: ["Continued heavy use", "Side effects", "Wanting to stop med"],
+    documentationExample: "Client reported acamprosate for alcohol use disorder and stated medication supports abstinence goal. Counselor explored adherence and cravings.",
+    curiousAbout: ["Alcohol use pattern", "Cravings", "Liver/kidney history (prescriber domain)"],
+  },
+  {
+    id: "disulfiram",
+    name: "Disulfiram (Antabuse)",
+    pronunciation: "dye-SUL-fih-ram",
+    brandNames: ["Antabuse"],
+    genericName: "Disulfiram",
+    category: "MAT Medications",
+    drugType: "Alcohol deterrent",
+    usedFor: "Alcohol use disorder with informed consent",
+    ladcShouldKnow: ["Severe reaction if alcohol consumed", "Hidden alcohol in products matters", "Requires clear informed consent"],
+    questionsToAsk: ["Understands reaction risk?", "Any alcohol exposure?", "Motivation for deterrent?", "Support person aware?"],
+    redFlags: ["Drinking while on disulfiram", "Unclear understanding of risks"],
+    commonSideEffects: ["Drowsiness", "Headache", "Metallic taste"],
+    counselorConsiderations: ["Confirm client understands deterrent mechanism", "Emergency plan if exposure"],
+    whenToCoordinate: ["Any alcohol use while on med", "Severe reaction symptoms"],
+    documentationExample: "Client reported disulfiram for alcohol use disorder. Counselor reviewed client's understanding of alcohol reaction risk and current abstinence support plan.",
+    curiousAbout: ["Abstinence motivation", "Hidden alcohol exposure", "Support system"],
+  },
+  {
+    id: "lamotrigine",
+    name: "Lamotrigine (Lamictal)",
+    pronunciation: "lah-moh-TRI-jeen",
+    brandNames: ["Lamictal"],
+    genericName: "Lamotrigine",
+    category: "Mood Stabilizers",
+    drugType: "Anticonvulsant mood stabilizer",
+    usedFor: "Bipolar disorder, seizure disorders",
+    ladcShouldKnow: ["Rash can be serious — prescriber domain", "Do not stop suddenly", "May affect mood stability and treatment engagement"],
+    questionsToAsk: ["Any rash?", "Bipolar diagnosis?", "Adherence?", "Mood cycling?"],
+    redFlags: ["New rash", "Stopping abruptly", "Manic/depressive episode worsening"],
+    commonSideEffects: ["Dizziness", "Headache", "Nausea", "Blurred vision"],
+    counselorConsiderations: ["Monitor mood symptoms", "Encourage dermatology/prescriber if rash reported"],
+    whenToCoordinate: ["Rash", "Severe mood destabilization"],
+    documentationExample: "Client reported lamotrigine for bipolar disorder. Counselor explored mood stability and treatment adherence without advising medication changes.",
+    curiousAbout: ["Bipolar symptoms", "Sleep", "Adherence", "Rash"],
+  },
+  {
+    id: "lithium",
+    name: "Lithium",
+    pronunciation: "LITH-ee-um",
+    brandNames: ["Lithobid", "Eskalith"],
+    genericName: "Lithium",
+    category: "Mood Stabilizers",
+    drugType: "Mood stabilizer",
+    usedFor: "Bipolar disorder",
+    ladcShouldKnow: ["Requires blood level monitoring by prescriber", "Dehydration and toxicity are prescriber emergencies", "Do not advise dose changes"],
+    questionsToAsk: ["Blood tests up to date?", "Hydration?", "Tremor or confusion?", "Salt/water changes?"],
+    redFlags: ["Confusion", "Severe tremor", "Vomiting", "Dehydration"],
+    commonSideEffects: ["Tremor", "Increased thirst/urination", "Weight gain", "Nausea"],
+    counselorConsiderations: ["Note cognitive presentation", "Urgent coordination if toxicity symptoms"],
+    whenToCoordinate: ["Possible toxicity symptoms", "Missed labs (prescriber)"],
+    documentationExample: "Client reported lithium for bipolar disorder. Counselor explored mood stability and denied symptoms suggestive of toxicity.",
+    curiousAbout: ["Bipolar symptoms", "Hydration", "Lab monitoring adherence"],
+  },
+];
+
+export function filterMedications(query: string, category: MedicationCategory | "All") {
+  const q = query.trim().toLowerCase();
+  return medications.filter((med) => {
+    if (category !== "All" && med.category !== category) return false;
+    if (!q) return true;
+    const haystack = [
+      med.name,
+      med.genericName,
+      ...med.brandNames,
+      med.category,
+      med.usedFor,
+      ...med.ladcShouldKnow,
+    ]
+      .join(" ")
+      .toLowerCase();
+    return haystack.includes(q);
+  });
+}

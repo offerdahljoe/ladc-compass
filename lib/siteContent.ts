@@ -1,4 +1,3 @@
-import { clientJourneyNavItems } from "@/lib/clientJourneyPhases";
 
 export type NavItem = {
   title: string;
@@ -37,13 +36,12 @@ export type PageDetails = {
 
 export const mainNavigation: NavItem[] = [
   {
-    title: "Today",
+    title: "Workspace",
     path: "/",
   },
   {
-    title: "Client Journey",
-    path: "/client-journey/dashboard",
-    items: clientJourneyNavItems,
+    title: "Client Workflow",
+    path: "/client-workflow/workflow",
   },
   {
     title: "Clinical Decision Navigator",
@@ -63,23 +61,6 @@ export const mainNavigation: NavItem[] = [
   {
     title: "Medication Reference",
     path: "/medications/overview",
-    items: [
-      { title: "Medication Overview", path: "/medications/overview" },
-      { title: "MOUD: Opioid Use Disorder", path: "/medications/moud-opioid-use-disorder" },
-      { title: "Buprenorphine", path: "/medications/buprenorphine" },
-      { title: "Methadone", path: "/medications/methadone" },
-      { title: "Naltrexone", path: "/medications/naltrexone" },
-      { title: "Naloxone", path: "/medications/naloxone" },
-      { title: "Alcohol Use Disorder Medications", path: "/medications/alcohol-use-disorder-medications" },
-      { title: "Acamprosate", path: "/medications/acamprosate" },
-      { title: "Disulfiram", path: "/medications/disulfiram" },
-      { title: "Psychiatric Medications", path: "/medications/antidepressants" },
-      { title: "Medication Questions for Assessment", path: "/medications/medication-questions-for-assessment" },
-    ],
-  },
-  {
-    title: "Calendar + Tasks",
-    path: "/calendar-tasks/planner",
   },
   {
     title: "Procentive Companion",
@@ -169,8 +150,8 @@ export const mainNavigation: NavItem[] = [
 
 export const quickActions = [
   { title: "Open Clinical Decision Navigator", path: "/clinical-decision-navigator/navigator" },
-  { title: "Open Client Journey", path: "/client-journey/dashboard" },
-  { title: "Open Calendar + Tasks", path: "/calendar-tasks/planner" },
+  { title: "Open Client Workflow", path: "/client-workflow/workflow" },
+  { title: "Open Workspace", path: "/" },
   { title: "Start Group Studio", path: "/group-studio/studio" },
   { title: "Create Documentation", path: "/documentation-lab/lab" },
   { title: "Find Resource", path: "/resource-library/library" },
@@ -1000,7 +981,7 @@ const specialPages: Record<string, Partial<ContentPage>> = {
       "A single workplace-specific Kai-Shin reference for Procentive orientation, document codes, intake workflow, templates, policies, and de-identified upload reminders.",
     related: [
       "/kai-shin-procentive/companion",
-      "/client-journey/intake-packet",
+      "/client-workflow/workflow",
       "/assessments/comprehensive-assessment",
       "/documentation/templates",
     ],
@@ -1475,35 +1456,35 @@ const specialDetails: Record<string, Partial<PageDetails>> = {
 function defaultRelatedFor(path: string, section: string) {
   const base = [
     "/clinical-decision-navigator/navigator",
-    "/client-journey/dashboard",
+    "/client-workflow/workflow",
     "/group-therapy-hub/planner",
     "/resource-hub/resources",
     "/kai-shin/hub",
   ];
   const sectionLinks: Record<string, string[]> = {
     "Client Communication Toolkit": [
-      "/client-journey/dashboard",
+      "/client-workflow/workflow",
       "/ethics-compliance/confidentiality",
       "/clinical-decision-navigator/navigator",
     ],
     "12 Core Functions": [
       "/clinical-decision-navigator/navigator",
-      "/client-journey/dashboard",
+      "/client-workflow/workflow",
       "/ethics-compliance/documentation-compliance",
     ],
     "Ethics & Compliance": [
-      "/client-journey/intake-packet",
+      "/client-workflow/workflow",
       "/clinical-decision-navigator/navigator",
       "/core-functions/consultation",
     ],
     "Kai-Shin Hub": [
       "/clinical-decision-navigator/navigator",
-      "/client-journey/intake-packet",
+      "/client-workflow/workflow",
       "/resource-hub/resources",
     ],
     "Group Therapy Hub": [
       "/clinical-decision-navigator/navigator",
-      "/client-journey/group-sessions",
+      "/client-workflow/workflow",
       "/core-functions/counseling",
     ],
   };
@@ -2602,6 +2583,11 @@ const medicationGuides: Record<string, MedicationGuide> = {
     ],
   },
 };
+
+export const medicationStaticParams = Object.keys(medicationGuides).map((path) => ({
+  section: "medications",
+  page: path.replace("/medications/", ""),
+}));
 
 function medicationBlocks(page: ContentPage): TopicBlock[] {
   const guide = medicationGuides[page.path] ?? medicationGuides["/medications/overview"];

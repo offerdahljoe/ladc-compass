@@ -328,57 +328,75 @@ function phase(data: JourneyPhase): JourneyPhase {
   return data;
 }
 
-function placeholderPhase(id: string, title: string, description: string): JourneyPhase {
-  return phase({
-    id,
-    title,
-    description,
-    purpose:
-      "This phase helps the counselor keep services organized, clinically connected, and documented in a way that supports continuity of care.",
+
+export const clientJourneyPhases: JourneyPhase[] = [
+  phase({
+    id: "dashboard",
+    title: "Client Journey Dashboard",
+    description: "Start here to see the full Kai-Shin workflow and jump to the phase you are in right now.",
+    purpose: "Orient yourself to where this client is in the 245G outpatient workflow before opening Procentive.",
     whatToDoNext: [
-      "Review what has already been completed.",
-      "Identify the required document or note for this phase.",
-      "Explain the step to the client in plain language.",
-      "Complete documentation and identify follow-up needs.",
+      "Identify which phase matches today's work (intake, assessment, individual, group, coordination, discharge).",
+      "Open that phase and work the checklist while Procentive is open.",
+      "Note any missing forms before billing or supervisor review.",
+    ],
+    requiredDocuments: [],
+    clientDialogue: [],
+    counselorThinking: ["Which phase am I actually in?", "What forms should already be signed?", "Is anything urgent before I continue?"],
+    documentationGuidance: [],
+    clinicalWordingExamples: [],
+    commonMistakes: ["Jumping to a note type without confirming the workflow phase.", "Assuming intake is done because the client is sitting in front of you."],
+    nextSteps: ["Open the matching phase from the sidebar."],
+    deadlines: [],
+    relatedAsamDimensions: [],
+    relatedTreatmentPlanAreas: [],
+  }),
+  phase({
+    id: "screening-first-contact",
+    title: "Screening / First Contact",
+    description: "Phone call, walk-in, or referral touch before intake paperwork — decide fit, urgency, and first appointment.",
+    purpose: "Determine whether Kai-Shin outpatient is appropriate today, whether the person is safe to wait for intake, and what must happen before forms are signed.",
+    whatToDoNext: [
+      "Get name, callback number, and how they heard about Kai-Shin.",
+      "Ask what substance(s), last use, and what prompted the call today.",
+      "Screen for withdrawal, overdose risk, SI/HI, DV, and inability to get here safely.",
+      "If withdrawal or medical instability: warm handoff or ER guidance — do not schedule routine intake alone.",
+      "If appropriate for OP: schedule intake and tell them what to bring (ID, insurance, medication list).",
+      "Log the contact in Procentive if your site workflow requires a pre-intake note.",
     ],
     requiredDocuments: [],
     clientDialogue: [
-      "I want to explain what this step is for and how it connects to your treatment so the paperwork makes sense.",
+      "What brings you in today, and when was your last use?",
+      "Are you having any withdrawal symptoms right now — shaking, nausea, seizures, seeing things?",
+      "Are you safe today? Any thoughts of hurting yourself or someone else?",
+      "Do you have a way to get to intake, and is there anyone we should know about for safety?",
     ],
     counselorThinking: [
-      "What changed clinically?",
-      "What documentation is required?",
-      "Does this affect ASAM, treatment planning, coordination, or discharge?",
+      "Is this OP, IOP, residential, detox, or ER?",
+      "Does probation/court timing affect how soon intake must happen?",
+      "Am I documenting enough to hand off to whoever does intake?",
     ],
     documentationGuidance: [
-      "Document the service or phase clearly: what happened, why it matters, client response, and next step.",
+      "If your site uses a screening log or intake scheduling note, record presenting concern, substances, last use, risk screen, and appointment offered.",
+      "Document any safety guidance given and who was notified (supervisor, on-call, 911/CRISIS).",
     ],
     clinicalWordingExamples: [
-      "Counselor reviewed current treatment needs, client response, and next steps. Follow-up plan was discussed.",
+      "Screening completed by phone. Client reported [substance/last use]. Withdrawal/safety screen: [findings]. Outpatient intake scheduled for [date/time]. Client verbalized understanding of location and what to bring.",
     ],
     commonMistakes: [
-      "Completing the form without explaining it to the client.",
-      "Forgetting to document follow-up steps.",
-      "Not connecting the phase to assessment, ASAM, or treatment plan needs.",
+      "Scheduling intake without a basic withdrawal/safety screen.",
+      "Promising services before confirming program fit.",
+      "No record of the conversation when the client no-shows intake later.",
     ],
-    nextSteps: ["Open the next workflow phase and check missing documents."],
-    deadlines: ["Follow Kai-Shin/Procentive and 245G timing requirements for this document."],
-    relatedAsamDimensions: ["Review applicable ASAM dimensions based on the phase."],
-    relatedTreatmentPlanAreas: ["Update treatment plan areas if needs, risks, or goals changed."],
-  });
-}
-
-export const clientJourneyPhases: JourneyPhase[] = [
-  placeholderPhase(
-    "dashboard",
-    "Client Journey Dashboard",
-    "A workflow command center for tracking current phase, documents, deadlines, contacts, and discharge planning.",
-  ),
-  placeholderPhase(
-    "screening-first-contact",
-    "Screening / First Contact",
-    "The first touchpoint where urgency, fit, safety, and next scheduling steps are clarified.",
-  ),
+    nextSteps: ["Move to Intake Packet when the client arrives for admission paperwork."],
+    deadlines: ["Address acute risk immediately — do not defer to intake day."],
+    relatedAsamDimensions: [
+      "Dimension 1: intoxication/withdrawal at first contact.",
+      "Dimension 3: acute psychiatric or safety concerns.",
+      "Dimension 6: transportation, housing, or environment barriers to showing up.",
+    ],
+    relatedTreatmentPlanAreas: ["Engagement", "Referral needs", "Immediate safety planning"],
+  }),
   phase({
     id: "intake-packet",
     title: "Intake Packet",
@@ -466,13 +484,289 @@ export const clientJourneyPhases: JourneyPhase[] = [
       "Client rights, consent, and barriers to participation.",
     ],
   }),
-  placeholderPhase("admission-first-day", "Admission / First Day", "The first active service day after intake paperwork and initial orientation."),
-  placeholderPhase("comprehensive-assessment", "Comprehensive Assessment", "The full clinical assessment phase leading to diagnosis, ASAM, and recommendations."),
-  placeholderPhase("initial-service-plan", "Initial Service Plan", "A starting service plan before the full treatment plan is completed."),
-  placeholderPhase("initial-treatment-plan", "Initial Treatment Plan", "The first full treatment plan based on assessment and ASAM findings."),
-  placeholderPhase("ongoing-individual-sessions", "Ongoing Individual Sessions", "Recurring individual services connected to treatment plan objectives and ASAM needs."),
-  placeholderPhase("group-sessions", "Group Sessions", "Group services with topic, intervention, participation, risk, and treatment plan connection."),
-  placeholderPhase("treatment-coordination", "Treatment Coordination", "Coordination with services and supports to maintain continuity of care."),
+  phase({
+    id: "admission-first-day",
+    title: "Admission / First Day",
+    description: "First active service day after intake paperwork — orient the client, confirm immediate needs, and start services.",
+    purpose: "Bridge signed intake forms into actual treatment engagement: confirm the client understands the schedule, address barriers, and begin billable or clinical work tied to the Initial Service Plan.",
+    whatToDoNext: [
+      "Confirm all intake forms are signed and scanned in Procentive.",
+      "Review R682-1202 Initial Service Plan priorities with the client in plain language.",
+      "Orient to group schedule, individual counselor, UA policy, and how to reach the clinic.",
+      "Re-screen safety/withdrawal if intake was more than a few days ago.",
+      "Schedule Comprehensive Assessment if not already booked.",
+      "Complete first billable individual or group note if a service occurs today.",
+    ],
+    requiredDocuments: [documentLibrary.initialServicePlan],
+    clientDialogue: [
+      "Today we are moving from paperwork into services. Here is what your week looks like.",
+      "What got in the way of treatment before, and what do you need from us to show up?",
+      "Before we go further — any changes in use, safety, or medical needs since intake?",
+    ],
+    counselorThinking: [
+      "Does the Initial Service Plan match what the client actually needs this week?",
+      "Are there ROIs we should complete before calling probation or providers?",
+      "Is assessment scheduled within Kai-Shin timeframe?",
+    ],
+    documentationGuidance: [
+      "Document orientation topics covered, client questions, and immediate plan updates.",
+      "If services occur, use PRO-1333 or R682-1305 with ASAM dimension and treatment plan link.",
+    ],
+    clinicalWordingExamples: [
+      "Client oriented to outpatient schedule, group expectations, UA policy, and confidentiality. Initial Service Plan reviewed. Client identified immediate priorities: [needs]. Comprehensive Assessment scheduled for [date].",
+    ],
+    commonMistakes: [
+      "Assuming intake paperwork equals treatment engagement — document today's clinical contact.",
+      "Starting groups before explaining attendance expectations to probation-involved clients.",
+      "No assessment date on the calendar.",
+    ],
+    nextSteps: ["Comprehensive Assessment", "Collateral Contacts / ROIs if coordination is needed"],
+    deadlines: [
+      "Initial Service Plan R682-1202 should guide services before full treatment plan is complete.",
+      "Do not delay assessment scheduling beyond Kai-Shin workflow.",
+    ],
+    relatedAsamDimensions: [
+      "Dimension 4: readiness and engagement on first service day.",
+      "Dimension 6: barriers to attending groups or appointments.",
+    ],
+    relatedTreatmentPlanAreas: ["Engagement", "Orientation", "Immediate service priorities"],
+  }),
+  phase({
+    id: "comprehensive-assessment",
+    title: "Comprehensive Assessment",
+    description: "Full clinical assessment in PRO-245G-E1100 — history, DSM, ASAM, recommendations.",
+    purpose: "Build the clinical story that drives diagnosis, ASAM placement, level-of-care rationale, and the Initial Treatment Plan. Use Clinical Decision Navigator alongside Procentive for this phase.",
+    whatToDoNext: [
+      "Open PRO-245G-E1100 and Clinical Decision Navigator side by side.",
+      "Gather substance use, mental health, medical, legal, family/social, and recovery environment history.",
+      "Complete DSM-5 criteria count and ASAM dimension ratings with rationale.",
+      "Document strengths, barriers, risk, and client goals in the client's words.",
+      "Draft recommendations and level-of-care consideration — review with supervisor if uncertain.",
+      "Schedule treatment plan session and any referrals (MAT, mental health, medical).",
+    ],
+    requiredDocuments: [documentLibrary.comprehensiveAssessment],
+    clientDialogue: [
+      "I am going to ask detailed questions so our recommendations fit your actual situation, not a generic program.",
+      "What has been the hardest part of stopping or cutting back?",
+      "Who supports your recovery, and who makes it harder?",
+      "Any mental health, medical, or medication concerns we should coordinate on?",
+    ],
+    counselorThinking: [
+      "Do I have enough evidence for each DSM criterion I am considering?",
+      "Which ASAM dimensions are driving placement — not just Dimension 1?",
+      "What would make a supervisor question this assessment?",
+    ],
+    documentationGuidance: [
+      "Each Procentive section should answer a different question — avoid repeating the same paragraph.",
+      "ASAM ratings need brief rationale tied to client statements or observed behavior.",
+      "Link recommendations to identified dimensions and barriers.",
+    ],
+    clinicalWordingExamples: [
+      "Comprehensive assessment completed. Client reported [presenting pattern]. DSM-5 criteria support [severity] [substance] use disorder. ASAM dimensions [list elevated dimensions with brief rationale]. Recommendations: [LOC/services/referrals]. Client participated and reviewed findings.",
+    ],
+    commonMistakes: [
+      "Copy-pasting generic ASAM language without client-specific rationale.",
+      "Missing legal/probation context when it affects treatment.",
+      "Assessment finished but treatment plan not scheduled.",
+    ],
+    nextSteps: ["Initial Treatment Plan R682-1203", "Complete ROIs for needed collateral contacts"],
+    deadlines: [
+      "Complete assessment within Kai-Shin/245G admission timeframe before ongoing services rely on an outdated picture.",
+    ],
+    relatedAsamDimensions: [
+      "All six dimensions — this is where they are formally scored and narrated.",
+    ],
+    relatedTreatmentPlanAreas: [
+      "Problem statements",
+      "Goals/objectives seed data",
+      "Referral and case management needs",
+    ],
+  }),
+  phase({
+    id: "initial-service-plan",
+    title: "Initial Service Plan",
+    description: "R682-1202 short-term plan before full assessment and treatment plan are done.",
+    purpose: "Document immediate service priorities when the full clinical picture is still being gathered — especially during intake and early admission.",
+    whatToDoNext: [
+      "Open R682-1202 in Procentive.",
+      "List immediate needs the client wants addressed this week (safety, housing, withdrawal referral, legal deadline).",
+      "Identify initial services (individual, group, case management) the client agrees to.",
+      "Note any safety or referral actions before assessment is complete.",
+      "Review with client — this is a starting plan, not the full treatment plan.",
+    ],
+    requiredDocuments: [documentLibrary.initialServicePlan],
+    clientDialogue: [
+      "This is our short-term plan while we finish the full assessment. What do you want help with first?",
+      "What would make it easier to show up this week?",
+    ],
+    counselorThinking: [
+      "Are any needs too urgent to wait for comprehensive assessment?",
+      "Does this match what intake already identified?",
+    ],
+    documentationGuidance: [
+      "Use client language for priorities where possible.",
+      "Document immediate services agreed to and any deferrals.",
+    ],
+    clinicalWordingExamples: [
+      "Initial Service Plan completed with client. Immediate needs: [list]. Initial services: [list]. Client verbalized understanding that plan will be updated after comprehensive assessment.",
+    ],
+    commonMistakes: [
+      "Skipping R682-1202 because assessment is scheduled next week.",
+      "Writing treatment-plan-level goals before assessment is done.",
+    ],
+    nextSteps: ["Comprehensive Assessment", "Intake Packet if forms still missing"],
+    deadlines: ["Complete early in admission per Kai-Shin workflow — before relying on full treatment plan."],
+    relatedAsamDimensions: ["Dimension 1 and 3 if immediate medical/psychiatric needs appear."],
+    relatedTreatmentPlanAreas: ["Immediate stabilization", "Engagement"],
+  }),
+  phase({
+    id: "initial-treatment-plan",
+    title: "Initial Treatment Plan",
+    description: "R682-1203 — turn assessment findings into goals, objectives, and interventions.",
+    purpose: "Create the contract for treatment: what you are working on, how you will know it is working, and which services address which ASAM needs.",
+    whatToDoNext: [
+      "Open R682-1203 and pull problem statements from assessment findings.",
+      "Write goals/objectives the client can repeat back in their own words.",
+      "Tie each objective to ASAM dimension(s) and service type (individual, group, coordination).",
+      "Document medical necessity language — why OP services match current ASAM profile.",
+      "Have client sign/review; schedule first treatment plan review date.",
+    ],
+    requiredDocuments: [documentLibrary.treatmentPlan],
+    clientDialogue: [
+      "Here is what we heard in assessment. Do these goals match what you want from treatment?",
+      "What would progress look like for you in the next 30 days?",
+    ],
+    counselorThinking: [
+      "Is every objective measurable and tied to assessment data?",
+      "Are probation or payer expectations reflected without replacing client voice?",
+    ],
+    documentationGuidance: [
+      "Use the treatment plan wording template in document library as a starting frame.",
+      "Objectives should be specific enough to guide progress notes.",
+    ],
+    clinicalWordingExamples: [
+      documentLibrary.treatmentPlan.wordingTemplate ?? "",
+    ],
+    commonMistakes: [
+      "Generic goals ('maintain sobriety') with no link to assessment findings.",
+      "Plan signed without client understanding group/individual expectations.",
+    ],
+    nextSteps: ["Ongoing Individual Sessions", "Group Sessions", "Treatment Plan Reviews on schedule"],
+    deadlines: ["Initial treatment plan due per 245G/Kai-Shin timing after assessment completion."],
+    relatedAsamDimensions: ["Each elevated dimension should map to at least one objective or intervention."],
+    relatedTreatmentPlanAreas: ["All active problem areas from assessment"],
+  }),
+  phase({
+    id: "ongoing-individual-sessions",
+    title: "Ongoing Individual Sessions",
+    description: "Billable individual work in PRO-1333 tied to treatment plan and ASAM.",
+    purpose: "Document focused individual clinical work — not a duplicate of group content — with intervention, client response, risk, and plan for next session.",
+    whatToDoNext: [
+      "Open PRO-1333 before or right after session while details are fresh.",
+      "State session focus and which treatment plan objective(s) you addressed.",
+      "Name ASAM dimension(s) and intervention approach (MI, education, relapse planning, etc.).",
+      "Document client response, progress toward goal, and any risk screen.",
+      "Schedule next individual and note homework or referrals.",
+    ],
+    requiredDocuments: [documentLibrary.individualNote],
+    clientDialogue: [
+      "What do you want to focus on today that connects to your treatment plan?",
+      "Since last time — any use, cravings, safety concerns, or probation issues?",
+    ],
+    counselorThinking: [
+      "Does this note prove medical necessity for today's service?",
+      "If progress is flat, does the plan need updating?",
+    ],
+    documentationGuidance: [
+      "Use Procentive Wording Mode in Clinical Decision Navigator or Documentation Lab for draft language.",
+      "Include risk statement (SI/HI denied or described with plan).",
+    ],
+    clinicalWordingExamples: [
+      documentLibrary.individualNote.wordingTemplate ?? "",
+    ],
+    commonMistakes: [
+      "Vague notes ('discussed recovery') with no ASAM or treatment plan link.",
+      "Missing risk statement.",
+      "Billing individual when the contact was really non-billable coordination.",
+    ],
+    nextSteps: ["Next scheduled individual", "Treatment Plan Review if goals are stale"],
+    deadlines: ["Complete PRO-1333 same day or per Kai-Shin billing workflow."],
+    relatedAsamDimensions: ["Document whichever dimensions today's intervention addressed."],
+    relatedTreatmentPlanAreas: ["Active objectives from R682-1203"],
+  }),
+  phase({
+    id: "group-sessions",
+    title: "Group Sessions",
+    description: "Billable group documentation in R682-1305 with topic, ASAM link, and individual participation.",
+    purpose: "Prove each client received clinically relevant group content connected to their treatment plan — without documenting other members' private information.",
+    whatToDoNext: [
+      "Facilitate with a clear topic tied to curriculum or treatment plan themes.",
+      "During or immediately after group, open R682-1305 for each attendee.",
+      "Document group topic, ASAM dimension(s), and facilitator interventions.",
+      "For each client: participation level, individual response, risk screen, plan.",
+      "Track attendance for probation/ROI reporting if applicable.",
+    ],
+    requiredDocuments: [documentLibrary.groupNote],
+    clientDialogue: [
+      "Today's group is about [topic]. How does this connect to what you are working on in your plan?",
+    ],
+    counselorThinking: [
+      "Is the group topic defensible as addressing ASAM/treatment plan needs?",
+      "Did anyone present risk that needs individual follow-up?",
+    ],
+    documentationGuidance: [
+      "Group section can be similar across members; individual section must be client-specific.",
+      "Use group note wording template — customize participation and insights.",
+    ],
+    clinicalWordingExamples: [
+      documentLibrary.groupNote.wordingTemplate ?? "",
+    ],
+    commonMistakes: [
+      "Same individual paragraph for every group member.",
+      "Naming other clients in a member's note.",
+      "No follow-up when a client discloses risk in group.",
+    ],
+    nextSteps: ["Individual follow-up if risk disclosed", "Update coordination if attendance report due"],
+    deadlines: ["Complete group notes per Kai-Shin billing turnaround."],
+    relatedAsamDimensions: ["Typically Dimensions 4–6 for skills, relapse, environment — document honestly."],
+    relatedTreatmentPlanAreas: ["Group-related objectives", "Skills-building goals"],
+  }),
+  phase({
+    id: "treatment-coordination",
+    title: "Treatment Coordination",
+    description: "Non-billable coordination, outreach, and continuity-of-care contacts documented in PRO-1081.",
+    purpose: "Track calls, faxes, and outreach that keep care connected — especially when ROI allows probation, medical, or mental health coordination.",
+    whatToDoNext: [
+      "Confirm ROI or policy basis before contacting anyone outside Kai-Shin.",
+      "Open PRO-1081 Contact Log.",
+      "Record date/time, who you contacted, purpose, information shared/requested (minimum necessary), outcome.",
+      "Note follow-up tasks and add to calendar if needed.",
+      "If weekly progress notes to probation are required, use coordination template language.",
+    ],
+    requiredDocuments: [documentLibrary.contactLog],
+    clientDialogue: [
+      "I am going to contact [provider/probation] about [purpose]. The release allows [scope]. Is that still okay with you?",
+    ],
+    counselorThinking: [
+      "Is this coordination or a billable individual session?",
+      "Am I sharing only what ROI permits?",
+    ],
+    documentationGuidance: [
+      "Contact Log for each attempt — including no-answer calls if site policy requires.",
+      "Weekly progress coordination may use documentationTemplates treatment coordination wording.",
+    ],
+    clinicalWordingExamples: [
+      "Treatment coordination completed with [contact] regarding [purpose]. Information shared limited to ROI scope. Outcome: [result]. Follow-up: [action].",
+    ],
+    commonMistakes: [
+      "Discussing client details in hallway conversation without ROI or documentation.",
+      "Forgetting to log failed contact attempts.",
+    ],
+    nextSteps: ["Collateral Contacts / ROIs if new releases needed", "Update treatment plan if coordination changes goals"],
+    deadlines: ["Document contacts promptly — same day when possible."],
+    relatedAsamDimensions: ["Dimension 3 and 6 when coordinating mental health, medical, legal, or family supports."],
+    relatedTreatmentPlanAreas: ["Case management", "Legal coordination", "Continuing care"],
+  }),
   phase({
     id: "collateral-contacts-rois",
     title: "Collateral Contacts / ROIs",
@@ -581,10 +875,152 @@ export const clientJourneyPhases: JourneyPhase[] = [
       "Continuing care and discharge supports.",
     ],
   }),
-  placeholderPhase("treatment-plan-reviews", "Treatment Plan Reviews", "Periodic review of progress, barriers, goals, objectives, and continued medical necessity."),
-  placeholderPhase("transition-planning", "Transition Planning", "Planning for continuing care, referrals, supports, and relapse prevention before discharge."),
-  placeholderPhase("discharge-summary", "Discharge Summary", "Final summary of treatment episode, progress, discharge reason, and recommendations."),
-  placeholderPhase("final-chart-review", "Final Chart Review", "A final documentation quality check before chart closure."),
+  phase({
+    id: "treatment-plan-reviews",
+    title: "Treatment Plan Reviews",
+    description: "Periodic R682-1203 updates — progress, barriers, continued medical necessity.",
+    purpose: "Show the chart reflects current clinical reality: what changed, what worked, what did not, and why continued services remain appropriate.",
+    whatToDoNext: [
+      "Pull up current R682-1203 and recent PRO-1333 / R682-1305 notes.",
+      "Review each goal/objective with the client — met, in progress, or needs revision.",
+      "Update ASAM-linked language if dimensions shifted (new MH symptoms, relapse, housing loss).",
+      "Document continued medical necessity for outpatient level of care.",
+      "Obtain client signature on updated plan per workflow.",
+    ],
+    requiredDocuments: [documentLibrary.treatmentPlan],
+    clientDialogue: [
+      "Since your last plan, what improved and what got harder?",
+      "Are these goals still the right focus, or should we change direction?",
+    ],
+    counselorThinking: [
+      "Would a payer audit see progress or stagnation documented?",
+      "Does the plan still match ASAM findings?",
+    ],
+    documentationGuidance: [
+      "Reference specific progress or lack of progress from notes — not generic 'client progressing'.",
+      "Document barrier updates and revised objectives.",
+    ],
+    clinicalWordingExamples: [
+      "Treatment plan reviewed with client. Progress noted on [objectives]. Barriers include [barriers]. Plan updated to include [changes]. Client agreed to continued outpatient services based on ASAM dimensions [list].",
+    ],
+    commonMistakes: [
+      "Rubber-stamping the old plan without clinical discussion.",
+      "Review overdue because notes were backlogged.",
+    ],
+    nextSteps: ["Continue ongoing services", "Transition Planning if discharge is approaching"],
+    deadlines: ["Follow Kai-Shin review interval — do not let plan expire silently."],
+    relatedAsamDimensions: ["Re-rate or narrate any dimension that changed since initial plan."],
+    relatedTreatmentPlanAreas: ["All active goals — update or close with rationale"],
+  }),
+  phase({
+    id: "transition-planning",
+    title: "Transition Planning",
+    description: "W435-1402 Transition Care Plan before step-down, transfer, or discharge.",
+    purpose: "Ensure the client leaves with supports — appointments, MAT, recovery meetings, safety plan — not a sudden stop in care.",
+    whatToDoNext: [
+      "Open W435-1402 Transition Care Plan.",
+      "Identify continuing care: IOP step-down, MAT provider, therapist, recovery supports.",
+      "Document relapse prevention strategies and early warning signs client recognizes.",
+      "Confirm medication/refill plan and crisis numbers.",
+      "Schedule discharge summary session if discharge is imminent.",
+    ],
+    requiredDocuments: [documentLibrary.transitionCarePlan],
+    clientDialogue: [
+      "Before you leave our program, let's map what support continues and who you call if things get hard.",
+      "What is your plan for the first week after discharge?",
+    ],
+    counselorThinking: [
+      "Is this transition clinically appropriate or driven only by attendance/policy?",
+      "Any ROI contacts needed to warm-handoff care?",
+    ],
+    documentationGuidance: [
+      "List specific appointments with dates when known.",
+      "Document client response to transition plan and barriers to follow-through.",
+    ],
+    clinicalWordingExamples: [
+      "Transition Care Plan developed with client. Continuing care: [list]. Relapse prevention strategies: [list]. Client verbalized understanding of follow-up appointments and crisis resources.",
+    ],
+    commonMistakes: [
+      "Discharge without transition plan because client 'said they were fine'.",
+      "Generic aftercare list with no client-specific barriers addressed.",
+    ],
+    nextSteps: ["Discharge Summary R682-1401 when episode ends"],
+    deadlines: ["Complete transition planning before discharge date — not after."],
+    relatedAsamDimensions: ["Dimension 5 and 6 for relapse risk and recovery environment post-discharge."],
+    relatedTreatmentPlanAreas: ["Aftercare", "Relapse prevention", "Recovery supports"],
+  }),
+  phase({
+    id: "discharge-summary",
+    title: "Discharge Summary",
+    description: "R682-1401 episode summary — progress, reason for discharge, recommendations.",
+    purpose: "Close the treatment episode with a defensible summary for the chart, client, and any ROI recipient who needs continuity.",
+    whatToDoNext: [
+      "Open R682-1401 Discharge Summary.",
+      "Summarize admission date, services received, and presenting problem at admission.",
+      "Document progress toward goals, current status, and reason for discharge.",
+      "Include recommendations, referrals, and risk considerations at discharge.",
+      "Review with client when possible; coordinate ROI transmission if required.",
+    ],
+    requiredDocuments: [documentLibrary.dischargeSummary],
+    clientDialogue: [
+      "This summary captures what we worked on and what we recommend next. Anything you want corrected before we finalize?",
+    ],
+    counselorThinking: [
+      "Does reason for discharge match chart facts (completion, AMA, administrative, transfer)?",
+      "If discharge is early, is risk documented and handoff clear?",
+    ],
+    documentationGuidance: [
+      "Align discharge summary with transition plan and recent progress notes.",
+      "Include continuing care appointments actually scheduled — not aspirational.",
+    ],
+    clinicalWordingExamples: [
+      "Client admitted [date] for [presenting concern]. Services included [individual/group/coordination]. Progress: [summary]. Discharge status: [reason]. Recommendations: [aftercare]. Client [participated/declined review] at discharge.",
+    ],
+    commonMistakes: [
+      "Contradicting attendance records or last progress note.",
+      "Missing recommendations when client may re-engage later.",
+    ],
+    nextSteps: ["Final Chart Review", "Close any open ROI coordination tasks"],
+    deadlines: ["Complete discharge summary per Kai-Shin/245G timeframe at episode end."],
+    relatedAsamDimensions: ["Note residual dimension needs at discharge for continuing care."],
+    relatedTreatmentPlanAreas: ["Final status on each goal"],
+  }),
+  phase({
+    id: "final-chart-review",
+    title: "Final Chart Review",
+    description: "Pre-closure QA — forms, signatures, note gaps, ROI, billing alignment.",
+    purpose: "Catch what supervisors and auditors catch: missing signatures, date gaps, plan reviews, and mismatched billing before the chart is closed.",
+    whatToDoNext: [
+      "Verify intake packet complete and signed (all R682/PRO intake forms).",
+      "Confirm assessment, initial plan, and required plan reviews on timeline.",
+      "Scan for note gaps on dates services were billed.",
+      "Check ROIs active for any documented collateral contacts.",
+      "Confirm discharge/transition documents if episode ended.",
+      "Run Procentive Companion 'Where Does This Go?' on anything unusual.",
+    ],
+    requiredDocuments: [],
+    clientDialogue: [],
+    counselorThinking: [
+      "If a surveyor opened this chart tomorrow, what would they question first?",
+      "Are ASAM and medical necessity visible across assessment, plan, and notes?",
+    ],
+    documentationGuidance: [
+      "Use a personal checklist or supervisor tool — document corrections made.",
+      "Add addendum notes rather than silent edits when policy requires.",
+    ],
+    clinicalWordingExamples: [
+      "Chart review completed prior to closure. Corrections: [list or 'none identified']. All required 245G documents present per Kai-Shin workflow.",
+    ],
+    commonMistakes: [
+      "Closing chart with unsigned treatment plan.",
+      "Individual notes with no treatment plan in chart.",
+      "Contact Log entries without ROI on file.",
+    ],
+    nextSteps: ["Close chart in Procentive per supervisor approval"],
+    deadlines: ["Complete before billing finalization or internal audit deadlines."],
+    relatedAsamDimensions: ["Verify assessment ASAM narrative matches later notes."],
+    relatedTreatmentPlanAreas: ["Verify plan problems match note focus over time"],
+  }),
 ];
 
 export const clientJourneyNavItems = clientJourneyPhases.map((phase) => ({

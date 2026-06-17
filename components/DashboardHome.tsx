@@ -1,7 +1,16 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import ResourceDatabase from "@/components/ResourceDatabase";
+import { useCloudJson } from "@/lib/useCloudJson";
+import { useLocalEntries } from "@/lib/useLocalEntries";
+
+type ResourceContact = {
+  id?: string;
+  organization?: string;
+  contactNames?: string;
+  name?: string;
+};
 
 type EventStatus =
   | "scheduled"
@@ -133,16 +142,6 @@ function formatShortDate(date: Date) {
   return date.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
 }
 
-function readStorage<T>(key: string, fallback: T): T {
-  if (typeof window === "undefined") return fallback;
-  try {
-    const raw = window.localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
 function occursOn(event: ScheduleEvent, dayKey: string) {
   if (event.date === dayKey) return true;
   if (event.repeat === "none" || !sameOrBefore(event.date, dayKey)) return false;
@@ -268,9 +267,52 @@ function EventCard({
 
 export default function DashboardHome() {
   const todayKey = dateKeyFor(new Date());
-  const [events, setEvents] = useState<ScheduleEvent[]>([]);
-  const [tasks, setTasks] = useState<TaskItem[]>([]);
-  const [alarm, setAlarm] = useState<AlarmSettings>(defaultAlarm);
+  const {
+    value: events,
+    setValue: persistEvents,
+    loaded: eventsLoaded,
+    hydrated: eventsHydrated,
+    cloudEnabled,
+    syncing,
+  } = useCloudJson<ScheduleEvent[]>("workspace-events", eventKey, []);
+  const {
+    value: tasks,
+    setValue: persistTasks,
+    loaded: tasksLoaded,
+    hydrated: tasksHydrated,
+  } = useCloudJson<TaskItem[]>("workspace-tasks", taskKey, []);
+  const {
+    value: alarm,
+    setValue: persistAlarm,
+    loaded: alarmLoaded,
+    hydrated: alarmHydrated,
+  } = useCloudJson<AlarmSettings>("workspace-alarm", alarmKey, defaultAlarm);
+  const { entries: resourceEntries, loaded: resourcesLoaded } =
+    useLocalEntries<ResourceContact>("ladc-resource-directory");
+
+  const setEvents = useCallback(
+    (updater: ScheduleEvent[] | ((current: ScheduleEvent[]) => ScheduleEvent[])) => {
+      const next = typeof updater === "function" ? updater(events) : updater;
+      void persistEvents(next);
+    },
+    [events, persistEvents],
+  );
+
+  const setTasks = useCallback(
+    (updater: TaskItem[] | ((current: TaskItem[]) => TaskItem[])) => {
+      const next = typeof updater === "function" ? updater(tasks) : updater;
+      void persistTasks(next);
+    },
+    [tasks, persistTasks],
+  );
+
+  const setAlarm = useCallback(
+    (updater: AlarmSettings | ((current: AlarmSettings) => AlarmSettings)) => {
+      const next = typeof updater === "function" ? updater(alarm) : updater;
+      void persistAlarm(next);
+    },
+    [alarm, persistAlarm],
+  );
   const [selectedDate, setSelectedDate] = useState(todayKey);
   const [weekStart, setWeekStart] = useState(dateKeyFor(startOfWeek(new Date())));
   const [miniMonth, setMiniMonth] = useState(new Date());
@@ -292,23 +334,16 @@ export default function DashboardHome() {
   );
 
   useEffect(() => {
-    setEvents(readStorage<ScheduleEvent[]>(eventKey, []));
-    setTasks(readStorage<TaskItem[]>(taskKey, []));
-    setAlarm(readStorage<AlarmSettings>(alarmKey, defaultAlarm));
-    loadContacts();
-  }, []);
-
-  useEffect(() => {
-    window.localStorage.setItem(eventKey, JSON.stringify(events));
-  }, [events]);
-
-  useEffect(() => {
-    window.localStorage.setItem(taskKey, JSON.stringify(tasks));
-  }, [tasks]);
-
-  useEffect(() => {
-    window.localStorage.setItem(alarmKey, JSON.stringify(alarm));
-  }, [alarm]);
+    if (!resourcesLoaded) return;
+    const names = resourceEntries.flatMap((resource) => [
+      resource.organization,
+      resource.contactNames,
+      resource.name,
+    ]);
+    setContactSuggestions(
+      Array.from(new Set(names.filter(Boolean).map((name) => String(name)))).sort(),
+    );
+  }, [resourceEntries, resourcesLoaded]);
 
   useEffect(() => {
     if (!warning) {
@@ -360,8 +395,7 @@ export default function DashboardHome() {
   }, [alarm, events, warnedKeys]);
 
   function loadContacts() {
-    const resources = readStorage<Record<string, string>[]>("ladc-resource-directory", []);
-    const names = resources.flatMap((resource) => [
+    const names = resourceEntries.flatMap((resource) => [
       resource.organization,
       resource.contactNames,
       resource.name,
@@ -557,6 +591,10 @@ export default function DashboardHome() {
   const selectedDateEvents = eventsForDay(selectedDate);
   const miniDays = monthDays(miniMonth);
 
+  if (!eventsLoaded || !tasksLoaded || !alarmLoaded || !eventsHydrated || !tasksHydrated || !alarmHydrated) {
+    return <p className="text-sm text-ink/60">Loading workspace…</p>;
+  }
+
   return (
     <div className="grid gap-4 xl:grid-cols-[18rem_minmax(0,1fr)_18rem]">
       {warning ? (
@@ -569,9 +607,14 @@ export default function DashboardHome() {
         <div className="flex items-center justify-between gap-2">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-lagoon">
-              Daily Tasks
+              Workspace · Tasks
             </p>
-            <h1 className="text-lg font-semibold text-ink">{formatShortDate(parseDateKey(selectedDate))}</h1>
+            <h2 className="text-lg font-semibold text-ink">{formatShortDate(parseDateKey(selectedDate))}</h2>
+            {cloudEnabled ? (
+              <p className="text-[11px] text-lagoon">{syncing ? "Syncing…" : "Cloud sync on"}</p>
+            ) : (
+              <p className="text-[11px] text-ink/55">Sign in to sync across devices</p>
+            )}
           </div>
           <button
             type="button"

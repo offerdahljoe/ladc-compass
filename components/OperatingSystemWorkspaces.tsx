@@ -204,7 +204,7 @@ export function ProcentiveCompanion() {
         steps={[
           { label: "Send wording to Documentation Lab", href: "/documentation-lab/lab", note: "Turn the detail into usable Procentive language." },
           { label: "Check ASAM fit", href: "/clinical-decision-navigator/navigator", note: "Decide whether it changes risk, level of care, or treatment priorities." },
-          { label: "Use Contact Log", href: "/client-journey/collateral-contacts-rois", note: "If this came from collateral contact, document ROI-based coordination." },
+          { label: "Use Contact Log", href: "/client-workflow/workflow#roi-coordination", note: "If this came from collateral contact, document ROI-based coordination in PRO-1081 SETC." },
         ]}
       />
       <section className="rounded-lg border border-lagoon/20 bg-white p-5 shadow-soft">
@@ -307,7 +307,7 @@ export function GroupStudio() {
     <Shell eyebrow="Group Studio" title="Build, Save, and Reuse Group Sessions">
       <NextStepEngine
         steps={[
-          { label: "Add to Calendar", href: "/calendar-tasks/planner", note: "Schedule the group and attach the session plan in the event notes." },
+          { label: "Add to Workspace Calendar", href: "/", note: "Schedule the group and attach the session plan in the event notes." },
           { label: "Generate Group Note Language", href: "/documentation-lab/lab", note: "Copy the documentation paragraph into the note generator." },
           { label: "Connect to ASAM", href: "/clinical-decision-navigator/navigator", note: "Confirm which treatment need the group supports." },
         ]}
@@ -458,7 +458,7 @@ export function MedicationReference({ path }: { path: string }) {
       <NextStepEngine
         steps={[
           { label: "Ask medication questions", href: "/medications/medication-questions-for-assessment", note: "Use non-prescribing assessment questions and document client report." },
-          { label: "Coordinate care with ROI", href: "/client-journey/collateral-contacts-rois", note: "Contact prescriber/pharmacy only with valid ROI or safety exception." },
+          { label: "Coordinate care with ROI", href: "/client-workflow/workflow#roi-coordination", note: "Contact prescriber/pharmacy only with valid ROI or safety exception." },
           { label: "Document clinical relevance", href: "/documentation-lab/lab", note: "Describe adherence, side effects, access barriers, or recovery relevance." },
         ]}
       />
@@ -497,7 +497,7 @@ export function BillingCodes() {
       <NextStepEngine
         steps={[
           { label: "Write the note", href: "/documentation-lab/lab", note: "Use the code to choose the correct documentation format." },
-          { label: "Check workflow phase", href: "/client-journey/dashboard", note: "Make sure the form belongs at this point in the client journey." },
+          { label: "Check Client Workflow", href: "/client-workflow/workflow", note: "Make sure the form belongs at this point in the workflow." },
         ]}
       />
       <input value={query} onChange={(event) => setQuery(event.target.value)} className="focus-ring rounded-lg border border-ink/15 bg-white px-4 py-3 text-sm shadow-soft" placeholder="Search code, service, note type..." />

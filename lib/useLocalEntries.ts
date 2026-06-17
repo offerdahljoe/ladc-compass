@@ -158,6 +158,7 @@ export function useLocalEntries<T extends StoredEntry>(key: string) {
     updateEntry,
     removeEntry,
     clearEntries,
+    loaded,
     cloudEnabled,
     syncing,
     isCloudConfigured,
