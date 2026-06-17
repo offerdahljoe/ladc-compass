@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import ADCPracticeTest from "@/components/ADCPracticeTest";
 import ClinicalDecisionNavigator from "@/components/ClinicalDecisionNavigator";
 import ClientWorkflow from "@/components/ClientWorkflow";
+import CommunicationsLogPage from "@/components/CommunicationsLogPage";
 import DashboardHome from "@/components/DashboardHome";
 import GroupTherapyHub from "@/components/GroupTherapyHub";
 import KaiShinCompanionWorkspace from "@/components/KaiShinCompanionWorkspace";
@@ -52,6 +53,10 @@ export default async function DynamicContentPage({
 
   if (path === "/client-workflow/workflow") {
     return <ClientWorkflow />;
+  }
+
+  if (path === "/communications-log/log") {
+    return <CommunicationsLogPage />;
   }
 
   if (path === "/clinical-decision-navigator/navigator") {

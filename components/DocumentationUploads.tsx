@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
+import { downloadDocumentFile, removeDocumentFile, uploadDocumentFile } from "@/lib/documentStorage";
 import { useLocalEntries } from "@/lib/useLocalEntries";
 
 type UploadEntry = {
@@ -11,6 +12,9 @@ type UploadEntry = {
   savedAt: string;
   text: string;
   analysis: string;
+  storagePath?: string;
+  fileSize?: number;
+  mimeType?: string;
 };
 
 const storageKey = "ladc-documentation-uploads";
@@ -38,6 +42,7 @@ function isReadableText(file: File) {
 export default function DocumentationUploads() {
   const { entries, addEntry, removeEntry, cloudEnabled, syncing } =
     useLocalEntries<UploadEntry>(storageKey);
+  const [status, setStatus] = useState("");
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -47,9 +52,21 @@ export default function DocumentationUploads() {
     const pastedText = String(data.get("pastedText") || "").trim();
     let text = pastedText;
     let name = "Pasted documentation text";
+    let storagePath: string | undefined;
+    let fileSize: number | undefined;
+    let mimeType: string | undefined;
 
     if (file instanceof File && file.name) {
       name = file.name;
+      fileSize = file.size;
+      mimeType = file.type;
+      const uploaded = await uploadDocumentFile(file);
+      if (uploaded) {
+        storagePath = uploaded.storagePath;
+        setStatus("File stored in Supabase Storage.");
+      } else if (cloudEnabled) {
+        setStatus("Cloud file upload failed — metadata saved locally. Create the ladc-documents bucket in Supabase.");
+      }
       if (!text && isReadableText(file)) {
         text = (await file.text()).slice(0, 35000);
       }
@@ -64,10 +81,33 @@ export default function DocumentationUploads() {
       savedAt: new Date().toLocaleString(),
       text,
       analysis: analyzeUpload(`${docType}\n${purpose}\n${text}`),
+      storagePath,
+      fileSize,
+      mimeType,
     };
 
     await addEntry(entry);
     form.reset();
+  }
+
+  async function handleDelete(entry: UploadEntry) {
+    if (entry.storagePath) await removeDocumentFile(entry.storagePath);
+    await removeEntry(entry.id);
+  }
+
+  async function handleDownload(entry: UploadEntry) {
+    if (!entry.storagePath) return;
+    const blob = await downloadDocumentFile(entry.storagePath);
+    if (!blob) {
+      setStatus("Download failed. Sign in and verify the ladc-documents bucket exists.");
+      return;
+    }
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = entry.name;
+    anchor.click();
+    URL.revokeObjectURL(url);
   }
 
   return (
@@ -125,10 +165,11 @@ export default function DocumentationUploads() {
             {syncing
               ? " Checking cloud sync..."
               : cloudEnabled
-                ? " Saving to your private cloud account."
+                ? " Metadata syncs to cloud; files use Supabase Storage when signed in."
                 : " Saving in this browser only until you sign in."}{" "}
             Do not upload real client identifiers or PHI.
           </p>
+          {status ? <p className="mt-2 text-xs text-lagoon">{status}</p> : null}
           <div className="mt-4 grid gap-3">
             {entries.length === 0 ? (
               <p className="rounded-lg border border-dashed border-ink/20 bg-paper p-4 text-sm text-ink/70">
@@ -139,14 +180,24 @@ export default function DocumentationUploads() {
                 <article key={entry.id} className="rounded-lg border border-ink/10 bg-paper p-4">
                   <div className="flex items-start justify-between gap-3">
                     <h4 className="font-semibold text-ink">{entry.name}</h4>
-                    <button
-                      type="button"
-                      onClick={() => removeEntry(entry.id)}
-                      className="focus-ring rounded-md px-2 py-1 text-sm font-semibold text-clay hover:bg-clay/10"
-                    >
-                      Delete
-                    </button>
+                    <div className="flex gap-2">
+                      {entry.storagePath ? (
+                        <button type="button" onClick={() => handleDownload(entry)} className="focus-ring rounded-md px-2 py-1 text-sm font-semibold text-lagoon hover:bg-lagoon/10">
+                          Download
+                        </button>
+                      ) : null}
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(entry)}
+                        className="focus-ring rounded-md px-2 py-1 text-sm font-semibold text-clay hover:bg-clay/10"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
+                  {entry.storagePath ? (
+                    <p className="mt-1 text-xs text-lagoon">Stored in cloud file storage{entry.fileSize ? ` · ${Math.round(entry.fileSize / 1024)} KB` : ""}</p>
+                  ) : null}
                   <p className="mt-3 text-sm text-ink/75"><strong>Type:</strong> {entry.docType}</p>
                   <p className="mt-2 text-sm text-ink/75"><strong>Saved:</strong> {entry.savedAt}</p>
                   <p className="mt-2 whitespace-pre-wrap text-sm text-ink/75"><strong>Website update notes:</strong><br />{entry.purpose || "No notes added."}</p>

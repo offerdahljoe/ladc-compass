@@ -2,6 +2,8 @@
 
 import NavLink from "@/components/NavLink";
 import { useMemo, useState } from "react";
+import { contactLabel, contactsFromResources } from "@/lib/workspaceContacts";
+import { useLocalEntries } from "@/lib/useLocalEntries";
 import { ROIContactScriptBuilder } from "@/components/ClientJourneyComponents";
 import {
   defaultWorkflowState,
@@ -72,9 +74,11 @@ function IntakeFormBlock({ formId }: { formId: string }) {
 function RoiPanel({
   rois,
   onChange,
+  contacts,
 }: {
   rois: RoiRecord[];
   onChange: (rois: RoiRecord[]) => void;
+  contacts: ReturnType<typeof contactsFromResources>;
 }) {
   const [draft, setDraft] = useState<Partial<RoiRecord>>({});
 
@@ -92,6 +96,7 @@ function RoiPanel({
         obtained: Boolean(draft.obtained),
         contactMade: false,
         documentedSetc: false,
+        contactId: draft.contactId,
       },
     ]);
     setDraft({});
@@ -101,6 +106,30 @@ function RoiPanel({
     <div className="mt-3 grid gap-3 rounded-md border border-lagoon/20 bg-paper p-3">
       <p className="text-xs font-semibold uppercase text-lagoon">ROI tracker</p>
       <div className="grid gap-2 md:grid-cols-2">
+        <label className="text-xs font-semibold text-ink sm:col-span-2">
+          Link Smart Contact
+          <select
+            value={draft.contactId ?? ""}
+            onChange={(e) => {
+              const contactId = e.target.value;
+              const contact = contacts.find((c) => c.id === contactId);
+              setDraft((c) => ({
+                ...c,
+                contactId: contactId || undefined,
+                person: contact?.label ?? c.person,
+                organization: contact?.organization ?? c.organization,
+              }));
+            }}
+            className="focus-ring mt-1 w-full rounded-md border border-ink/15 bg-white px-2 py-1 text-sm"
+          >
+            <option value="">Select or type manually below</option>
+            {contacts.map((contact) => (
+              <option key={contact.id} value={contact.id}>
+                {contactLabel([contact], contact.id)}
+              </option>
+            ))}
+          </select>
+        </label>
         {(["person", "organization", "relationship", "reason", "expiration"] as const).map((field) => (
           <label key={field} className="text-xs font-semibold text-ink">
             {field}
@@ -159,12 +188,14 @@ function WorkflowSectionBlock({
   onToggle,
   onFlags,
   onRois,
+  contacts,
 }: {
   section: WorkflowSection;
   state: ClientWorkflowState;
   onToggle: (id: string, value: boolean) => void;
   onFlags: (flags: string[]) => void;
   onRois: (rois: RoiRecord[]) => void;
+  contacts: ReturnType<typeof contactsFromResources>;
 }) {
   const { done, total } = sectionProgress(section, state.checkedTasks, state.flags);
   const visibleTasks = section.tasks.filter((t) => isTaskVisible(t, state.checkedTasks, state.flags));
@@ -225,7 +256,7 @@ function WorkflowSectionBlock({
         ))}
       </div>
       {section.id === "roi-coordination" ? (
-        <RoiPanel rois={state.rois} onChange={onRois} />
+        <RoiPanel rois={state.rois} onChange={onRois} contacts={contacts} />
       ) : null}
     </details>
   );
@@ -237,6 +268,9 @@ export default function ClientWorkflow() {
     LEGACY_KEY,
     defaultWorkflowState,
   );
+
+  const { entries: resourceEntries } = useLocalEntries<{ id?: string; organization?: string; contactNames?: string; name?: string; category?: string; phone?: string; email?: string }>("ladc-resource-directory");
+  const contacts = useMemo(() => contactsFromResources(resourceEntries), [resourceEntries]);
 
   const totalProgress = useMemo(() => {
     let done = 0;
@@ -301,6 +335,7 @@ export default function ClientWorkflow() {
           onToggle={toggleTask}
           onFlags={(flags) => update({ flags })}
           onRois={(rois) => update({ rois })}
+          contacts={contacts}
         />
       ))}
     </section>

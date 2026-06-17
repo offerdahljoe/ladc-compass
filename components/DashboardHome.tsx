@@ -2,64 +2,31 @@
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import DocumentationUploads from "@/components/DocumentationUploads";
+import NavLink from "@/components/NavLink";
+import ReminderPopup from "@/components/ReminderPopup";
 import ResourceDatabase from "@/components/ResourceDatabase";
+import WorkspaceMonthGrid from "@/components/WorkspaceMonthGrid";
+import { sendRemoteReminder } from "@/lib/reminderDelivery";
 import { useCloudJson } from "@/lib/useCloudJson";
 import { useLocalEntries } from "@/lib/useLocalEntries";
+import { contactLabel, contactsFromResources } from "@/lib/workspaceContacts";
+import {
+  type AlarmSettings,
+  type EventStatus,
+  type ReminderNotice,
+  type ScheduleEvent,
+  type TaskItem,
+  eventColorCategories,
+} from "@/lib/workspaceTypes";
 
 type ResourceContact = {
   id?: string;
   organization?: string;
   contactNames?: string;
   name?: string;
-};
-
-type EventStatus =
-  | "scheduled"
-  | "confirmed"
-  | "showed"
-  | "cancelled"
-  | "no-show"
-  | "rescheduled"
-  | "needs-follow-up";
-
-type ScheduleEvent = {
-  id: string;
-  title: string;
-  contact: string;
-  action: string;
-  date: string;
-  start: string;
-  end: string;
-  repeat: "none" | "daily" | "weekly" | "monthly";
-  repeatEndDate: string;
-  repeatCount: number;
-  editScope: "one" | "future" | "series";
-  deleteScope: "one" | "future" | "series";
-  reminderAmount: number;
-  reminderUnit: "minutes" | "hours" | "days";
-  emailReminder: boolean;
-  emailReminderAddress: string;
-  textReminder: boolean;
-  textReminderPhone: string;
-  notes: string;
-  wrapUpMinutes: number;
-  unavailable?: boolean;
-  statusByDate?: Record<string, EventStatus>;
-};
-
-type TaskItem = {
-  id: string;
-  text: string;
-  createdDate: string;
-  deadline: string;
-  completedAt?: string;
-  order: number;
-};
-
-type AlarmSettings = {
-  enabled: boolean;
-  sound: "soft" | "double" | "steady";
-  defaultWrapUpMinutes: number;
+  category?: string;
+  phone?: string;
+  email?: string;
 };
 
 const eventKey = "ladc-dashboard-events";
@@ -95,7 +62,10 @@ const defaultAlarm: AlarmSettings = {
   enabled: true,
   sound: "soft",
   defaultWrapUpMinutes: 10,
+  upcomingReminderMinutes: 15,
 };
+
+const dismissedKey = "ladc-dismissed-reminders";
 
 const emptyEvents: ScheduleEvent[] = [];
 const emptyTasks: TaskItem[] = [];
@@ -317,7 +287,15 @@ export default function DashboardHome() {
   const [selectedDate, setSelectedDate] = useState(todayKey);
   const [weekStart, setWeekStart] = useState(dateKeyFor(startOfWeek(new Date())));
   const [miniMonth, setMiniMonth] = useState(new Date());
-  const [calendarMode, setCalendarMode] = useState<"week" | "day">("week");
+  const [calendarMode, setCalendarMode] = useState<"month" | "week" | "day">("month");
+  const [viewMonth, setViewMonth] = useState(new Date());
+  const [draggingEventId, setDraggingEventId] = useState<string | null>(null);
+  const [activeReminders, setActiveReminders] = useState<ReminderNotice[]>([]);
+  const { value: dismissedReminderIds, setValue: persistDismissed } = useCloudJson<string[]>(
+    "workspace-dismissed-reminders",
+    dismissedKey,
+    [],
+  );
   const [monthOverlayOpen, setMonthOverlayOpen] = useState(false);
   const [resourceOverlayOpen, setResourceOverlayOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -325,85 +303,107 @@ export default function DashboardHome() {
   const [taskDraft, setTaskDraft] = useState("");
   const [taskDeadline, setTaskDeadline] = useState("");
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
-  const [warning, setWarning] = useState<ScheduleEvent | null>(null);
   const [warnedKeys, setWarnedKeys] = useState<string[]>([]);
-  const [contactSuggestions, setContactSuggestions] = useState<string[]>([]);
+  const contacts = useMemo(() => contactsFromResources(resourceEntries), [resourceEntries]);
+
+  const setDismissedReminderIds = useCallback(
+    (updater: string[] | ((current: string[]) => string[])) => {
+      const next = typeof updater === "function" ? updater(dismissedReminderIds) : updater;
+      void persistDismissed(next);
+    },
+    [dismissedReminderIds, persistDismissed],
+  );
 
   const weekDays = useMemo(
     () => Array.from({ length: 5 }, (_, index) => addDays(parseDateKey(weekStart), index)),
     [weekStart],
   );
 
-  useEffect(() => {
-    if (!resourcesLoaded) return;
-    const names = resourceEntries.flatMap((resource) => [
-      resource.organization,
-      resource.contactNames,
-      resource.name,
-    ]);
-    setContactSuggestions(
-      Array.from(new Set(names.filter(Boolean).map((name) => String(name)))).sort(),
-    );
-  }, [resourceEntries, resourcesLoaded]);
+  function reminderMinutesBefore(event: ScheduleEvent) {
+    const amount = event.reminderAmount || alarm.upcomingReminderMinutes;
+    const unit = event.reminderUnit || "minutes";
+    if (unit === "hours") return amount * 60;
+    if (unit === "days") return amount * 24 * 60;
+    return amount;
+  }
+
+  function acknowledgeReminder(id: string) {
+    setActiveReminders((current) => current.filter((item) => item.id !== id));
+    setDismissedReminderIds((current) => (current.includes(id) ? current : [...current, id]));
+  }
 
   useEffect(() => {
-    if (!warning) {
+    const flashing = activeReminders.some((item) => item.kind === "wrap-up");
+    if (!flashing) {
       document.title = "LADC Compass";
       return;
     }
     let visible = true;
     const interval = window.setInterval(() => {
-      document.title = visible ? "WRAP UP - LADC Compass" : "LADC Compass";
+      document.title = visible ? "REMINDER - LADC Compass" : "LADC Compass";
       visible = !visible;
     }, 900);
     return () => {
       window.clearInterval(interval);
       document.title = "LADC Compass";
     };
-  }, [warning]);
+  }, [activeReminders]);
 
   useEffect(() => {
     const interval = window.setInterval(() => {
       if (!alarm.enabled) {
-        setWarning(null);
+        setActiveReminders([]);
         return;
       }
       const now = new Date();
       const dayKey = dateKeyFor(now);
       const nowMinutes = now.getHours() * 60 + now.getMinutes();
-      const active = events
-        .filter((event) => occursOn(event, dayKey) && !event.unavailable)
-        .find((event) => {
-          const end = minutesFromTime(event.end);
-          const startWarning = end - (event.wrapUpMinutes || alarm.defaultWrapUpMinutes);
-          const status = statusFor(event, dayKey);
-          return status === "scheduled" && nowMinutes >= startWarning && nowMinutes < end;
-        });
+      const notices: ReminderNotice[] = [];
 
-      if (!active) {
-        setWarning(null);
-        return;
+      for (const event of events.filter((item) => occursOn(item, dayKey) && !item.unavailable)) {
+        const start = minutesFromTime(event.start);
+        const end = minutesFromTime(event.end);
+        const status = statusFor(event, dayKey);
+        const wrapStart = end - (event.wrapUpMinutes || alarm.defaultWrapUpMinutes);
+        const upcomingStart = start - reminderMinutesBefore(event);
+
+        if (status === "scheduled" && nowMinutes >= wrapStart && nowMinutes < end) {
+          notices.push({
+            id: `wrap-${event.id}-${dayKey}`,
+            kind: "wrap-up",
+            title: event.title || event.action,
+            body: `Session ends at ${event.end}. Complete note, schedule follow-up, review treatment plan objective.`,
+            eventId: event.id,
+          });
+        } else if (status === "scheduled" && nowMinutes >= upcomingStart && nowMinutes < start) {
+          notices.push({
+            id: `upcoming-${event.id}-${dayKey}`,
+            kind: "upcoming",
+            title: event.title || event.action,
+            body: `Starts at ${event.start}${event.contact ? ` · ${event.contact}` : ""}.`,
+            eventId: event.id,
+          });
+        }
       }
 
-      const warningKey = `${active.id}-${dayKey}`;
-      setWarning(active);
-      if (!warnedKeys.includes(warningKey)) {
-        playSound(alarm.sound);
-        setWarnedKeys((current) => [...current, warningKey]);
+      const visible = notices.filter((notice) => !dismissedReminderIds.includes(notice.id));
+      setActiveReminders(visible);
+
+      for (const notice of visible) {
+        if (!warnedKeys.includes(notice.id)) {
+          playSound(alarm.sound);
+          setWarnedKeys((current) => [...current, notice.id]);
+        }
       }
-    }, 20000);
+    }, 15000);
     return () => window.clearInterval(interval);
-  }, [alarm, events, warnedKeys]);
+  }, [alarm, dismissedReminderIds, events, warnedKeys]);
 
-  function loadContacts() {
-    const names = resourceEntries.flatMap((resource) => [
-      resource.organization,
-      resource.contactNames,
-      resource.name,
-    ]);
-    setContactSuggestions(
-      Array.from(new Set(names.filter(Boolean).map((name) => String(name)))).sort(),
+  function moveEventToDay(eventId: string, dayKey: string) {
+    setEvents((current) =>
+      current.map((event) => (event.id === eventId ? { ...event, date: dayKey } : event)),
     );
+    setDraggingEventId(null);
   }
 
   function eventsForDay(dayKey: string) {
@@ -477,6 +477,26 @@ export default function DashboardHome() {
         ? current.map((item) => (item.id === clean.id ? clean : item))
         : [...current, clean];
     });
+    if (clean.emailReminder && clean.emailReminderAddress) {
+      void sendRemoteReminder({
+        channel: "email",
+        to: clean.emailReminderAddress,
+        subject: `Reminder: ${clean.title}`,
+        body: clean.notes || `${clean.action} on ${clean.date} at ${clean.start}`,
+        eventTitle: clean.title,
+        eventWhen: `${clean.date} ${clean.start}`,
+      });
+    }
+    if (clean.textReminder && clean.textReminderPhone) {
+      void sendRemoteReminder({
+        channel: "sms",
+        to: clean.textReminderPhone,
+        subject: `Reminder: ${clean.title}`,
+        body: clean.notes || `${clean.action} on ${clean.date} at ${clean.start}`,
+        eventTitle: clean.title,
+        eventWhen: `${clean.date} ${clean.start}`,
+      });
+    }
     setEventDraft(null);
   }
 
@@ -529,10 +549,12 @@ export default function DashboardHome() {
     ]);
   }
 
-  function selectCalendarDate(dayKey: string, mode: "week" | "day" = "day") {
+  function selectCalendarDate(dayKey: string, mode: "month" | "week" | "day" = "day") {
     const day = parseDateKey(dayKey);
     setSelectedDate(dayKey);
     setWeekStart(dateKeyFor(startOfWeek(day)));
+    setViewMonth(new Date(day.getFullYear(), day.getMonth(), 1));
+    setMiniMonth(new Date(day.getFullYear(), day.getMonth(), 1));
     setCalendarMode(mode);
   }
 
@@ -590,6 +612,7 @@ export default function DashboardHome() {
 
   const selectedTasks = activeTasksForDate(selectedDate);
   const selectedDateEvents = eventsForDay(selectedDate);
+  const monthGridDays = monthDays(viewMonth);
   const miniDays = monthDays(miniMonth);
 
   if (!eventsLoaded || !tasksLoaded || !alarmLoaded) {
@@ -598,11 +621,7 @@ export default function DashboardHome() {
 
   return (
     <div className="grid gap-4 xl:grid-cols-[18rem_minmax(0,1fr)_18rem]">
-      {warning ? (
-        <div className="fixed left-0 right-0 top-0 z-50 bg-clay px-4 py-2 text-center text-sm font-bold text-white">
-          Wrap-up warning: {warning.title} ends at {warning.end}
-        </div>
-      ) : null}
+      <ReminderPopup notices={activeReminders} onAcknowledge={acknowledgeReminder} />
 
       <aside className="rounded-lg border border-ink/10 bg-white p-4 shadow-soft">
         <div className="flex items-center justify-between gap-2">
@@ -616,6 +635,17 @@ export default function DashboardHome() {
             ) : (
               <p className="text-[11px] text-ink/55">Sign in to sync across devices</p>
             )}
+            <div className="mt-2 flex flex-wrap gap-1">
+              <NavLink href="/communications-log/log" className="focus-ring rounded-md border border-lagoon/20 px-2 py-0.5 text-[11px] font-semibold text-lagoon hover:bg-lagoon/10">
+                Comms Log
+              </NavLink>
+              <NavLink href="/smart-contacts/contacts" className="focus-ring rounded-md border border-lagoon/20 px-2 py-0.5 text-[11px] font-semibold text-lagoon hover:bg-lagoon/10">
+                Contacts
+              </NavLink>
+              <NavLink href="/resource-library/library" className="focus-ring rounded-md border border-lagoon/20 px-2 py-0.5 text-[11px] font-semibold text-lagoon hover:bg-lagoon/10">
+                Resources
+              </NavLink>
+            </div>
           </div>
           <button
             type="button"
@@ -675,15 +705,30 @@ export default function DashboardHome() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-lagoon">
-              {calendarMode === "week" ? "This Week" : "Selected Day"}
+              {calendarMode === "month" ? "Month View" : calendarMode === "week" ? "This Week" : "Selected Day"}
             </p>
             <h2 className="text-2xl font-semibold text-ink">
-              {calendarMode === "week"
-                ? `${formatShortDate(weekDays[0])} - ${formatShortDate(weekDays[4])}`
-                : formatShortDate(parseDateKey(selectedDate))}
+              {calendarMode === "month"
+                ? formatMonth(viewMonth)
+                : calendarMode === "week"
+                  ? `${formatShortDate(weekDays[0])} - ${formatShortDate(weekDays[4])}`
+                  : formatShortDate(parseDateKey(selectedDate))}
             </h2>
           </div>
           <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                const d = parseDateKey(selectedDate);
+                setViewMonth(new Date(d.getFullYear(), d.getMonth(), 1));
+                setCalendarMode("month");
+              }}
+              className={`focus-ring rounded-md border px-3 py-2 text-sm font-semibold ${
+                calendarMode === "month" ? "border-lagoon bg-lagoon text-white" : "border-ink/10 hover:bg-paper"
+              }`}
+            >
+              Month
+            </button>
             <button
               type="button"
               onClick={() => selectCalendarDate(todayKey, "day")}
@@ -709,9 +754,11 @@ export default function DashboardHome() {
             <button
               type="button"
               onClick={() =>
-                calendarMode === "week"
-                  ? setWeekStart(dateKeyFor(addDays(parseDateKey(weekStart), -7)))
-                  : selectCalendarDate(dateKeyFor(addDays(parseDateKey(selectedDate), -1)), "day")
+                calendarMode === "month"
+                  ? setViewMonth(addMonths(viewMonth, -1))
+                  : calendarMode === "week"
+                    ? setWeekStart(dateKeyFor(addDays(parseDateKey(weekStart), -7)))
+                    : selectCalendarDate(dateKeyFor(addDays(parseDateKey(selectedDate), -1)), "day")
               }
               className="focus-ring rounded-md border border-ink/10 px-3 py-2 text-sm font-semibold hover:bg-paper"
             >
@@ -721,9 +768,11 @@ export default function DashboardHome() {
             <button
               type="button"
               onClick={() =>
-                calendarMode === "week"
-                  ? setWeekStart(dateKeyFor(addDays(parseDateKey(weekStart), 7)))
-                  : selectCalendarDate(dateKeyFor(addDays(parseDateKey(selectedDate), 1)), "day")
+                calendarMode === "month"
+                  ? setViewMonth(addMonths(viewMonth, 1))
+                  : calendarMode === "week"
+                    ? setWeekStart(dateKeyFor(addDays(parseDateKey(weekStart), 7)))
+                    : selectCalendarDate(dateKeyFor(addDays(parseDateKey(selectedDate), 1)), "day")
               }
               className="focus-ring rounded-md border border-ink/10 px-3 py-2 text-sm font-semibold hover:bg-paper"
             >
@@ -732,7 +781,32 @@ export default function DashboardHome() {
           </div>
         </div>
 
-        {calendarMode === "day" ? (
+        {calendarMode === "month" ? (
+          <section className="mt-4">
+            <div className="mb-3 flex flex-wrap gap-2">
+              <button type="button" onClick={() => openEventForm(selectedDate)} className="focus-ring rounded-md bg-lagoon px-4 py-2 text-sm font-semibold text-white hover:bg-ink">
+                Add event
+              </button>
+              <button type="button" onClick={() => markUnavailable(selectedDate)} className="focus-ring rounded-md border border-clay/30 px-4 py-2 text-sm font-semibold text-clay hover:bg-clay hover:text-white">
+                Make unavailable
+              </button>
+              <NavLink href="/communications-log/log" className="focus-ring rounded-md border border-lagoon/25 px-3 py-2 text-sm font-semibold text-lagoon hover:bg-lagoon/10">
+                Communications Log
+              </NavLink>
+            </div>
+            <WorkspaceMonthGrid
+              days={monthGridDays}
+              viewMonth={viewMonth}
+              selectedDate={selectedDate}
+              eventsForDay={eventsForDay}
+              draggingEventId={draggingEventId}
+              onDragStart={setDraggingEventId}
+              onDropEvent={moveEventToDay}
+              onSelectDay={(dayKey) => selectCalendarDate(dayKey, "day")}
+            />
+            <p className="mt-2 text-xs text-ink/55">Drag events between days. Click a day for detail view.</p>
+          </section>
+        ) : calendarMode === "day" ? (
           <section className="mt-4 min-h-[34rem] rounded-xl border border-lagoon/25 bg-lagoon/5 p-4">
             <div className="flex flex-col gap-3 border-b border-lagoon/15 pb-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -887,6 +961,16 @@ export default function DashboardHome() {
             />
           </label>
           <label className="mt-3 block text-xs font-semibold text-ink">
+            Upcoming event reminder (minutes before start)
+            <input
+              type="number"
+              min="0"
+              value={alarm.upcomingReminderMinutes ?? 15}
+              onChange={(event) => setAlarm((current) => ({ ...current, upcomingReminderMinutes: Number(event.target.value || 0) }))}
+              className="focus-ring mt-1 w-full rounded-md border border-ink/15 px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="mt-3 block text-xs font-semibold text-ink">
             Sound
             <select
               value={alarm.sound}
@@ -932,11 +1016,37 @@ export default function DashboardHome() {
                 </select>
               </label>
               <label className="text-sm font-semibold text-ink">
-                Contact / place
-                <input list="dashboard-contacts" value={eventDraft.contact} onChange={(event) => setEventDraft((current) => current ? { ...current, contact: event.target.value } : current)} className="focus-ring mt-1 w-full rounded-md border border-ink/15 px-3 py-2 text-sm" placeholder="Use initials or non-identifying label" />
-                <datalist id="dashboard-contacts">
-                  {contactSuggestions.map((suggestion) => <option key={suggestion} value={suggestion} />)}
-                </datalist>
+                Linked contact
+                <select
+                  value={eventDraft.contactId ?? ""}
+                  onChange={(event) => {
+                    const contactId = event.target.value;
+                    const label = contactLabel(contacts, contactId, eventDraft.contact);
+                    setEventDraft((current) =>
+                      current ? { ...current, contactId: contactId || undefined, contact: label } : current,
+                    );
+                  }}
+                  className="focus-ring mt-1 w-full rounded-md border border-ink/15 px-3 py-2 text-sm"
+                >
+                  <option value="">Select contact (optional)</option>
+                  {contacts.map((contact) => (
+                    <option key={contact.id} value={contact.id}>
+                      {contact.label}{contact.organization ? ` — ${contact.organization}` : ""}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="text-sm font-semibold text-ink">
+                Contact label (manual)
+                <input value={eventDraft.contact} onChange={(event) => setEventDraft((current) => current ? { ...current, contact: event.target.value } : current)} className="focus-ring mt-1 w-full rounded-md border border-ink/15 px-3 py-2 text-sm" placeholder="Initials or role if not in Smart Contacts" />
+              </label>
+              <label className="text-sm font-semibold text-ink">
+                Color category
+                <select value={eventDraft.colorCategory ?? "clinical"} onChange={(event) => setEventDraft((current) => current ? { ...current, colorCategory: event.target.value } : current)} className="focus-ring mt-1 w-full rounded-md border border-ink/15 px-3 py-2 text-sm">
+                  {eventColorCategories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>{cat.label}</option>
+                  ))}
+                </select>
               </label>
               <label className="text-sm font-semibold text-ink">
                 Title
@@ -1082,7 +1192,7 @@ export default function DashboardHome() {
         <div className="fixed inset-0 z-40 overflow-y-auto bg-paper p-4">
           <div className="mx-auto max-w-7xl">
             <div className="sticky top-0 z-10 mb-4 flex justify-end bg-paper py-2">
-              <button type="button" onClick={() => { setResourceOverlayOpen(false); loadContacts(); }} className="focus-ring rounded-md bg-lagoon px-4 py-2 text-sm font-semibold text-white">Close resources</button>
+              <button type="button" onClick={() => setResourceOverlayOpen(false)} className="focus-ring rounded-md bg-lagoon px-4 py-2 text-sm font-semibold text-white">Close resources</button>
             </div>
             <ResourceDatabase />
           </div>

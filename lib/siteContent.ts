@@ -40,6 +40,10 @@ export const mainNavigation: NavItem[] = [
     path: "/",
   },
   {
+    title: "Communications Log",
+    path: "/communications-log/log",
+  },
+  {
     title: "Client Workflow",
     path: "/client-workflow/workflow",
   },
@@ -138,8 +142,9 @@ export const mainNavigation: NavItem[] = [
 
 export const quickActions = [
   { title: "Open Clinical Decision Navigator", path: "/clinical-decision-navigator/navigator" },
-  { title: "Open Client Workflow", path: "/client-workflow/workflow" },
   { title: "Open Workspace", path: "/" },
+  { title: "Communications Log", path: "/communications-log/log" },
+  { title: "Open Client Workflow", path: "/client-workflow/workflow" },
   { title: "Start Group Studio", path: "/group-studio/studio" },
   { title: "Create Documentation", path: "/documentation-lab/lab" },
   { title: "Find Resource", path: "/resource-library/library" },

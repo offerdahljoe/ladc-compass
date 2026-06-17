@@ -1,7 +1,11 @@
 "use client";
 
+import NavLink from "@/components/NavLink";
 import { useMemo, useState } from "react";
+import { buildWorkflowImportFromCdn, mergeWorkflowImport } from "@/lib/cdnWorkflowImport";
+import { defaultWorkflowState, type ClientWorkflowState } from "@/lib/clientWorkflow";
 import { generateDocumentationOutputs } from "@/lib/clinicalDocumentationEngine";
+import { useCloudJson } from "@/lib/useCloudJson";
 
 type DimensionId = "d1" | "d2" | "d3" | "d4" | "d5" | "d6";
 type Rating = 0 | 1 | 2 | 3 | 4;
@@ -389,6 +393,12 @@ function OutputCard({
 
 export default function ClinicalDecisionNavigator() {
   const [mode, setMode] = useState("Beginner / Intern Mode");
+  const [importMessage, setImportMessage] = useState("");
+  const { value: workflowState, setValue: setWorkflowState } = useCloudJson<ClientWorkflowState>(
+    "ladc-client-workflow-state",
+    "ladc-workflow-progress",
+    defaultWorkflowState,
+  );
   const [snapshot, setSnapshot] = useState<Snapshot>({
     label: "",
     age: "",
@@ -574,6 +584,30 @@ export default function ClinicalDecisionNavigator() {
       d5: { answers: { quit: "2-3 attempts", stress: "High", coping: "Limited", triggers: "Limited", plan: "Minimal" }, userRating: 3, rationale: "Relapse vulnerability appears elevated due to limited coping, triggers, and prior attempts.", notes: "" },
       d6: { answers: { living: "Active substance use present", support: "Limited", barriers: "Moderate", stress: "Significant", relationships: "Mixed" }, userRating: 3, rationale: "Recovery environment includes active-use exposure and limited sober support.", notes: "" },
     });
+  }
+
+  function importToClientWorkflow() {
+    const patch = buildWorkflowImportFromCdn({
+      snapshot,
+      substance,
+      dsmCount,
+      dsmSeverity,
+      dimensionSummaries: dimensionOutputs.map(({ dimension, state, finalRating }) => ({
+        id: dimension.id,
+        title: dimension.title,
+        rating: finalRating,
+        rationale: state.rationale,
+      })),
+      selectedStrengths,
+      selectedBarriers,
+      selectedGoals,
+      selectedSafetyFlags,
+      elevatedDimensionIds: elevated.map((item) => item.dimension.id),
+      highRiskDimensionIds: highRisk.map((item) => item.dimension.id),
+      maxRating,
+    });
+    setWorkflowState(mergeWorkflowImport(workflowState, patch));
+    setImportMessage(`Imported ${patch.flags?.length ?? 0} workflow flags and assessment checkboxes. Open Client Workflow to review.`);
   }
 
   function resetAll() {
@@ -811,6 +845,20 @@ export default function ClinicalDecisionNavigator() {
         <OutputCard title="Strengths and Barriers Summary" text={documentation.strengthsBarriers} />
 
         <OutputCard title="What This Unlocks in Client Workflow" text={documentation.workflowUnlocks} />
+
+        <section className="rounded-lg border border-lagoon/25 bg-lagoon/5 p-4 shadow-soft">
+          <h2 className="text-sm font-semibold text-ink">One-click import to Client Workflow</h2>
+          <p className="mt-1 text-xs text-ink/65">Sets assessment flags, ROI placeholders, and completed CDN tasks in your cloud-synced workflow.</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button type="button" onClick={importToClientWorkflow} className="focus-ring rounded-md bg-lagoon px-3 py-2 text-xs font-semibold text-white hover:bg-ink">
+              Import to Client Workflow
+            </button>
+            <NavLink href="/client-workflow/workflow" className="focus-ring rounded-md border border-lagoon/30 px-3 py-2 text-xs font-semibold text-lagoon hover:bg-white">
+              Open Client Workflow
+            </NavLink>
+          </div>
+          {importMessage ? <p className="mt-2 text-xs text-lagoon">{importMessage}</p> : null}
+        </section>
 
         <OutputCard title="Supervisor Review Flags" tone={highRisk.length || selectedSafetyFlags.length ? "warning" : "default"} text={documentation.supervisorFlags} />
 

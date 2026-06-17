@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, ReactNode, useMemo, useState } from "react";
+import ADCPracticeTest from "@/components/ADCPracticeTest";
 import HoursTrackerPlaceholder from "@/components/HoursTrackerPlaceholder";
 import { websiteLibrary } from "@/lib/siteContent";
 import { useLocalEntries } from "@/lib/useLocalEntries";
@@ -102,8 +103,9 @@ export function DocumentationLab() {
     <Shell eyebrow="Documentation Lab" title="Clinical Wording Generator">
       <NextStepEngine
         steps={[
-          { label: "Copy to Documentation Lab", href: "/documentation-lab/lab", note: "Turn wording into note-ready language before entering it." },
-          { label: "Build treatment priorities", href: "/clinical-decision-navigator/navigator", note: "Connect this wording to ASAM, DSM, and treatment planning." },
+          { label: "Open Client Workflow", href: "/client-workflow/workflow", note: "See which documentation step you are on in the live workflow." },
+          { label: "Build treatment priorities", href: "/clinical-decision-navigator/navigator", note: "Connect wording to ASAM, DSM, and treatment planning." },
+          { label: "Log coordination", href: "/communications-log/log", note: "Record collateral contacts in the Communications Log." },
           { label: "Review billing code", href: "/billing-codes/reference", note: "Confirm the note type matches the service." },
         ]}
       />
@@ -309,6 +311,7 @@ export function GroupStudio() {
         steps={[
           { label: "Add to Workspace Calendar", href: "/", note: "Schedule the group and attach the session plan in the event notes." },
           { label: "Generate Group Note Language", href: "/documentation-lab/lab", note: "Copy the documentation paragraph into the note generator." },
+          { label: "Open Client Workflow", href: "/client-workflow/workflow", note: "Complete group session checklist and PRO-1334 tasks." },
           { label: "Connect to ASAM", href: "/clinical-decision-navigator/navigator", note: "Confirm which treatment need the group supports." },
         ]}
       />
@@ -695,49 +698,17 @@ const licensureSteps = [
 ];
 
 function ExamAcademyWorkspace() {
-  const [answers, setAnswers] = useState<Record<string, number>>({});
-  const [submitted, setSubmitted] = useState(false);
-  const score = examQuestions.filter((question, index) => answers[String(index)] === question.answer).length;
   return (
-    <Shell eyebrow="Exam Academy" title="Licensure Exam Training">
+    <Shell eyebrow="Exam Academy" title="ADC Practice Test">
       <NextStepEngine
         steps={[
           { label: "Review 12 Core Functions", href: "/core-functions/screening", note: "Anchor missed questions to the core functions." },
           { label: "Practice case reasoning", href: "/case-challenges/challenges", note: "Move from memorizing to clinical decision-making." },
           { label: "Track licensure tasks", href: "/internship-survival-guide/hours-tracker", note: "Connect exam prep to your licensure roadmap." },
+          { label: "Open Client Workflow", href: "/client-workflow/workflow", note: "Apply exam concepts to live workflow." },
         ]}
       />
-      <section className="grid gap-4">
-        {examQuestions.map((question, index) => {
-          const chosen = answers[String(index)];
-          const correct = chosen === question.answer;
-          return (
-            <article key={question.prompt} className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">
-              <p className="text-xs font-semibold uppercase tracking-wide text-lagoon">{question.level}</p>
-              <h2 className="mt-2 text-lg font-semibold text-ink">{question.prompt}</h2>
-              <div className="mt-4 grid gap-2">
-                {question.choices.map((choice, choiceIndex) => (
-                  <label key={choice} className="flex gap-2 rounded-md bg-paper p-3 text-sm text-ink/75">
-                    <input type="radio" name={`exam-${index}`} checked={chosen === choiceIndex} onChange={() => setAnswers((current) => ({ ...current, [index]: choiceIndex }))} />
-                    <span>{choice}</span>
-                  </label>
-                ))}
-              </div>
-              {submitted ? (
-                <div className={`mt-4 rounded-md p-3 text-sm leading-6 ${correct ? "bg-sage/15 text-ink" : "bg-clay/10 text-ink"}`}>
-                  <p><strong>{correct ? "Correct." : "Review this one."}</strong> {question.why}</p>
-                  <p><strong>Why the others are wrong:</strong> {question.wrong}</p>
-                  <p><strong>Concept tested:</strong> {question.concept}</p>
-                  <p><strong>Real-world application:</strong> {question.application}</p>
-                </div>
-              ) : null}
-            </article>
-          );
-        })}
-      </section>
-      <button type="button" onClick={() => setSubmitted(true)} className="focus-ring w-fit rounded-md bg-lagoon px-4 py-2 text-sm font-semibold text-white hover:bg-ink">
-        Submit answers {submitted ? `(${score}/${examQuestions.length})` : ""}
-      </button>
+      <ADCPracticeTest />
     </Shell>
   );
 }

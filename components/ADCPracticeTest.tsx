@@ -1,17 +1,9 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import { adcExamQuestionsAdditional, type AdcExamQuestion } from "@/lib/adcExamQuestionsAdditional";
 
-type Question = {
-  id: string;
-  topic: string;
-  prompt: string;
-  choices: string[];
-  answer: number;
-  explanation: string;
-};
-
-const questions: Question[] = [
+const baseQuestions: AdcExamQuestion[] = [
   {
     id: "q1",
     topic: "Screening",
@@ -254,6 +246,8 @@ const questions: Question[] = [
   },
 ];
 
+const questions: AdcExamQuestion[] = [...baseQuestions, ...adcExamQuestionsAdditional];
+
 export default function ADCPracticeTest() {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -279,8 +273,8 @@ export default function ADCPracticeTest() {
         <div>
           <h2 className="text-2xl font-semibold text-ink">ADC Practice Test</h2>
           <p className="mt-2 text-sm leading-6 text-ink/70">
-            Twenty exam-style questions across assessment, ASAM, ethics,
-            documentation, counseling, referral, crisis, and scope of practice.
+            {questions.length} exam-style questions across assessment, ASAM, ethics,
+            documentation, counseling, referral, crisis, core functions, and scope of practice.
           </p>
         </div>
         {submitted ? (

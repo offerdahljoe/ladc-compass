@@ -21,6 +21,7 @@ const navPrefixGroups: Record<string, string[]> = {
   "/documentation-lab/lab": ["/documentation-lab"],
   "/medications/overview": ["/medications"],
   "/reset-room/reset": ["/reset-room"],
+  "/communications-log/log": ["/communications-log"],
 };
 
 export function isNavActive(pathname: string, target: string) {

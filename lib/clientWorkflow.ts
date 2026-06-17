@@ -54,6 +54,7 @@ export type RoiRecord = {
   obtained: boolean;
   contactMade: boolean;
   documentedSetc: boolean;
+  contactId?: string;
 };
 
 export type ClientWorkflowState = {

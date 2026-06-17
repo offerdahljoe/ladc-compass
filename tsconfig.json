@@ -37,6 +37,7 @@
   ],
   "exclude": [
     "node_modules",
-    "LADC-Compass-GitHub-Package"
+    "LADC-Compass-GitHub-Package",
+    "supabase/functions"
   ]
 }
