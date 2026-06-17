@@ -181,10 +181,18 @@ export default function TopSearch() {
 
   return (
     <div className="sticky top-0 z-20 border-b border-ink/10 bg-paper/95 px-4 py-3 backdrop-blur">
-      <div className="mx-auto mb-2 max-w-7xl rounded-md border border-clay/30 bg-clay/10 px-3 py-2 text-xs font-medium text-ink">
-        <strong>No PHI:</strong> Do not enter real client names, dates of birth,
-        addresses, phone numbers, case numbers, chart screenshots, or other
-        identifying information.
+      <div className="mx-auto mb-2 flex max-w-7xl flex-wrap items-center gap-2">
+        <NavLink
+          href="/#workspace-uploads"
+          className="focus-ring rounded-md bg-lagoon px-3 py-1.5 text-xs font-semibold text-white hover:bg-ink"
+        >
+          Upload Docs
+        </NavLink>
+        <div className="flex-1 rounded-md border border-clay/30 bg-clay/10 px-3 py-2 text-xs font-medium text-ink">
+          <strong>No PHI:</strong> Do not enter real client names, dates of birth,
+          addresses, phone numbers, case numbers, chart screenshots, or other
+          identifying information.
+        </div>
       </div>
       <div className="mx-auto grid max-w-7xl gap-3 xl:grid-cols-[minmax(0,1fr)_minmax(18rem,0.6fr)_minmax(18rem,0.55fr)] xl:items-end">
         <label className="block text-sm font-medium text-ink">

@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import DocumentationUploads from "@/components/DocumentationUploads";
 import ResourceDatabase from "@/components/ResourceDatabase";
 import { useCloudJson } from "@/lib/useCloudJson";
 import { useLocalEntries } from "@/lib/useLocalEntries";
@@ -1121,6 +1122,10 @@ export default function DashboardHome() {
           </section>
         </div>
       ) : null}
+
+      <section id="workspace-uploads" className="col-span-full scroll-mt-36">
+        <DocumentationUploads />
+      </section>
     </div>
   );
 }
