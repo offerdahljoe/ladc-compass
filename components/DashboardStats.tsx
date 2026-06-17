@@ -91,7 +91,17 @@ export default function DashboardStats() {
       });
     }
 
-    loadStats();
+    void loadStats();
+
+    if (!supabase) return;
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+        void loadStats();
+      }
+    });
+    return () => subscription.unsubscribe();
   }, []);
 
   const progress = Math.min(100, Math.round((stats.hours / 880) * 100));

@@ -90,11 +90,17 @@ You can also host `LADCCompass.html` by uploading it to a static file host. This
 
 ## What Syncs Now
 
-- Treatment Plan Lab entries
-- Group Planner entries
-- Internship Tracker hours
-- Supervision Notebook entries
-- Documentation Upload records and pasted de-identified text
+When signed in, these sync across devices via Supabase (localStorage is kept as a fallback cache):
+
+- **Workspace** — calendar events, tasks, alarm settings
+- **Client Workflow** — checklist progress, case label, ROI entries
+- **Favorites**
+- **Smart Contacts / Resource Directory** and custom categories
+- **Group Studio** sessions
+- **Internship Tracker** hours
+- **Treatment Plan Lab** entries
+- **Supervision Notebook** entries
+- **Documentation Upload** records and pasted de-identified text
 
 ## Future Upgrade
 

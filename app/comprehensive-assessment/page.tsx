@@ -1,4 +1,4 @@
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 import InfoCard from "@/components/InfoCard";
 import PageHeader from "@/components/PageHeader";
 
@@ -26,12 +26,12 @@ export default function ComprehensiveAssessmentPage() {
         <p className="mt-3 text-sm leading-6 text-ink/75">
           The Comprehensive Assessment Coach is the default AI mode and the top-priority documentation feature.
         </p>
-        <Link
+        <NavLink
           href="/assistant"
           className="focus-ring mt-4 inline-flex rounded-md bg-lagoon px-4 py-2 text-sm font-semibold text-white hover:bg-ink"
         >
           Open in AI Assessment Coach
-        </Link>
+        </NavLink>
       </section>
       <section className="grid gap-4 lg:grid-cols-2">
         {sections.map(([title, body], index) => (

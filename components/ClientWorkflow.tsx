@@ -264,31 +264,33 @@ export default function ClientWorkflow() {
 
   return (
     <section className="grid gap-3">
-      <div className="sticky top-28 z-10 rounded-lg border border-lagoon/20 bg-white p-4 shadow-soft">
-        <p className="text-xs font-semibold uppercase tracking-wide text-lagoon">Client Workflow</p>
-        <p className="mt-1 text-sm text-ink/70">
-          What did I just do → what does that unlock? Check tasks as you complete them in Procentive.
-        </p>
-        <label className="mt-3 block max-w-xs text-xs font-semibold text-ink">
-          Client label (initials only)
-          <input
-            value={state.caseLabel}
-            onChange={(e) => update({ caseLabel: e.target.value })}
-            className="focus-ring mt-1 w-full rounded-md border border-ink/15 px-3 py-2 text-sm"
-            placeholder="e.g. JS"
-          />
-        </label>
-        <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-ink/60">
-          <span>{totalProgress.done}/{totalProgress.total} tasks complete</span>
-          {cloudEnabled ? <span className="text-lagoon">Cloud sync on</span> : <span>Local only — sign in to sync</span>}
-          {syncing ? <span>Syncing…</span> : null}
+      <div className="rounded-lg border border-lagoon/20 bg-white p-3 shadow-soft">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-lagoon">Client Workflow</p>
+            <p className="text-xs text-ink/60">{totalProgress.done}/{totalProgress.total} tasks · check off as you complete work</p>
+          </div>
+          <label className="text-xs font-semibold text-ink">
+            Client label
+            <input
+              value={state.caseLabel}
+              onChange={(e) => update({ caseLabel: e.target.value })}
+              className="focus-ring ml-1 w-24 rounded-md border border-ink/15 px-2 py-1 text-xs"
+              placeholder="JS"
+            />
+          </label>
         </div>
-        <div className="mt-2 h-1.5 rounded-full bg-paper">
+        <div className="mt-2 h-1 rounded-full bg-paper">
           <div
-            className="h-1.5 rounded-full bg-lagoon transition-all"
+            className="h-1 rounded-full bg-lagoon transition-all"
             style={{ width: `${totalProgress.total ? (totalProgress.done / totalProgress.total) * 100 : 0}%` }}
           />
         </div>
+        {cloudEnabled || syncing ? (
+          <p className="mt-1 text-[11px] text-ink/55">
+            {syncing ? "Syncing…" : "Cloud sync on"}
+          </p>
+        ) : null}
       </div>
 
       {workflowSections.map((section) => (

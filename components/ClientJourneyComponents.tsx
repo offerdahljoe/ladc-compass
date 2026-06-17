@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 import { useMemo, useState } from "react";
 import {
   clientJourneyNavItems,
@@ -333,13 +333,13 @@ export function ClientJourneyDashboard() {
         </summary>
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
           {phases.map((item) => (
-            <Link
+            <NavLink
               key={item.path}
               href={item.path}
               className="focus-ring rounded-md border border-ink/10 bg-paper px-3 py-2 text-sm font-medium text-ink hover:border-lagoon"
             >
               {item.title}
-            </Link>
+            </NavLink>
           ))}
         </div>
       </details>

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 
 export default function DocumentationMovedPage() {
   return (
@@ -9,12 +9,12 @@ export default function DocumentationMovedPage() {
         The old standalone documentation page has been retired. Use Documentation Lab for clinical wording,
         progress notes, ASAM language, treatment plan wording, group notes, and Procentive-style templates.
       </p>
-      <Link
+      <NavLink
         href="/documentation-lab/lab"
         className="focus-ring mt-5 inline-block rounded-md bg-lagoon px-4 py-2 text-sm font-semibold text-white hover:bg-ink"
       >
         Open Documentation Lab
-      </Link>
+      </NavLink>
     </section>
   );
 }

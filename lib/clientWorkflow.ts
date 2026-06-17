@@ -215,7 +215,7 @@ export const workflowSections: WorkflowSection[] = [
     summary: "Eight required forms — explain each before signature.",
     intakeForms,
     tasks: intakeTasks(),
-    toolLinks: [{ label: "Procentive Companion", href: "/procentive-companion/companion" }],
+    toolLinks: [{ label: "Documentation Lab", href: "/documentation-lab/lab" }],
   },
   {
     id: "comprehensive-assessment",
@@ -238,7 +238,7 @@ export const workflowSections: WorkflowSection[] = [
     ],
     toolLinks: [
       { label: "Clinical Decision Navigator", href: "/clinical-decision-navigator/navigator" },
-      { label: "Procentive Companion", href: "/procentive-companion/companion" },
+      { label: "Documentation Lab", href: "/documentation-lab/lab" },
     ],
   },
   {

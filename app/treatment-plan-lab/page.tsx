@@ -1,4 +1,4 @@
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 
 export default function TreatmentPlanLabMovedPage() {
   return (
@@ -9,12 +9,12 @@ export default function TreatmentPlanLabMovedPage() {
         The old separate Treatment Plan Lab has been retired. Use Clinical Decision Navigator to connect
         assessment findings, ASAM risk, treatment priorities, level of care, and treatment plan ideas.
       </p>
-      <Link
+      <NavLink
         href="/clinical-decision-navigator/navigator"
         className="focus-ring mt-5 inline-block rounded-md bg-lagoon px-4 py-2 text-sm font-semibold text-white hover:bg-ink"
       >
         Open Clinical Decision Navigator
-      </Link>
+      </NavLink>
     </section>
   );
 }

@@ -102,7 +102,7 @@ export function DocumentationLab() {
     <Shell eyebrow="Documentation Lab" title="Clinical Wording Generator">
       <NextStepEngine
         steps={[
-          { label: "Copy to Procentive", href: "/procentive-companion/companion", note: "Check where the wording belongs before entering it." },
+          { label: "Copy to Documentation Lab", href: "/documentation-lab/lab", note: "Turn wording into note-ready language before entering it." },
           { label: "Build treatment priorities", href: "/clinical-decision-navigator/navigator", note: "Connect this wording to ASAM, DSM, and treatment planning." },
           { label: "Review billing code", href: "/billing-codes/reference", note: "Confirm the note type matches the service." },
         ]}
@@ -784,7 +784,7 @@ export function LicensureJourneyWorkspace() {
         steps={[
           { label: "Practice exam questions", href: "/exam-academy/practice", note: "Move from checklist completion to exam readiness." },
           { label: "Study foundations", href: "/ladc-academy/academy", note: "Build knowledge around ASAM, DSM, ethics, documentation, and groups." },
-          { label: "Prepare supervision", href: "/clinical-wisdom/wisdom", note: "Bring better questions and clearer clinical reflections." },
+          { label: "Open Documentation Lab", href: "/documentation-lab/lab", note: "Bring better questions and clearer clinical reflections." },
         ]}
       />
       <section className="rounded-lg border border-ink/10 bg-white p-5 shadow-soft">

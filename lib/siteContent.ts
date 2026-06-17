@@ -63,14 +63,6 @@ export const mainNavigation: NavItem[] = [
     path: "/medications/overview",
   },
   {
-    title: "Procentive Companion",
-    path: "/procentive-companion/companion",
-    items: [
-      { title: "Where Does This Go?", path: "/procentive-companion/companion" },
-      { title: "Kai-Shin Reference", path: "/kai-shin/hub" },
-    ],
-  },
-  {
     title: "Reset Room",
     path: "/reset-room/reset",
   },
@@ -141,10 +133,6 @@ export const mainNavigation: NavItem[] = [
       "Study Center",
       "Practice Questions",
     ].map((title) => ({ title, path: `/internship-survival-guide/${slugify(title)}` })),
-  },
-  {
-    title: "Clinical Wisdom",
-    path: "/clinical-wisdom/wisdom",
   },
 ];
 

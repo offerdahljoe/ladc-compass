@@ -65,11 +65,14 @@ function Section({ title, items, tone = "default" }: { title: string; items: str
 const medSlugAliases: Record<string, string> = {
   buprenorphine: "suboxone",
   naltrexone: "vivitrol",
-  naloxone: "vivitrol",
+  naloxone: "naloxone",
+  antidepressants: "sertraline",
+  "anti-anxiety-medications": "hydroxyzine",
+  "mood-stabilizers": "lithium",
+  "antipsychotic-medications": "quetiapine",
   acamprosate: "acamprosate",
   disulfiram: "disulfiram",
   methadone: "methadone",
-  antidepressants: "sertraline",
 };
 
 export default function MedicationReferencePage({ medId }: { medId?: string }) {
@@ -83,9 +86,9 @@ export default function MedicationReferencePage({ medId }: { medId?: string }) {
 
   return (
     <section className="grid gap-3">
-      <div className="sticky top-28 z-10 rounded-lg border border-lagoon/20 bg-white p-4 shadow-soft">
-        <p className="text-xs font-semibold uppercase tracking-wide text-lagoon">Medication Reference</p>
-        <p className="mt-1 text-sm text-ink/70">Client named a medication — what does an LADC need to know?</p>
+      <div className="rounded-lg border border-lagoon/20 bg-white p-3 shadow-soft">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-lagoon">Medication Reference</p>
+        <p className="text-xs text-ink/60">{medications.length} medications · search or filter by category</p>
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}

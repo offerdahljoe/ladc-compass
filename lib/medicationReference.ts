@@ -1,33 +1,10 @@
-export type MedicationCategory =
-  | "MAT Medications"
-  | "Antidepressants"
-  | "Mood Stabilizers"
-  | "Antipsychotics"
-  | "ADHD Medications"
-  | "Sleep/Anxiety Medications"
-  | "Benzodiazepines / Higher Caution";
+import { additionalMedications } from "./medicationAdditional";
+export type { MedicationCategory, MedicationEntry } from "./medicationTypes";
 
-export type MedicationEntry = {
-  id: string;
-  name: string;
-  pronunciation: string;
-  brandNames: string[];
-  genericName: string;
-  category: MedicationCategory;
-  drugType: string;
-  usedFor: string;
-  ladcShouldKnow: string[];
-  questionsToAsk: string[];
-  redFlags: string[];
-  commonSideEffects: string[];
-  counselorConsiderations: string[];
-  whenToCoordinate: string[];
-  documentationExample: string;
-  curiousAbout: string[];
-};
+import type { MedicationCategory, MedicationEntry } from "./medicationTypes";
 
 export const neverPanicContent = {
-  title: "Client lists 12 medications. Don't panic.",
+  title: "Client lists many medications. Don't panic.",
   body: [
     "You do not need to memorize medications or act like a prescriber.",
     "As an LADC, focus on: why is the client taking it, who prescribes it, are they taking it as prescribed, does it affect attendance/alertness/cravings/withdrawal/mood/sleep/safety, is ROI/coordination needed, and are there misuse or stopping-suddenly concerns.",
@@ -310,6 +287,7 @@ export const medications: MedicationEntry[] = [
     documentationExample: "Client reported lithium for bipolar disorder. Counselor explored mood stability and denied symptoms suggestive of toxicity.",
     curiousAbout: ["Bipolar symptoms", "Hydration", "Lab monitoring adherence"],
   },
+  ...additionalMedications,
 ];
 
 export function filterMedications(query: string, category: MedicationCategory | "All") {
