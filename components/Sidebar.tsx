@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { mainNavigation } from "@/lib/siteContent";
@@ -21,12 +21,12 @@ export default function Sidebar() {
     >
       <div className="flex items-start justify-between gap-2">
         {!collapsed ? (
-          <Link href="/" className="focus-ring block rounded-md">
+          <NavLink href="/" className="focus-ring block rounded-md">
             <p className="text-xs font-semibold uppercase tracking-wide text-lagoon">
               LADC Compass
             </p>
             <h1 className="mt-1 text-2xl font-semibold text-ink">Clinical Workspace</h1>
-          </Link>
+          </NavLink>
         ) : null}
         <button
           type="button"
@@ -39,13 +39,13 @@ export default function Sidebar() {
       </div>
       {collapsed ? (
         <div className="mt-6 grid gap-2">
-          <Link
+          <NavLink
             href="/"
             className="focus-ring rounded-md bg-lagoon px-2 py-2 text-center text-xs font-bold text-white"
             title="Dashboard"
           >
             D
-          </Link>
+          </NavLink>
         </div>
       ) : null}
       {!collapsed ? (
@@ -54,7 +54,7 @@ export default function Sidebar() {
           const active = hasActivePath(item, pathname);
           if (!item.items || item.items.length <= 1) {
             return (
-              <Link
+              <NavLink
                 key={item.title}
                 href={item.path}
                 className={`focus-ring rounded-md px-3 py-2 text-sm font-semibold ${
@@ -64,7 +64,7 @@ export default function Sidebar() {
                 }`}
               >
                 {item.title}
-              </Link>
+              </NavLink>
             );
           }
           return (
@@ -80,7 +80,7 @@ export default function Sidebar() {
                         {child.title}
                       </summary>
                       <div className="ml-2 mt-1 grid gap-1 border-l border-ink/10 pl-2">
-                        <Link
+                        <NavLink
                           href={child.path}
                           className={`focus-ring rounded-md px-3 py-2 text-sm ${
                             pathname === child.path
@@ -89,9 +89,9 @@ export default function Sidebar() {
                           }`}
                         >
                           Open {child.title}
-                        </Link>
+                        </NavLink>
                         {child.items.map((grandchild) => (
-                          <Link
+                          <NavLink
                             key={grandchild.path}
                             href={grandchild.path}
                             className={`focus-ring rounded-md px-3 py-2 text-sm ${
@@ -101,12 +101,12 @@ export default function Sidebar() {
                             }`}
                           >
                             {grandchild.title}
-                          </Link>
+                          </NavLink>
                         ))}
                       </div>
                     </details>
                   ) : (
-                    <Link
+                    <NavLink
                       key={child.path}
                       href={child.path}
                       className={`focus-ring rounded-md px-3 py-2 text-sm ${
@@ -116,7 +116,7 @@ export default function Sidebar() {
                       }`}
                     >
                       {child.title}
-                    </Link>
+                    </NavLink>
                   ),
                 )}
               </div>

@@ -96,6 +96,9 @@ const defaultAlarm: AlarmSettings = {
   defaultWrapUpMinutes: 10,
 };
 
+const emptyEvents: ScheduleEvent[] = [];
+const emptyTasks: TaskItem[] = [];
+
 function pad(value: number) {
   return String(value).padStart(2, "0");
 }
@@ -271,22 +274,19 @@ export default function DashboardHome() {
     value: events,
     setValue: persistEvents,
     loaded: eventsLoaded,
-    hydrated: eventsHydrated,
     cloudEnabled,
     syncing,
-  } = useCloudJson<ScheduleEvent[]>("workspace-events", eventKey, []);
-  const {
-    value: tasks,
-    setValue: persistTasks,
-    loaded: tasksLoaded,
-    hydrated: tasksHydrated,
-  } = useCloudJson<TaskItem[]>("workspace-tasks", taskKey, []);
-  const {
-    value: alarm,
-    setValue: persistAlarm,
-    loaded: alarmLoaded,
-    hydrated: alarmHydrated,
-  } = useCloudJson<AlarmSettings>("workspace-alarm", alarmKey, defaultAlarm);
+  } = useCloudJson<ScheduleEvent[]>("workspace-events", eventKey, emptyEvents);
+  const { value: tasks, setValue: persistTasks, loaded: tasksLoaded } = useCloudJson<TaskItem[]>(
+    "workspace-tasks",
+    taskKey,
+    emptyTasks,
+  );
+  const { value: alarm, setValue: persistAlarm, loaded: alarmLoaded } = useCloudJson<AlarmSettings>(
+    "workspace-alarm",
+    alarmKey,
+    defaultAlarm,
+  );
   const { entries: resourceEntries, loaded: resourcesLoaded } =
     useLocalEntries<ResourceContact>("ladc-resource-directory");
 
@@ -591,7 +591,7 @@ export default function DashboardHome() {
   const selectedDateEvents = eventsForDay(selectedDate);
   const miniDays = monthDays(miniMonth);
 
-  if (!eventsLoaded || !tasksLoaded || !alarmLoaded || !eventsHydrated || !tasksHydrated || !alarmHydrated) {
+  if (!eventsLoaded || !tasksLoaded || !alarmLoaded) {
     return <p className="text-sm text-ink/60">Loading workspace…</p>;
   }
 

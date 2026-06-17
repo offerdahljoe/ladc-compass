@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { contentPages } from "@/lib/siteContent";
 import { isCloudConfigured, supabase } from "@/lib/supabaseClient";
@@ -215,7 +215,7 @@ export default function TopSearch() {
       {results.length > 0 ? (
         <div className="absolute left-4 right-4 top-24 mx-auto grid max-w-5xl gap-1 rounded-lg border border-ink/10 bg-white p-2 shadow-soft lg:top-20">
           {results.map((page) => (
-            <Link
+            <NavLink
               key={page.path}
               href={page.path}
               onClick={() => setQuery("")}
@@ -223,7 +223,7 @@ export default function TopSearch() {
             >
               <strong>{page.title}</strong>
               <span className="ml-2 text-ink/55">{page.section}</span>
-            </Link>
+            </NavLink>
           ))}
         </div>
       ) : null}

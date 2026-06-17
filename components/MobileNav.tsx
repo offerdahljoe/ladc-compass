@@ -1,17 +1,17 @@
 "use client";
 
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 import { mainNavigation, NavItem } from "@/lib/siteContent";
 
-function MobileLinkTree({ item }: { item: NavItem }) {
+function MobileNavLinkTree({ item }: { item: NavItem }) {
   if (!item.items?.length) {
     return (
-      <Link
+      <NavLink
         href={item.path}
         className="rounded-md px-3 py-2 text-sm text-ink/70 hover:bg-paper"
       >
         {item.title}
-      </Link>
+      </NavLink>
     );
   }
 
@@ -21,14 +21,14 @@ function MobileLinkTree({ item }: { item: NavItem }) {
         {item.title}
       </summary>
       <div className="grid gap-1 border-l border-ink/10 pl-3">
-        <Link
+        <NavLink
           href={item.path}
           className="rounded-md px-3 py-2 text-sm text-ink/70 hover:bg-paper"
         >
           Open {item.title}
-        </Link>
+        </NavLink>
         {item.items.map((child) => (
-          <MobileLinkTree key={child.path} item={child} />
+          <MobileNavLinkTree key={child.path} item={child} />
         ))}
       </div>
     </details>
@@ -48,26 +48,26 @@ export default function MobileNav() {
         <nav className="mt-3 grid gap-2">
           {mainNavigation.map((section) =>
             !section.items || section.items.length <= 1 ? (
-              <Link
+              <NavLink
                 key={section.title}
                 href={section.path}
                 className="rounded-md px-3 py-2 text-sm font-semibold text-ink hover:bg-paper"
               >
                 {section.title}
-              </Link>
+              </NavLink>
             ) : (
               <details key={section.title}>
                 <summary className="cursor-pointer rounded-md px-3 py-2 text-sm font-semibold text-ink">
                   {section.title}
                 </summary>
                 <div className="grid gap-1 pl-3">
-                  <Link
+                  <NavLink
                     href={section.path}
                     className="rounded-md px-3 py-2 text-sm text-ink/70 hover:bg-paper"
                   >
                     Open {section.title}
-                  </Link>
-                  {section.items?.map((item) => <MobileLinkTree key={item.path} item={item} />)}
+                  </NavLink>
+                  {section.items?.map((item) => <MobileNavLinkTree key={item.path} item={item} />)}
                 </div>
               </details>
             ),

@@ -45,64 +45,69 @@ export function useLocalEntries<T extends StoredEntry>(key: string) {
 
     async function loadCloudEntries() {
       setSyncing(true);
-      const { data: userData } = await supabase!.auth.getUser();
-      const currentUserId = userData.user?.id ?? null;
-      setUserId(currentUserId);
-      setCloudEnabled(Boolean(currentUserId));
+      try {
+        const { data: userData } = await supabase!.auth.getUser();
+        const currentUserId = userData.user?.id ?? null;
+        setUserId(currentUserId);
+        setCloudEnabled(Boolean(currentUserId));
 
-      if (!currentUserId) {
-        setSyncing(false);
-        return;
-      }
+        if (!currentUserId) return;
 
-      const { data: rows, error } = await supabase!
-        .from("ladc_entries")
-        .select("id,payload,created_at")
-        .eq("collection", key)
-        .order("created_at", { ascending: false });
+        const { data: rows, error } = await supabase!
+          .from("ladc_entries")
+          .select("id,payload,created_at")
+          .eq("collection", key)
+          .order("created_at", { ascending: false });
 
-      if (!error && rows) {
-        if (rows.length === 0) {
-          const localEntries = readLocalEntries();
-          if (localEntries.length > 0) {
-            const { data: inserted } = await supabase!
-              .from("ladc_entries")
-              .insert(
-                localEntries.map(({ id: _id, ...payload }) => ({
-                  collection: key,
-                  payload,
-                })),
-              )
-              .select("id,payload,created_at")
-              .order("created_at", { ascending: false });
+        if (!error && rows) {
+          if (rows.length === 0) {
+            const localEntries = readLocalEntries();
+            if (localEntries.length > 0) {
+              const { data: inserted } = await supabase!
+                .from("ladc_entries")
+                .insert(
+                  localEntries.map(({ id: _id, ...payload }) => ({
+                    collection: key,
+                    payload,
+                  })),
+                )
+                .select("id,payload,created_at")
+                .order("created_at", { ascending: false });
 
-            if (inserted) {
-              setEntries(
-                inserted.map((row) => ({
-                  ...(row.payload as T),
-                  id: row.id,
-                })) as T[],
-              );
-              setSyncing(false);
-              return;
+              if (inserted) {
+                setEntries(
+                  inserted.map((row) => ({
+                    ...(row.payload as T),
+                    id: row.id,
+                  })) as T[],
+                );
+                return;
+              }
             }
           }
-        }
 
-        setEntries(
-          rows.map((row) => ({
-            ...(row.payload as T),
-            id: row.id,
-          })) as T[],
-        );
+          setEntries(
+            rows.map((row) => ({
+              ...(row.payload as T),
+              id: row.id,
+            })) as T[],
+          );
+        }
+      } catch {
+        /* keep local entries */
+      } finally {
+        setSyncing(false);
       }
-      setSyncing(false);
     }
 
     loadCloudEntries();
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => loadCloudEntries());
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+        loadCloudEntries();
+      }
+    });
 
     return () => subscription.unsubscribe();
   }, [key]);

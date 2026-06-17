@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 import { useMemo, useState } from "react";
 import { ROIContactScriptBuilder } from "@/components/ClientJourneyComponents";
 import {
@@ -181,9 +181,9 @@ function WorkflowSectionBlock({
       {section.toolLinks?.length ? (
         <div className="mt-2 flex flex-wrap gap-2">
           {section.toolLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="focus-ring rounded-md border border-lagoon/20 px-2 py-1 text-xs font-semibold text-lagoon hover:bg-lagoon/10">
+            <NavLink key={link.href} href={link.href} className="focus-ring rounded-md border border-lagoon/20 px-2 py-1 text-xs font-semibold text-lagoon hover:bg-lagoon/10">
               {link.label}
-            </Link>
+            </NavLink>
           ))}
         </div>
       ) : null}
@@ -232,7 +232,7 @@ function WorkflowSectionBlock({
 }
 
 export default function ClientWorkflow() {
-  const { value: state, setValue, loaded, hydrated, cloudEnabled, syncing } = useCloudJson<ClientWorkflowState>(
+  const { value: state, setValue, loaded, cloudEnabled, syncing } = useCloudJson<ClientWorkflowState>(
     STORAGE_KEY,
     LEGACY_KEY,
     defaultWorkflowState,
@@ -258,7 +258,7 @@ export default function ClientWorkflow() {
     setValue({ ...state, checkedTasks });
   }
 
-  if (!loaded || !hydrated) {
+  if (!loaded) {
     return <p className="text-sm text-ink/60">Loading workflow…</p>;
   }
 

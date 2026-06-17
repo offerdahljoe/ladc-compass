@@ -10,7 +10,7 @@ set "LOG_FILE=%~dp0ladc-compass-server.log"
 
 if not exist "%NODE_EXE%" (
   echo Could not find the bundled Node.js runtime.
-  echo If you have Node.js installed, open this folder in a terminal and run: npm run start
+  echo If you have Node.js installed, open this folder in a terminal and run: npm run dev
   pause
   exit /b 1
 )
@@ -33,7 +33,7 @@ echo.
 if exist "%LOG_FILE%" del "%LOG_FILE%"
 
 start "" "%APP_URL%"
-"%NODE_EXE%" "%NEXT_BIN%" start -H 127.0.0.1 -p 3000
+"%NODE_EXE%" "%NEXT_BIN%" dev -H 127.0.0.1 -p 3000
 
 echo.
 echo LADC Compass stopped. If you saw an error above, send me a screenshot or paste the message.

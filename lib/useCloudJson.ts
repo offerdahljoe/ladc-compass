@@ -8,14 +8,23 @@ type SingletonRow = {
   payload: unknown;
 };
 
+const CLOUD_TIMEOUT_MS = 6000;
+
+function shouldReloadOnAuth(event: string) {
+  return event === "SIGNED_IN" || event === "SIGNED_OUT";
+}
+
 /** Syncs a single JSON blob per collection via Supabase ladc_entries (singleton row). */
 export function useCloudJson<T>(collection: string, legacyLocalKey: string, defaultValue: T) {
   const [value, setValue] = useState<T>(defaultValue);
   const [loaded, setLoaded] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
   const [cloudEnabled, setCloudEnabled] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const rowIdRef = useRef<string | null>(null);
+  const userEditedRef = useRef(false);
+  const loadGenerationRef = useRef(0);
+  const defaultValueRef = useRef(defaultValue);
+  defaultValueRef.current = defaultValue;
 
   const persistLocal = useCallback(
     (next: T) => {
@@ -27,14 +36,14 @@ export function useCloudJson<T>(collection: string, legacyLocalKey: string, defa
   );
 
   const readLocal = useCallback((): T => {
-    if (typeof window === "undefined") return defaultValue;
+    if (typeof window === "undefined") return defaultValueRef.current;
     try {
       const raw = window.localStorage.getItem(legacyLocalKey);
-      return raw ? (JSON.parse(raw) as T) : defaultValue;
+      return raw ? (JSON.parse(raw) as T) : defaultValueRef.current;
     } catch {
-      return defaultValue;
+      return defaultValueRef.current;
     }
-  }, [defaultValue, legacyLocalKey]);
+  }, [legacyLocalKey]);
 
   const fetchRowId = useCallback(async (): Promise<string | null> => {
     if (!supabase) return null;
@@ -52,48 +61,61 @@ export function useCloudJson<T>(collection: string, legacyLocalKey: string, defa
   useEffect(() => {
     setValue(readLocal());
     setLoaded(true);
-    if (!supabase) setHydrated(true);
   }, [readLocal]);
 
   useEffect(() => {
-    if (!loaded || !hydrated) return;
+    if (!loaded) return;
     persistLocal(value);
-  }, [hydrated, loaded, persistLocal, value]);
+  }, [loaded, persistLocal, value]);
 
   useEffect(() => {
     if (!supabase) return;
 
-    async function loadFromCloud() {
+    async function loadFromCloud(resetEdited: boolean) {
+      const generation = ++loadGenerationRef.current;
+      if (resetEdited) userEditedRef.current = false;
+
       setSyncing(true);
-      const { data: userData } = await supabase!.auth.getUser();
-      const userId = userData.user?.id ?? null;
-      setCloudEnabled(Boolean(userId));
-      if (!userId) {
-        setHydrated(true);
-        setSyncing(false);
-        return;
-      }
+      try {
+        const authResult = await Promise.race([
+          supabase!.auth.getUser(),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error("auth timeout")), CLOUD_TIMEOUT_MS),
+          ),
+        ]);
+        if (generation !== loadGenerationRef.current) return;
 
-      const { data: rows, error } = await supabase!
-        .from("ladc_entries")
-        .select("id,payload")
-        .eq("collection", collection)
-        .order("created_at", { ascending: false })
-        .limit(1);
+        const userId = authResult.data.user?.id ?? null;
+        setCloudEnabled(Boolean(userId));
+        if (!userId) return;
 
-      if (error) {
-        setHydrated(true);
-        setSyncing(false);
-        return;
-      }
+        const { data: rows, error } = await Promise.race([
+          supabase!
+            .from("ladc_entries")
+            .select("id,payload")
+            .eq("collection", collection)
+            .order("created_at", { ascending: false })
+            .limit(1),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error("cloud timeout")), CLOUD_TIMEOUT_MS),
+          ),
+        ]);
+        if (generation !== loadGenerationRef.current) return;
 
-      const row = rows?.[0] as SingletonRow | undefined;
-      if (row?.payload !== undefined && row.payload !== null) {
-        rowIdRef.current = row.id;
-        setValue(row.payload as T);
-      } else {
+        if (error) return;
+
+        const row = rows?.[0] as SingletonRow | undefined;
+        if (row?.payload !== undefined && row.payload !== null) {
+          rowIdRef.current = row.id;
+          if (!userEditedRef.current) {
+            setValue(row.payload as T);
+          }
+          return;
+        }
+
         const local = readLocal();
-        const hasLocal = JSON.stringify(local) !== JSON.stringify(defaultValue);
+        const hasLocal =
+          JSON.stringify(local) !== JSON.stringify(defaultValueRef.current);
         if (hasLocal) {
           const { data: inserted } = await supabase!
             .from("ladc_entries")
@@ -102,47 +124,58 @@ export function useCloudJson<T>(collection: string, legacyLocalKey: string, defa
             .single();
           if (inserted) rowIdRef.current = inserted.id;
         }
+      } catch {
+        /* keep local data — cloud sync is best-effort */
+      } finally {
+        if (generation === loadGenerationRef.current) {
+          setSyncing(false);
+        }
       }
-      setHydrated(true);
-      setSyncing(false);
     }
 
-    loadFromCloud();
+    void loadFromCloud(true);
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
-      setHydrated(false);
-      loadFromCloud();
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (shouldReloadOnAuth(event)) {
+        void loadFromCloud(true);
+      }
     });
     return () => subscription.unsubscribe();
-  }, [collection, defaultValue, readLocal]);
+  }, [collection, legacyLocalKey, readLocal]);
 
   const saveValue = useCallback(
     async (next: T) => {
+      userEditedRef.current = true;
       setValue(next);
       persistLocal(next);
       if (!supabase) return;
 
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) return;
+      try {
+        const { data: userData } = await supabase.auth.getUser();
+        if (!userData.user) return;
 
-      setCloudEnabled(true);
-      setSyncing(true);
+        setCloudEnabled(true);
+        setSyncing(true);
 
-      let id = rowIdRef.current;
-      if (!id) id = await fetchRowId();
+        let id = rowIdRef.current;
+        if (!id) id = await fetchRowId();
 
-      if (id) {
-        await supabase.from("ladc_entries").update({ payload: next }).eq("id", id);
-      } else {
-        const { data } = await supabase
-          .from("ladc_entries")
-          .insert({ collection, payload: next })
-          .select("id")
-          .single();
-        if (data) rowIdRef.current = data.id;
+        if (id) {
+          await supabase.from("ladc_entries").update({ payload: next }).eq("id", id);
+        } else {
+          const { data } = await supabase
+            .from("ladc_entries")
+            .insert({ collection, payload: next })
+            .select("id")
+            .single();
+          if (data) rowIdRef.current = data.id;
+        }
+      } catch {
+        /* local copy already saved */
+      } finally {
+        setSyncing(false);
       }
-      setSyncing(false);
     },
     [collection, fetchRowId, persistLocal],
   );
@@ -151,7 +184,6 @@ export function useCloudJson<T>(collection: string, legacyLocalKey: string, defa
     value,
     setValue: saveValue,
     loaded,
-    hydrated,
     cloudEnabled,
     syncing,
     isCloudConfigured,

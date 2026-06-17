@@ -1,4 +1,4 @@
-import Link from "next/link";
+import NavLink from "@/components/NavLink";
 import { getRelatedPages } from "@/lib/siteContent";
 
 export default function RelatedTools({ paths }: { paths: string[] }) {
@@ -13,13 +13,13 @@ export default function RelatedTools({ paths }: { paths: string[] }) {
       </p>
       <div className="mt-4 grid gap-2">
         {related.map((page) => (
-          <Link
+          <NavLink
             key={page.path}
             href={page.path}
             className="focus-ring rounded-md border border-ink/10 bg-paper px-3 py-2 text-sm font-semibold text-ink hover:border-lagoon hover:text-lagoon"
           >
             {page.title}
-          </Link>
+          </NavLink>
         ))}
       </div>
     </aside>
